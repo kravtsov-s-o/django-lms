@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="icon" type="image/png" href="{% static 'img/favicon.png' %}"/>
+    <title>{% block page-title %}{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap"
+          rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'style/style.css' %}">
+    {% block extra-css %}{% endblock %}
+</head>
+<body class="default_scheme login">
+<header class="main-header">
+    <div class="container container-fluid">
+        <div class="row">
+            <div class="col">
+                <div class="logo">
+                    <a href="index.html"><img src="{% static 'img/logo.svg' %}" width="36" height="40"
+                                              alt="Ruslana.English"></a>
+                </div>
+            </div>
+            <div class="col text-right flex-items-center">
+                <div class="theme-control">
+                    <fieldset class="theme-switcher">
+                        <legend class="theme-switcher__legend">Color Mode</legend>
+                        <input class="theme-switcher__radio theme-switcher__radio--light" type="radio"
+                               name="color-scheme" value="light" aria-label="Light">
+                        <input class="theme-switcher__radio theme-switcher__radio--auto" type="radio"
+                               name="color-scheme" value="auto" aria-label="Auto" checked>
+                        <input class="theme-switcher__radio theme-switcher__radio--dark" type="radio"
+                               name="color-scheme" value="dark" aria-label="Dark">
+                        <div class="theme-switcher__status"></div>
+                    </fieldset>
+                </div>
+                {% if user.is_authenticated %}
+                <form class="logout-form" action="{% url 'users:logout' %}" method="POST">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-sm btn-outline-link3">Logout</button>
+                </form>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</header>
+<main>
+    {% block content %}{% endblock %}
+</main>
+<footer class="main-footer dark_scheme">
+    <div class="container">
+        <p><a href="index.html">RuslanaEnglish</a> © 2024. All Rights Reserved.</p>
+    </div>
+</footer>
+<script src="{% static 'js/script.js' %}"></script>
+{% block extra-js %}{% endblock %}
+</body>
+</html>

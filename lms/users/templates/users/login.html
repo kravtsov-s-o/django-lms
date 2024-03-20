@@ -1,0 +1,36 @@
+{% extends 'users/base-template.html' %}
+
+{% block page-title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="wrapper">
+    <div class="wrapper_inner">
+        <h1 class="h4">{{ title }}</h1>
+        {% if messages %}
+        <div class="form-errors">
+            {% for message in messages %}
+            {{ message }}
+            {% endfor %}
+        </div>
+        {% endif %}
+        <form action="#" method="post">
+            {% csrf_token %}
+            {% for field in form %}
+            <div class="form-field">
+                {{ field.label_tag }}
+                {{ field }}
+                {% if field.help_text %}
+                <p class="help" id="{{ field.auto_id }}_helptext">
+                    {{ field.help_text|safe }}
+                </p>
+                {% endif %}
+            </div>
+            {% endfor %}
+            <div class="form-field">
+                <button class="btn btn-link btn-block" type="submit">Sign In</button>
+            </div>
+            <p class="form-link"><a href="{% url 'users:password_reset' %}">Forgot Password?</a></p>
+        </form>
+    </div>
+</div>
+{% endblock %}

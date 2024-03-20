@@ -1,0 +1,105 @@
+.form-field {
+    position: relative;
+    margin-top: 1em;
+
+    &:first-child {
+        margin-top: 0;
+    }
+
+    ul {
+        padding: 0;
+        margin: 0;
+        list-style: none;
+
+        li {
+            position: relative;
+            padding-left: 15px;
+            font-size: 0.85rem;
+            line-height: 1.2em;
+
+            &::before {
+                content: '';
+                position: absolute;
+                left: 0;
+                top: 6px;
+                width: 6px;
+                height: 6px;
+                rotate: 45deg;
+                background-color: var(--text_link);
+            }
+
+            + li {
+                margin-top: 0.25rem
+            }
+        }
+    }
+}
+
+label {
+    display: block;
+    margin-bottom: 0.35rem;
+    font-size: 0.9em;
+    font-weight: 600;
+    color: var(--text_dark);
+}
+
+input:not([type="radio"]):not([type="checkbox"]),
+textarea,
+select {
+    display: block;
+    width: 100%;
+    padding: 0.375rem 0.75rem;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: var(--text);
+    background-color: transparent;
+    background-clip: padding-box;
+    border: 1px solid var(--bd_color);
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    border-radius: 0.25rem;
+    transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+    box-sizing: border-box;
+
+    &:focus,
+    &:active {
+        color: var(--text_dark);
+        background-color: transparent;
+        border-color: var(--extra_bd_color);
+        outline: 0;
+    }
+}
+
+textarea {
+    resize: vertical;
+}
+
+select {
+    &:not([multiple]) {
+        background-repeat: no-repeat;
+        background-position: right 0.75rem center;
+        background-size: 16px 12px;
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+    }
+}
+
+.form-link a {
+    margin-top: 1rem;
+    font-size: 0.9em;
+    color: var(--text_light);
+
+    &:hover {
+        color: var(--text);
+    }
+}
+
+.form-errors {
+    display: block;
+    border-radius: 0.25rem;
+    border: 2px solid var(--extra_danger);
+    padding: 0.5rem 1rem;
+    color: var(--extra_danger);
+}
+
