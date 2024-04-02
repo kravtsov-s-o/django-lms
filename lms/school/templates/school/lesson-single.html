@@ -1,0 +1,79 @@
+{% extends 'users/base-template.html' %}
+
+{% block page-title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="container">
+        <div class="row mb-4 align-items-center">
+            <div class="col-6">
+                <h1 class="h3 text-ellipses">Lorem ipsum dolor sit amet.</h1>
+            </div>
+            <div class="col-6 text-right">
+                <a href="{% url 'school:main' %}" class="btn btn-sm btn-outline-link3">Schedule</a>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="h5 card-title">
+                            Lesson
+                        </h3>
+                    </div>
+                    <div class="card-body">
+                        <dl class="lesson">
+                            <dt>Stuudent(s)</dt>
+                            <dd>Dima NGO</dd>
+                            <dd>Dima NGO</dd>
+                            <dt>Date</dt>
+                            <dd>12.03.2024</dd>
+                            <dt>Time</dt>
+                            <dd>12:00</dd>
+                            <dt>Duration</dt>
+                            <dd>45 min</dd>
+                            <dt>Status</dt>
+                            <dd>Planned</dd>
+                            <dt>Type</dt>
+                            <dd>Individual / Group</dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-9">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="row">
+                            <div class="col">
+                                <h2 class="h5">About</h2>
+                            </div>
+                            <div class="col text-right">
+                                <a href="lesson-add.html" class="btn btn-sm btn-outline-link">Edit</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <dl>
+                            <dt>Theme:</dt>
+                            <dd>Lorem ipsum dolor sit amet.</dd>
+                            <dt>Description:</dt>
+                            <dd>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Animi at consectetur doloremque excepturi facere ipsa necessitatibus nihil odio odit officiis pariatur perferendis quo, soluta suscipit vel, veniam voluptatibus. Accusantium ad aliquid consequuntur dicta ducimus exercitationem fugiat hic, iure molestiae nemo, possimus quidem rerum similique sit totam unde veniam veritatis voluptas.</dd>
+                            <dt>Homework:</dt>
+                            <dd>
+                                <p><a href="#">Some link</a></p>
+                                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ab amet dicta molestiae
+                                    natus necessitatibus perferendis provident, voluptates! Alias, dignissimos
+                                    illum!</p>
+                                <p>Aperiam deleniti dolore dolorum ea enim explicabo, facilis illo ipsa maiores minima
+                                    minus nam quibusdam quod, sit, suscipit tempore voluptates?</p>
+                                <p>At cumque delectus dolore, incidunt iste natus odit quos? Ab animi culpa delectus
+                                    ipsam maxime? A eos id quae quis?</p>
+                                <p>Ab consectetur doloribus, eaque et eum fugit harum ipsam libero nihil optio
+                                    praesentium quaerat quam reprehenderit ullam, unde velit voluptatibus.</p>
+                            </dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

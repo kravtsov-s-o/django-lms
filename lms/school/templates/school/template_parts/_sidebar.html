@@ -1,0 +1,43 @@
+{% load static %}
+<aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
+    <div class="app-brand demo">
+        <a href="index.html" class="app-brand-link">
+                    <span class="app-brand-logo demo">
+                        <img src="{% static './img/logo.svg' %}" alt="Ruslana.English">
+                    </span>
+            <span class="app-brand-text demo ms-2">
+                        <img src="{% static './img/logo-title.svg' %}" alt="Ruslana.English">
+                    </span>
+        </a>
+
+        <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto">
+            <i class="bx menu-toggle-icon d-none d-xl-block fs-4 align-middle"></i>
+            <i class="bx bx-x d-block d-xl-none bx-sm align-middle"></i>
+        </a>
+    </div>
+
+    <ul class="menu-inner py-2">
+        <!-- Page -->
+        <li class="menu-item active">
+            <a href="{% url 'school:main' %}" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-home-circle"></i>
+                <div>Lessons</div>
+            </a>
+        </li>
+        <li class="menu-item">
+            <a href="{% url 'school:students' %}" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-detail"></i>
+                <div data-i18n="Page 2">Students</div>
+            </a>
+        </li>
+        <li class="menu-item disabled">
+            <a href="#" class="menu-link "
+                        data-bs-toggle="tooltip"
+                        data-bs-placement="right"
+                        title="Coming Soon">
+                <i class="menu-icon tf-icons bx bx-detail"></i>
+                <div data-i18n="Page 2">Statistics</div>
+            </a>
+        </li>
+    </ul>
+</aside>
