@@ -41,7 +41,14 @@
             </nav>
         </div>
     </div>
-    <form action="{% url 'school:lesson-add' %}" method="post">
+    <form action="
+            {% if lesson %}
+                {% url 'school:lesson-edit' pk=lesson.pk %}
+            {% else %}
+                {% url 'school:lesson-add' %}
+            {% endif %}
+        " method="post">
+        {% csrf_token %}
         <div class="row">
             <div class="col-md-4">
                 <div class="card">
@@ -51,8 +58,18 @@
                         {{ form.time|as_crispy_field }}
                         {{ form.duration|as_crispy_field }}
                         {{ form.students|as_crispy_field }}
+                        {{ form.teacher|as_crispy_field }}
                     </div>
                 </div>
+                {% if form.errors %}
+                <div class="card mt-3">
+                    <div class="card-body">
+                            {% for error in form.errors %}
+                                {{error}}
+                            {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
             </div>
             <div class="col-md-8">
                 <div class="card">
@@ -158,8 +175,23 @@
         var noteContent = fullEditorNote.root.innerHTML;
         var hwContent = fullEditorHW.root.innerHTML;
 
+        if (!noteContent.trim() || noteContent === '<p><br></p>') {
+            noteContent = '';
+        }
+        if (!hwContent.trim() || hwContent === '<p><br></p>') {
+            hwContent = '';
+        }
+
         document.getElementById('id_notes').value = noteContent;
         document.getElementById('id_homework').value = hwContent;
     });
+
+    window.onload = function() {
+        let notes = document.getElementById('id_notes').value;
+        let homework = document.getElementById('id_homework').value;
+
+        fullEditorNote.root.innerHTML = notes;
+        fullEditorHW.root.innerHTML = homework;
+    };
 </script>
 {% endblock %}

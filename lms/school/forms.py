@@ -41,13 +41,16 @@ class LessonForm(forms.ModelForm):
     def __init__(self, teacher, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['students'].queryset = Student.objects.filter(teacher=teacher, user__is_active=True)
+        self.fields['teacher'].initial = teacher
 
     class Meta:
         model = Lesson
-        fields = '__all__'
+        # fields = '__all__'
+        fields = ('date', 'time', 'duration', 'students', 'teacher', 'theme', 'notes', 'homework')
         widgets = {
             'date': forms.DateInput(attrs={'type': 'date'}),
-            'time': forms.TimeInput(format='%H:%M'),
+            'time': forms.TimeInput(attrs={'type': 'time'}, format='%H:%M'),
             'notes': forms.HiddenInput(),
             'homework': forms.HiddenInput(),
+            'teacher': forms.HiddenInput()
         }

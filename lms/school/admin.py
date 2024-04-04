@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Teacher, Student, Lesson, LessonStudentPrice, LessonTeacherPrice
+from .models import Teacher, Student, Lesson
 from .forms import TeacherForm, StudentForm
 
 
@@ -54,5 +54,3 @@ class StudentAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Lesson)
-admin.site.register(LessonStudentPrice)
-admin.site.register(LessonTeacherPrice)

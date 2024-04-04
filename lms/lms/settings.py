@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'settings',
     'companies',
     'school',
+    'transactions',
 ]
 
 MIDDLEWARE = [
