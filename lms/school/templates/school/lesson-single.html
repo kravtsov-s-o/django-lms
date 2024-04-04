@@ -1,0 +1,104 @@
+{% extends 'school/base-template.html' %}
+{% load extract_students %}
+{% block page-title %}{{ lesson.theme }}{% endblock %}
+{% block extra_css %}
+<style>
+    .card p {
+        margin-bottom: 0.5rem
+    }
+</style>
+{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class=" d-flex flex-wrap justify-content-between align-items-center gap-3 w-100">
+                <h1 class="h2 m-0">{{lesson.theme}}</h1>
+                <a href="{% url 'school:main' %}" class="btn btn-outline-secondary">Schedule</a>
+            </div>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb m-0">
+                    <li class="breadcrumb-item">
+                        <a href="{% url 'school:main' %}">Schedule</a>
+                    </li>
+                    <li class="breadcrumb-item active">
+                        Lesson {{ lesson.id }}
+                    </li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <div class="btn-group">
+                        {% if lesson.status == 'planned' %}
+                        <a class="btn btn-icon btn-outline-secondary" href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#success" title="Complete"><i class="bx bx-check"></i></a>
+                        <a class="btn btn-icon btn-outline-secondary" href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#missed" title="Miss"><i class="bx bx-x"></i></a>
+                        <a class="btn btn-icon btn-outline-secondary" href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#move" title="Move"><i class="bx bx-right-arrow-circle"></i></a>
+                        <a class="btn btn-icon btn-outline-secondary" href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#delete" title="Delete"><i class="bx bx-trash"></i></a>
+                        {% else %}
+                        <a class="btn btn-icon btn-outline-secondary" href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#planned" title="Complete"><i class="bx bx-rotate-left"></i></a>
+                        {% endif %}
+                    </div>
+                    <hr class="mt-3 mb-3">
+                    <h5 class="mb-3">Date</h5>
+                    <p class="mb-0"><i class='bx bx-calendar me-1'></i>{{ lesson.date }}</p>
+                    <p class="mb-0"><i class='bx bx-time-five me-1'></i>{{ lesson.time }}</p>
+                    <hr class="mt-3 mb-3">
+                    <h5 class="mb-3">Status</h5>
+                    <p class="mb-0"><span class="badge bg-label-info">{{ lesson.status }}</span></p>
+                    <hr class="mt-3 mb-3">
+                    <h5 class="mb-3">Students</h5>
+                    <ul class="list-unstyled m-0">
+                        {% for student in lesson.students.all %}
+                        <li><a href="{{ student.id }}">{{ student }}</a></li>
+                        {% endfor %}
+                    </ul>
+                    <hr class="mt-3 mb-3">
+                    <h5 class="mb-2">Duration</h5>
+                    <p class="mb-0">{{ lesson.duration }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-9">
+            <div class="card">
+                <div class="card-header">
+                    <div class="d-flex flex-wrap justify-content-between align-items-center w-100 gap-3">
+                        <h2 class="h5 m-0">Details</h2>
+                        <a href="{% url 'school:lesson-edit' pk=lesson.id %}" class="btn btn-sm btn-outline-secondary">Edit</a>
+                    </div>
+                </div>
+                <hr class="m-0">
+                <div class="card-body">
+                    <h5 class="mb-2">Theme</h5>
+                    <p class="m-0">{{ lesson.theme }}</p>
+                    <hr class="mt-3 mb-3">
+                    <h5 class="mb-2">Notes</h5>
+                    {{ lesson.notes|safe }}
+                    <hr class="mt-3 mb-3">
+                    <h5 class="mb-2">Homework</h5>
+                    {{ lesson.homework|safe }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Success -->
+{% include 'school/modals/lesson-success.html' %}
+<!-- / Modal Success -->
+<!-- Modal Missed -->
+{% include 'school/modals/lesson-miss.html' %}
+<!-- / Modal Missed -->
+<!-- Modal Cancel -->
+{% include 'school/modals/lesson-cancel.html' %}
+<!-- / Modal Cancel -->
+<!-- Modal Delete -->
+{% include 'school/modals/lesson-delete.html' %}
+<!-- / Modal Delete -->
+<!-- Modal Move  -->
+{% include 'school/modals/lesson-move.html' %}
+<!-- / Modal Move -->
+{% endblock %}

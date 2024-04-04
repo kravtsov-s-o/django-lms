@@ -29,7 +29,7 @@ SECRET_KEY = env('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', '192.168.0.26', '0.0.0.0.', 'localhost']
+ALLOWED_HOSTS = ['127.0.0.1', '192.168.0.26', '0.0.0.0', 'localhost']
 
 # Application definition
 
@@ -40,7 +40,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'users'
+    'crispy_forms',
+    "crispy_bootstrap5",
+    'users',
+    'settings',
+    'companies',
+    'school',
+    'transactions',
 ]
 
 MIDDLEWARE = [
@@ -125,7 +131,6 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'lms/static'),
 ]
 
-
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
@@ -144,3 +149,14 @@ EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
 EMAIL_PORT = env('EMAIL_PORT')
 EMAIL_HOST = env('EMAIL_HOST')
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+LESSON_STATUSES = [
+    ('planned', 'Planned'),
+    ('completed', 'Completed'),
+    ('missed', 'Missed'),
+]
+
+# Crispy settings
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
+CRISPY_TEMPLATE_PACK = "bootstrap5"
+# Crispy settings

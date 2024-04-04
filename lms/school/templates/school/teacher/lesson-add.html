@@ -1,0 +1,197 @@
+{% extends 'school/base-template.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block extra_css %}
+<!--  Custom  -->
+<link rel="stylesheet" href="{% static './vendor/libs/select2/select2.css' %}"/>
+<link rel="stylesheet" href="{% static './vendor/libs/quill/typography.css' %}"/>
+<link rel="stylesheet" href="{% static './vendor/libs/quill/katex.css' %}"/>
+<link rel="stylesheet" href="{% static './vendor/libs/quill/editor.css' %}"/>
+<style>
+    .ql-snow .ql-editor {
+      min-height: 3em;
+    }
+
+    .ql-snow .ql-editor > * {
+      margin-bottom: 0.25rem;
+    }
+</style>
+{% endblock %}
+
+{% block page-title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid flex-grow-1 container-p-y">
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class=" d-flex flex-wrap justify-content-between align-items-center gap-3 w-100">
+                <h1 class="h2 m-0">Add Lesson</h1>
+                <a href="{% url 'school:main' %}" class="btn btn-outline-secondary">Schedule</a>
+            </div>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb m-0">
+                    <li class="breadcrumb-item">
+                        <a href="{% url 'school:main' %}">Schedule</a>
+                    </li>
+                    <li class="breadcrumb-item active">
+                        New lesson
+                    </li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+    <form action="
+            {% if lesson %}
+                {% url 'school:lesson-edit' pk=lesson.pk %}
+            {% else %}
+                {% url 'school:lesson-add' %}
+            {% endif %}
+        " method="post">
+        {% csrf_token %}
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        {% csrf_token %}
+                        {{ form.date|as_crispy_field }}
+                        {{ form.time|as_crispy_field }}
+                        {{ form.duration|as_crispy_field }}
+                        {{ form.students|as_crispy_field }}
+                        {{ form.teacher|as_crispy_field }}
+                    </div>
+                </div>
+                {% if form.errors %}
+                <div class="card mt-3">
+                    <div class="card-body">
+                            {% for error in form.errors %}
+                                {{error}}
+                            {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-body">
+                        {{ form.theme|as_crispy_field }}
+                        <div class="mb-3">
+                            <label for="full-editor-note" class="form-label">Notes</label>
+                            {{ form.notes }}
+                            <div class="full-editor-note" id="full-editor-note"></div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="full-editor-hw" class="form-label">Homework</label>
+                            {{ form.homework }}
+                            <div class="full-editor-hw" id="full-editor-hw"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card mt-3">
+            <div class="card-body">
+                <div class="d-flex flex-wrap justify-content-between w-100 gap-3">
+                    <button class="btn btn-primary" type="submit">Save</button>
+                    <button class="btn btn-outline-danger" type="reset">Clear</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script src="{% static './vendor/libs/select2/select2.js' %}"></script>
+<script src="{% static './vendor/libs/quill/quill.js' %}"></script>
+<script src="{% static './vendor/libs/quill/katex.js' %}"></script>
+
+<script>
+    $("#id_students").select2();
+
+    const fullToolbar = [
+        ['bold', 'italic', 'underline', 'strike'],
+        [
+            {
+                color: []
+            },
+            {
+                background: []
+            }
+        ],
+        [
+            {
+                header: '1'
+            },
+            {
+                header: '2'
+            },
+            'blockquote'
+        ],
+        [
+            {
+                list: 'ordered'
+            },
+            {
+                list: 'bullet'
+            },
+            {
+                indent: '-1'
+            },
+            {
+                indent: '+1'
+            }
+        ],
+        [
+            'direction',
+            {
+                align: []
+            }
+        ],
+        ['link'],
+        ['clean']
+    ];
+
+    const fullEditorNote = new Quill('.full-editor-note', {
+        bounds: '#full-editor-note',
+        placeholder: 'More information about lesson...',
+        modules: {
+            formula: false,
+            toolbar: fullToolbar
+        },
+        theme: 'snow'
+    });
+
+    const fullEditorHW = new Quill('.full-editor-hw', {
+        bounds: '#full-editor-hw',
+        placeholder: 'Homework...',
+        modules: {
+            formula: false,
+            toolbar: fullToolbar
+        },
+        theme: 'snow'
+    });
+
+    document.querySelector('form').addEventListener('submit', function(event) {
+        var noteContent = fullEditorNote.root.innerHTML;
+        var hwContent = fullEditorHW.root.innerHTML;
+
+        if (!noteContent.trim() || noteContent === '<p><br></p>') {
+            noteContent = '';
+        }
+        if (!hwContent.trim() || hwContent === '<p><br></p>') {
+            hwContent = '';
+        }
+
+        document.getElementById('id_notes').value = noteContent;
+        document.getElementById('id_homework').value = hwContent;
+    });
+
+    window.onload = function() {
+        let notes = document.getElementById('id_notes').value;
+        let homework = document.getElementById('id_homework').value;
+
+        fullEditorNote.root.innerHTML = notes;
+        fullEditorHW.root.innerHTML = homework;
+    };
+</script>
+{% endblock %}

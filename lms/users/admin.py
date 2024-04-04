@@ -17,6 +17,8 @@ class MyUserAdmin(UserAdmin):
             'Custom fields',
             {
                 'fields': (
+                    'first_name',
+                    'last_name',
                     'email',
                     'school_role',
                     'groups'
