@@ -1,10 +1,13 @@
+from abc import ABC, abstractmethod
+
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.views import View
+from django.conf import settings as django_settings
 from datetime import datetime
 from .models import Student, Teacher, Lesson
-from .forms import LessonForm
+from .forms import LessonForm, LessonMoveForm
 
 
 # Create your views here.
@@ -22,7 +25,8 @@ class MainView(View):
                       context={
                           'title': 'Lesson',
                           'date': current_date,
-                          'lessons': lessons
+                          'lessons': lessons,
+                          'lesson_move_form': LessonMoveForm(),
                       })
 
 
@@ -62,8 +66,8 @@ class LessonEdit(View):
         return Teacher.objects.filter(user=request.user).first()
 
     def get(self, request, *args, **kwargs):
-        teacher = self.get_teacher(request)
         pk = kwargs.get('pk', None)
+        teacher = self.get_teacher(request)
         lesson = get_object_or_404(Lesson, pk=pk, teacher=teacher)
         form = LessonForm(instance=lesson, teacher=teacher)
 
@@ -77,9 +81,7 @@ class LessonEdit(View):
 
     def post(self, request, pk):
         teacher = self.get_teacher(request)
-
         lesson = get_object_or_404(Lesson, pk=pk, teacher=teacher)
-
         form = LessonForm(teacher, request.POST, instance=lesson)
 
         if form.is_valid():
@@ -95,11 +97,68 @@ class LessonEdit(View):
 
 
 @method_decorator(login_required(login_url='/login/'), name='dispatch')
-class LessonSingle(View):
+class LessonView(View):
     def get(self, request, pk):
         teacher = Teacher.objects.filter(user=request.user).first()
         lesson = get_object_or_404(Lesson, pk=pk, teacher=teacher)
-        return render(request, 'school/lesson-single.html', context={'lesson': lesson})
+        return render(request, 'school/lesson-single.html',
+                      context={'lesson': lesson, 'lesson_move_form': LessonMoveForm})
+
+
+@method_decorator(login_required(login_url='/login/'), name='dispatch')
+class LessonDelete(View):
+    def post(self, request, pk):
+        teacher = Teacher.objects.filter(user=request.user).first()
+        lesson = get_object_or_404(Lesson, pk=pk, teacher=teacher)
+
+        if request.method == "POST":
+            lesson.delete()
+            return redirect(request.META.get('HTTP_REFERER', '/'))
+
+
+@method_decorator(login_required(login_url='/login/'), name='dispatch')
+class LessonMove(View):
+    def post(self, request, pk):
+        if request.method == "POST":
+            form = LessonMoveForm(request.POST)
+
+            if form.is_valid():
+                new_date = form.cleaned_data['date']
+                new_time = form.cleaned_data['time']
+                teacher = Teacher.objects.filter(user=request.user).first()
+                Lesson.objects.filter(pk=pk, teacher=teacher).update(date=new_date, time=new_time)
+                return redirect(to='school:main')
+            return redirect(request.META.get('HTTP_REFERER', '/'))
+
+
+@method_decorator(login_required(login_url='/login/'), name='dispatch')
+class UpdateLessonStatusView(ABC, View):
+    @abstractmethod
+    def get_status(self):
+        pass
+
+    def update_lesson_status(self, request, pk):
+        teacher = Teacher.objects.filter(user=request.user).first()
+        Lesson.objects.filter(pk=pk, teacher=teacher).update(status=self.get_status())
+
+    def post(self, request, pk):
+        self.update_lesson_status(request, pk)
+        return redirect(request.META.get('HTTP_REFERER', '/'))
+
+
+class LessonConducted(UpdateLessonStatusView):
+    def get_status(self):
+        return 'conducted'
+
+
+class LessonMissed(UpdateLessonStatusView):
+    def get_status(self):
+        return 'missed'
+
+
+class LessonPlanned(UpdateLessonStatusView):
+    def get_status(self):
+        return 'planned'
 
 
 @method_decorator(login_required(login_url='/login/'), name='dispatch')

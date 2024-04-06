@@ -185,7 +185,7 @@ html:not([dir=rtl]) .select2-container--default .select2-selection--single .sele
 }
 .select2-container--default .select2-results__option[aria-selected=true] {
   background-color: rgba(226, 177, 67, 0.08) !important;
-  color: #E2B143 !important;
+  color: #8ac253 !important;
 }
 .select2-container--default,
 .select2-container--default * {

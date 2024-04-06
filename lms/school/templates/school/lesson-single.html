@@ -34,21 +34,44 @@
                 <div class="card-body">
                     <div class="btn-group">
                         {% if lesson.status == 'planned' %}
-                        <a class="btn btn-icon btn-outline-secondary" href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#success" title="Complete"><i class="bx bx-check"></i></a>
-                        <a class="btn btn-icon btn-outline-secondary" href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#missed" title="Miss"><i class="bx bx-x"></i></a>
-                        <a class="btn btn-icon btn-outline-secondary" href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#move" title="Move"><i class="bx bx-right-arrow-circle"></i></a>
-                        <a class="btn btn-icon btn-outline-secondary" href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#delete" title="Delete"><i class="bx bx-trash"></i></a>
+                        <a class="lesson-action btn btn-icon btn-outline-secondary" href="javascript:void(0);"
+                           data-bs-toggle="modal" data-bs-target="#conducted"
+                           data-id="{{ lesson.id }}" data-action="conducted">
+                            <i class="bx bx-check"></i></a>
+                        <a class="lesson-action btn btn-icon btn-outline-secondary" href="javascript:void(0);"
+                           data-bs-toggle="modal" data-bs-target="#missed"
+                           data-id="{{ lesson.id }}" data-action="missed">
+                            <i class="bx bx-x "></i></a>
+                        <a class="lesson-action btn btn-icon btn-outline-secondary" href="javascript:void(0);"
+                           data-bs-toggle="modal" data-bs-target="#move"
+                           data-id="{{ lesson.id }}" data-action="move">
+                            <i class="bx bx-right-arrow-circle "></i></a>
+                        <a class="lesson-action btn btn-icon btn-outline-secondary" href="javascript:void(0);"
+                           data-bs-toggle="modal" data-bs-target="#delete"
+                           data-id="{{ lesson.id }}" data-action="delete">
+                            <i class="bx bx-trash "></i></a>
                         {% else %}
-                        <a class="btn btn-icon btn-outline-secondary" href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#planned" title="Complete"><i class="bx bx-rotate-left"></i></a>
+                        <a class="lesson-action btn btn-icon btn-outline-secondary" href="javascript:void(0);"
+                           data-bs-toggle="modal" data-bs-target="#planned" title="Planned"
+                           data-id="{{ lesson.id }}" data-action="planned">
+                            <i class="bx bx-rotate-left"></i></a>
                         {% endif %}
                     </div>
                     <hr class="mt-3 mb-3">
                     <h5 class="mb-3">Date</h5>
-                    <p class="mb-0"><i class='bx bx-calendar me-1'></i>{{ lesson.date }}</p>
-                    <p class="mb-0"><i class='bx bx-time-five me-1'></i>{{ lesson.time }}</p>
+                    <p class="mb-0"><i class='bx bx-calendar me-1'></i>{{ lesson.date|date:"d.m.Y" }}</p>
+                    <p class="mb-0"><i class='bx bx-time-five me-1'></i>{{ lesson.time|time:"H:i" }}</p>
                     <hr class="mt-3 mb-3">
                     <h5 class="mb-3">Status</h5>
-                    <p class="mb-0"><span class="badge bg-label-info">{{ lesson.status }}</span></p>
+                    <p class="mb-0">
+                        {% if lesson.status == 'planned' %}
+                        <span class="badge bg-label-info">{{ lesson.status }}</span>
+                        {% elif lesson.status == 'conducted' %}
+                        <span class="badge bg-label-success">{{ lesson.status }}</span>
+                        {% elif lesson.status == 'missed' %}
+                        <span class="badge bg-label-danger">{{ lesson.status }}</span>
+                        {% endif %}
+                    </p>
                     <hr class="mt-3 mb-3">
                     <h5 class="mb-3">Students</h5>
                     <ul class="list-unstyled m-0">
@@ -86,19 +109,48 @@
     </div>
 </div>
 
-<!-- Modal Success -->
-{% include 'school/modals/lesson-success.html' %}
-<!-- / Modal Success -->
+<!-- Modal Conducted -->
+{% include 'school/modals/lesson-conducted.html' %}
+<!-- / Modal Conducted -->
 <!-- Modal Missed -->
-{% include 'school/modals/lesson-miss.html' %}
+{% include 'school/modals/lesson-missed.html' %}
 <!-- / Modal Missed -->
-<!-- Modal Cancel -->
-{% include 'school/modals/lesson-cancel.html' %}
-<!-- / Modal Cancel -->
+<!-- Modal Planned -->
+{% include 'school/modals/lesson-planned.html' %}
+<!-- / Modal Planned -->
 <!-- Modal Delete -->
 {% include 'school/modals/lesson-delete.html' %}
 <!-- / Modal Delete -->
 <!-- Modal Move  -->
 {% include 'school/modals/lesson-move.html' %}
 <!-- / Modal Move -->
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function handleDropdownItemClick(action) {
+    let urls = {
+        'delete': "{% url 'school:lesson-delete' pk=0 %}",
+        'move': "{% url 'school:lesson-move' pk=0 %}",
+        'conducted': "{% url 'school:lesson-conducted' pk=0 %}",
+        'missed': "{% url 'school:lesson-missed' pk=0 %}",
+        'planned': "{% url 'school:lesson-planned' pk=0 %}",
+    };
+
+    document.querySelectorAll('.lesson-action').forEach(function(item) {
+        item.addEventListener('click', function(event) {
+            var lessonId = this.getAttribute('data-id');
+            var url = urls[action].replace('0', lessonId);
+            document.querySelector('#' + action + ' form').setAttribute('action', url);
+        });
+    });
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.lesson-action').forEach(function(item) {
+        var action = item.getAttribute('data-action');
+        handleDropdownItemClick(action);
+    });
+});
+</script>
 {% endblock %}

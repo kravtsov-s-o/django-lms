@@ -22,7 +22,7 @@
   --bs-gray-dark: rgba(38, 60, 85, 0.8);
   --bs-gray-25: rgba(38, 60, 85, 0.025);
   --bs-gray-50: rgba(38, 60, 85, 0.06);
-  --bs-primary: #E2B143;
+  --bs-primary: #8ac253;
   --bs-secondary: #7B9042;
   --bs-success: #39da8a;
   --bs-info: #AC7561;
@@ -89,7 +89,7 @@
   --bs-tertiary-bg: rgba(38, 60, 85, 0.1);
   --bs-tertiary-bg-rgb: 38, 60, 85;
   --bs-heading-color: #19310C;
-  --bs-link-color: #E2B143;
+  --bs-link-color: #8ac253;
   --bs-link-color-rgb: 226, 177, 67;
   --bs-link-decoration: none;
   --bs-link-hover-color: #cb9f3c;
@@ -3287,7 +3287,7 @@ textarea.form-control-lg {
   --bs-dropdown-link-color: #545549;
   --bs-dropdown-link-hover-color: #545549;
   --bs-dropdown-link-hover-bg: rgba(38, 60, 85, 0.06);
-  --bs-dropdown-link-active-color: #E2B143;
+  --bs-dropdown-link-active-color: #8ac253;
   --bs-dropdown-link-active-bg: rgba(226, 177, 67, 0.08);
   --bs-dropdown-link-disabled-color: #bec5cc;
   --bs-dropdown-item-padding-x: 1rem;
@@ -3557,7 +3557,7 @@ textarea.form-control-lg {
   --bs-dropdown-link-hover-color: #fff;
   --bs-dropdown-divider-bg: #DADDD1;
   --bs-dropdown-link-hover-bg: rgba(255, 255, 255, 0.15);
-  --bs-dropdown-link-active-color: #E2B143;
+  --bs-dropdown-link-active-color: #8ac253;
   --bs-dropdown-link-active-bg: rgba(226, 177, 67, 0.08);
   --bs-dropdown-link-disabled-color: rgba(38, 60, 85, 0.5);
   --bs-dropdown-header-color: rgba(38, 60, 85, 0.5);
@@ -5013,7 +5013,7 @@ textarea.form-control-lg {
   --bs-progress-border-radius: 10rem;
   --bs-progress-box-shadow: var(--bs-box-shadow-inset);
   --bs-progress-bar-color: #fff;
-  --bs-progress-bar-bg: #E2B143;
+  --bs-progress-bar-bg: #8ac253;
   --bs-progress-bar-transition: width 0.6s ease;
   display: -webkit-box;
   display: -ms-flexbox;
@@ -13817,7 +13817,7 @@ html:not([dir=rtl]) .card .card-separator {
 }
 
 .border-primary {
-  border-color: #E2B143 !important;
+  border-color: #8ac253 !important;
 }
 
 .border-secondary {
@@ -25140,7 +25140,7 @@ html:not([dir=rtl]) .switches-stacked .switch {
 }
 .timeline .timeline-item .timeline-indicator i,
 .timeline .timeline-item .timeline-indicator-advanced i {
-  color: #E2B143;
+  color: #8ac253;
   font-size: 0.85rem !important;
 }
 .timeline .timeline-item .timeline-point {
@@ -25152,7 +25152,7 @@ html:not([dir=rtl]) .switches-stacked .switch {
   height: 0.75rem;
   width: 0.75rem;
   border-radius: 50%;
-  background-color: #E2B143;
+  background-color: #8ac253;
 }
 .timeline .timeline-item.timeline-item-transparent .timeline-event {
   top: -1.4rem;

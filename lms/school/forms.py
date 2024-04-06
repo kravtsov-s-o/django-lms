@@ -54,3 +54,13 @@ class LessonForm(forms.ModelForm):
             'homework': forms.HiddenInput(),
             'teacher': forms.HiddenInput()
         }
+
+class LessonMoveForm(forms.ModelForm):
+    class Meta:
+        model = Lesson
+        # fields = '__all__'
+        fields = ('date', 'time')
+        widgets = {
+            'date': forms.DateInput(attrs={'type': 'date'}),
+            'time': forms.TimeInput(attrs={'type': 'time'}, format='%H:%M')
+        }

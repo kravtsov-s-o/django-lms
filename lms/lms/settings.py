@@ -152,7 +152,7 @@ DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 LESSON_STATUSES = [
     ('planned', 'Planned'),
-    ('completed', 'Completed'),
+    ('сonducted', 'Conducted'),
     ('missed', 'Missed'),
 ]
 

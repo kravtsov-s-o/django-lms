@@ -1,3 +1,4 @@
+{% load crispy_forms_tags %}
 <div class="modal fade" id="move" tabindex="-1" aria-labelledby="moveLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
@@ -7,16 +8,10 @@
                 </button>
             </div>
             <form action="#" method="post">
+                {% csrf_token %}
                 <div class="modal-body">
-                    <div class="mb-3">
-                        <label for="date" class="form-label">Date</label>
-                        <input type="date" class="form-control" id="date" placeholder="28.03.2024"
-                               aria-describedby="date">
-                    </div>
-                    <div class="mb-3">
-                        <label for="time" class="form-label">Time</label>
-                        <input type="time" class="form-control" id="time" placeholder="12:00" aria-describedby="time">
-                    </div>
+                    {{ lesson_move_form.date|as_crispy_field }}
+                    {{ lesson_move_form.time|as_crispy_field }}
                 </div>
                 <div class="modal-footer">
                     <div class="d-flex flex-wrap justify-content-between w-100 gap-3">
