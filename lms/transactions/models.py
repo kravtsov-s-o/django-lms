@@ -4,30 +4,31 @@ from companies.models import Company
 
 
 # Create your models here.
-class LessonPrice(models.Model):
+class TransactionBase(models.Model):
     lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE)
     price = models.DecimalField(max_digits=10, decimal_places=2)
+    description = models.CharField(max_length=255, null=True, blank=True)
 
     class Meta:
         abstract = True
 
 
-class LessonStudentPrice(LessonPrice):
-    students = models.ForeignKey(Student, on_delete=models.CASCADE)
+class StudentPayment(TransactionBase):
+    student = models.ForeignKey(Student, on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.students
+        return f"{self.student.user.first_name} {self.student.user.last_name}"
 
 
-class LessonTeacherPrice(LessonPrice):
+class TeacherPayment(TransactionBase):
     teacher = models.ForeignKey(Teacher, on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.teacher
+        return f"{self.teacher.user.first_name} {self.teacher.user.last_name}"
 
 
-class LessonCompanyPrice(LessonPrice):
+class CompanyPayment(TransactionBase):
     company = models.ForeignKey(Company, on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.company
+        return self.company.name

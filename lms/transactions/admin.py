@@ -1,7 +1,13 @@
 from django.contrib import admin
-from .models import LessonStudentPrice, LessonTeacherPrice, LessonCompanyPrice
+from .models import StudentPayment, TeacherPayment, CompanyPayment
 
 # Register your models here.
-admin.site.register(LessonStudentPrice)
-admin.site.register(LessonTeacherPrice)
-admin.site.register(LessonCompanyPrice)
+@admin.register(TeacherPayment)
+class TeacherPaymentAdmin(admin.ModelAdmin):
+    list_display = ['teacher', 'lesson', 'price', 'description']
+@admin.register(StudentPayment)
+class StudentPaymentAdmin(admin.ModelAdmin):
+    list_display = ['student', 'lesson', 'price', 'description']
+@admin.register(CompanyPayment)
+class CompanyPaymentAdmin(admin.ModelAdmin):
+    list_display = ['company', 'lesson', 'price', 'description']

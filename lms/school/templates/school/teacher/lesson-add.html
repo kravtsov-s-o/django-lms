@@ -26,7 +26,7 @@
     <div class="card mb-4">
         <div class="card-body">
             <div class=" d-flex flex-wrap justify-content-between align-items-center gap-3 w-100">
-                <h1 class="h2 m-0">Add Lesson</h1>
+                <h1 class="h2 m-0">{{ title }}</h1>
                 <a href="{% url 'school:main' %}" class="btn btn-outline-secondary">Schedule</a>
             </div>
             <nav aria-label="breadcrumb">
@@ -35,7 +35,7 @@
                         <a href="{% url 'school:main' %}">Schedule</a>
                     </li>
                     <li class="breadcrumb-item active">
-                        New lesson
+                        {{ title }}
                     </li>
                 </ol>
             </nav>

@@ -1,13 +1,13 @@
 from abc import ABC, abstractmethod
-
+from django.db import transaction
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.views import View
-from django.conf import settings as django_settings
 from datetime import datetime
 from .models import Student, Teacher, Lesson
 from .forms import LessonForm, LessonMoveForm
+from .services import lesson_finished
 
 
 # Create your views here.
@@ -74,7 +74,7 @@ class LessonEdit(View):
         return render(request,
                       'school/teacher/lesson-add.html',
                       context={
-                          'title': 'Add new lesson',
+                          'title': 'Edit lesson',
                           'form': form,
                           'lesson': lesson
                       })
@@ -91,7 +91,7 @@ class LessonEdit(View):
             return render(request,
                           'school/teacher/lesson-add.html',
                           context={
-                              'title': 'Add new lesson',
+                              'title': 'Edit lesson',
                               'form': form
                           })
 
@@ -137,9 +137,11 @@ class UpdateLessonStatusView(ABC, View):
     def get_status(self):
         pass
 
+    @transaction.atomic
     def update_lesson_status(self, request, pk):
         teacher = Teacher.objects.filter(user=request.user).first()
-        Lesson.objects.filter(pk=pk, teacher=teacher).update(status=self.get_status())
+
+        lesson_finished(teacher, pk, self.get_status())
 
     def post(self, request, pk):
         self.update_lesson_status(request, pk)
@@ -147,6 +149,7 @@ class UpdateLessonStatusView(ABC, View):
 
 
 class LessonConducted(UpdateLessonStatusView):
+    print()
     def get_status(self):
         return 'conducted'
 

@@ -53,4 +53,9 @@ class StudentAdmin(admin.ModelAdmin):
     get_balance.short_description = 'Wallet'
 
 
-admin.site.register(Lesson)
+@admin.register(Lesson)
+class LessonAdmin(admin.ModelAdmin):
+    # search_fields = ['user__username', 'user__first_name', 'user__last_name', 'user__email']
+    list_display = ['theme', 'date', 'time', 'status', 'teacher', 'price', 'currency']
+    # list_filter = ['language', 'company', 'teacher', 'user__is_active']
+
