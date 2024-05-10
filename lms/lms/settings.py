@@ -150,11 +150,7 @@ EMAIL_PORT = env('EMAIL_PORT')
 EMAIL_HOST = env('EMAIL_HOST')
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
-LESSON_STATUSES = [
-    ('planned', 'Planned'),
-    ('сonducted', 'Conducted'),
-    ('missed', 'Missed'),
-]
+
 
 # Crispy settings
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"

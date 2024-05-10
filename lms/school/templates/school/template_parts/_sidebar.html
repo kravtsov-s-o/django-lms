@@ -18,19 +18,20 @@
 
     <ul class="menu-inner py-2">
         <!-- Page -->
-        <li class="menu-item active">
+        <li class="menu-item {% if current_page == 'schedule' %}active{% endif %}">
             <a href="{% url 'school:main' %}" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-home-circle"></i>
                 <div>Lessons</div>
             </a>
         </li>
-        <li class="menu-item">
+        <li class="menu-item {% if current_page == 'students' %}active{% endif %}">
             <a href="{% url 'school:students' %}" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-detail"></i>
                 <div data-i18n="Page 2">Students</div>
             </a>
         </li>
-        <li class="menu-item disabled">
+        {% if current_user.is_staff %}
+        <li class="menu-item disabled  {% if current_page == 'statistics' %}active{% endif %}">
             <a href="#" class="menu-link "
                         data-bs-toggle="tooltip"
                         data-bs-placement="right"
@@ -39,5 +40,6 @@
                 <div data-i18n="Page 2">Statistics</div>
             </a>
         </li>
+        {% endif %}
     </ul>
 </aside>

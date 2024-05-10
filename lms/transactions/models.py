@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.db import models
 from school.models import Lesson, Teacher, Student
 from companies.models import Company
@@ -5,6 +7,7 @@ from companies.models import Company
 
 # Create your models here.
 class TransactionBase(models.Model):
+    created_at = models.DateField(default=datetime.now)
     lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE)
     price = models.DecimalField(max_digits=10, decimal_places=2)
     description = models.CharField(max_length=255, null=True, blank=True)

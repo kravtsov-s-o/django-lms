@@ -92,7 +92,7 @@
                                 <td>
                                     {% if lesson.status == 'planned' %}
                                     <span class="badge bg-label-info">{{ lesson.status }}</span>
-                                    {% elif lesson.status == 'conducted' %}
+                                    {% elif lesson.status == 'сonducted' %}
                                     <span class="badge bg-label-success">{{ lesson.status }}</span>
                                     {% elif lesson.status == 'missed' %}
                                     <span class="badge bg-label-danger">{{ lesson.status }}</span>
@@ -174,11 +174,11 @@
 <!-- / Modal Move -->
 {% endblock %}
 {% block extra_js %}
-<script src="{% static './js/forms-pickers.js' %}"></script>
-<script src="{% static './js/ui-modals.js' %}"></script>
 <script src="{% static './vendor/libs/flatpickr/flatpickr.js' %}"></script>
 <script src="{% static './vendor/libs/quill/quill.js' %}"></script>
 <script src="{% static './vendor/libs/quill/katex.js' %}"></script>
+<!--<script src="{% static './js/forms-pickers.js' %}"></script>-->
+<!--<script src="{% static './js/ui-modals.js' %}"></script>-->
 <script>
 function handleDropdownItemClick(action) {
     let urls = {

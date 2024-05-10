@@ -43,9 +43,15 @@ class Student(CommonFields):
 
 
 class Lesson(models.Model):
+    LESSON_STATUSES = [
+        ('planned', 'Planned'),
+        ('сonducted', 'Conducted'),
+        ('missed', 'Missed'),
+    ]
+
     date = models.DateField(default=datetime.now, null=False)
     time = models.TimeField(default=datetime.now, null=False)
-    status = models.CharField(max_length=50,  choices=django_settings.LESSON_STATUSES, default='planned')
+    status = models.CharField(max_length=50,  choices=LESSON_STATUSES, default='planned')
     teacher = models.ForeignKey(Teacher, on_delete=models.SET_NULL, null=True)
     students = models.ManyToManyField(Student)
     duration = models.ForeignKey(Duration, on_delete=models.SET_NULL, null=True)

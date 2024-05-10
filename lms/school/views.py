@@ -4,6 +4,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.views import View
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from datetime import datetime
 from .models import Student, Teacher, Lesson
 from .forms import LessonForm, LessonMoveForm
@@ -27,6 +28,7 @@ class MainView(View):
                           'date': current_date,
                           'lessons': lessons,
                           'lesson_move_form': LessonMoveForm(),
+                          'current_page': 'schedule'
                       })
 
 
@@ -149,9 +151,8 @@ class UpdateLessonStatusView(ABC, View):
 
 
 class LessonConducted(UpdateLessonStatusView):
-    print()
     def get_status(self):
-        return 'conducted'
+        return 'сonducted'
 
 
 class LessonMissed(UpdateLessonStatusView):
@@ -167,8 +168,34 @@ class LessonPlanned(UpdateLessonStatusView):
 @method_decorator(login_required(login_url='/login/'), name='dispatch')
 class StudentsView(View):
     def get(self, request):
-        students = Student.objects.filter(teacher__user=request.user)
+        students = Student.objects.filter(teacher__user=request.user, user__is_active=True).order_by('user__first_name', 'user__last_name')
+
+        # Start Paginator
+        items_per_page = 20
+        paginator = Paginator(students, items_per_page)
+
+        page = request.GET.get("page")
+
+        try:
+            students_page = paginator.page(page)
+        except PageNotAnInteger:
+            students_page = paginator.page(1)
+        except EmptyPage:
+            students_page = paginator.page(paginator.num_pages)
+
+        page_range = range(1, students_page.paginator.num_pages + 1)
+        # End Paginator
 
         return render(request, 'school/teacher/students.html',
-                      context={'students': students}
+                      context={
+                          'title': 'Students',
+                          'students': students_page,
+                          'page_range': page_range,
+                          'current_page': 'students'}
                       )
+
+
+@method_decorator(login_required(login_url='/login/'), name='dispatch')
+class StudentView(View):
+    def get(self, request, pk):
+        pass

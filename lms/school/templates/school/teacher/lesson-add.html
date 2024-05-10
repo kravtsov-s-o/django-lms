@@ -47,7 +47,7 @@
             {% else %}
                 {% url 'school:lesson-add' %}
             {% endif %}
-        " method="post">
+        " method="post" id="lesson-form">
         {% csrf_token %}
         <div class="row">
             <div class="col-md-4">
@@ -92,8 +92,8 @@
         <div class="card mt-3">
             <div class="card-body">
                 <div class="d-flex flex-wrap justify-content-between w-100 gap-3">
-                    <button class="btn btn-primary" type="submit">Save</button>
                     <button class="btn btn-outline-danger" type="reset">Clear</button>
+                    <button class="btn btn-primary" type="submit">Save</button>
                 </div>
             </div>
         </div>
@@ -171,7 +171,7 @@
         theme: 'snow'
     });
 
-    document.querySelector('form').addEventListener('submit', function(event) {
+    document.querySelector('form#lesson-form').addEventListener('submit', function(event) {
         var noteContent = fullEditorNote.root.innerHTML;
         var hwContent = fullEditorHW.root.innerHTML;
 
@@ -181,7 +181,7 @@
         if (!hwContent.trim() || hwContent === '<p><br></p>') {
             hwContent = '';
         }
-
+        console.log(noteContent)
         document.getElementById('id_notes').value = noteContent;
         document.getElementById('id_homework').value = hwContent;
     });

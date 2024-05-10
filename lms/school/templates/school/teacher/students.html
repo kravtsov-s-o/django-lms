@@ -3,370 +3,93 @@
 {% block page-title %}{{ title }}{% endblock %}
 
 {% block content %}
-<div class="container">
-        <div class="row mb-4 align-items-center">
-            <div class="col-6">
-                <h1 class="h3 text-ellipses">Students</h1>
-            </div>
-            <div class="col-6 text-right">
-                <a href="index.html" class="btn btn-sm btn-outline-link3">Schedule</a>
-            </div>
-        </div>
-        <div class="card teacher-students">
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-md-3">
-                        <div class="list-group">
-                            {% for student in students %}
-                            <a href="{{ student.id }}" class="list-group-item list-group-item-action" aria-current="true">
-                                {{ student }}
-                            </a>
-                            {% endfor %}
-<!--                            <a href="#" class="list-group-item list-group-item-action">A second link item</a>-->
-<!--                            <a href="#" class="list-group-item list-group-item-action">A third link item</a>-->
-<!--                            <a href="#" class="list-group-item list-group-item-action">A fourth link item</a>-->
-<!--                            <a href="#" class="list-group-item list-group-item-action disabled" tabindex="-1"-->
-<!--                               aria-disabled="true">A disabled link item</a>-->
-                        </div>
-                    </div>
-                    <div class="col-md-9">
-                        <div class="card">
-                            <div class="card-header">12.12.2023 - 15:00 | Planned</div>
-                            <div class="card-body">
-                                <p><a href="lesson-single.html">Modal verbs: rules and habits of living in Cyprus</a></p>
-                                <p>"Watch the video and complete the task in the file.
-                                    Make 4 sentences about how to say NO, use modals verbs which are suitable
-                                    <a href="#">https://www.youtube.com/watch?v=vs-Km-0QsBc&t=132s</a></p>
-                            </div>
-                        </div>
-<!--                        -->
-                        <div class="card">
-                            <div class="card-header">12.12.2023 - 15:00 | Planned</div>
-                            <div class="card-body">
-                                <p><a href="lesson-single.html">"Fun-with-IELTS_Blank-fillers - 1 sentences.
-                                    Speaking comprehension - Speaking part 1 + listaning anakysis, speaking part 2"</a></p>
-                                <hr>
-                                <p>"1. https://skell.sketchengine.eu/#home?lang=en
-                                    2. Fun-with-IELTS_Blank-fillers
-                                    Complete the 2nd sentence in each category 3 times. So, you should have 9 senetnces in the end.
-                                    They must be logical, grammatically correct and topic-relevant.
-                                    3. Listen to the answers of a student. Analyse them in terms of the use of English, range of vocabulary, confedence"</p>
-                                <hr>
-                                <p>"1. https://skell.sketchengine.eu/#home?lang=en
-                                    2. Fun-with-IELTS_Blank-fillers
-                                    Complete the 2nd sentence in each category 3 times. So, you should have 9 senetnces in the end.
-                                    They must be logical, grammatically correct and topic-relevant.
-                                    3. Listen to the answers of a student. Analyse them in terms of the use of English, range of vocabulary, confedence"</p>
-                            </div>
-                        </div>
-                        <div class="card">
-                            <div class="card-header">12.12.2023 - 15:00 | Planned</div>
-                            <div class="card-body">
-                                <p><a href="lesson-single.html">"Fun-with-IELTS_Blank-fillers - 1 sentences.
-                                    Speaking comprehension - Speaking part 1 + listaning anakysis, speaking part 2"</a></p>
-                                <hr>
-                                <p>"1. https://skell.sketchengine.eu/#home?lang=en
-                                    2. Fun-with-IELTS_Blank-fillers
-                                    Complete the 2nd sentence in each category 3 times. So, you should have 9 senetnces in the end.
-                                    They must be logical, grammatically correct and topic-relevant.
-                                    3. Listen to the answers of a student. Analyse them in terms of the use of English, range of vocabulary, confedence"</p>
-                                <hr>
-                                <p>"1. https://skell.sketchengine.eu/#home?lang=en
-                                    2. Fun-with-IELTS_Blank-fillers
-                                    Complete the 2nd sentence in each category 3 times. So, you should have 9 senetnces in the end.
-                                    They must be logical, grammatically correct and topic-relevant.
-                                    3. Listen to the answers of a student. Analyse them in terms of the use of English, range of vocabulary, confedence"</p>
-                            </div>
-                        </div>
-                        <div class="card">
-                            <div class="card-header">12.12.2023 - 15:00 | Planned</div>
-                            <div class="card-body">
-                                <p><a href="lesson-single.html">"Fun-with-IELTS_Blank-fillers - 1 sentences.
-                                    Speaking comprehension - Speaking part 1 + listaning anakysis, speaking part 2"</a></p>
-                                <hr>
-                                <p>"1. https://skell.sketchengine.eu/#home?lang=en
-                                    2. Fun-with-IELTS_Blank-fillers
-                                    Complete the 2nd sentence in each category 3 times. So, you should have 9 senetnces in the end.
-                                    They must be logical, grammatically correct and topic-relevant.
-                                    3. Listen to the answers of a student. Analyse them in terms of the use of English, range of vocabulary, confedence"</p>
-                                <hr>
-                                <p>"1. https://skell.sketchengine.eu/#home?lang=en
-                                    2. Fun-with-IELTS_Blank-fillers
-                                    Complete the 2nd sentence in each category 3 times. So, you should have 9 senetnces in the end.
-                                    They must be logical, grammatically correct and topic-relevant.
-                                    3. Listen to the answers of a student. Analyse them in terms of the use of English, range of vocabulary, confedence"</p>
-                            </div>
-                        </div>
-                        <div class="card">
-                            <div class="card-header">12.12.2023 - 15:00 | Planned</div>
-                            <div class="card-body">
-                                <p><a href="lesson-single.html">"Fun-with-IELTS_Blank-fillers - 1 sentences.
-                                    Speaking comprehension - Speaking part 1 + listaning anakysis, speaking part 2"</a></p>
-                                <hr>
-                                <p>"1. https://skell.sketchengine.eu/#home?lang=en
-                                    2. Fun-with-IELTS_Blank-fillers
-                                    Complete the 2nd sentence in each category 3 times. So, you should have 9 senetnces in the end.
-                                    They must be logical, grammatically correct and topic-relevant.
-                                    3. Listen to the answers of a student. Analyse them in terms of the use of English, range of vocabulary, confedence"</p>
-                                <hr>
-                                <p>"1. https://skell.sketchengine.eu/#home?lang=en
-                                    2. Fun-with-IELTS_Blank-fillers
-                                    Complete the 2nd sentence in each category 3 times. So, you should have 9 senetnces in the end.
-                                    They must be logical, grammatically correct and topic-relevant.
-                                    3. Listen to the answers of a student. Analyse them in terms of the use of English, range of vocabulary, confedence"</p>
-                            </div>
-                        </div>
-                        <div class="card">
-                            <div class="card-header">12.12.2023 - 15:00 | Planned</div>
-                            <div class="card-body">
-                                <p><a href="lesson-single.html">"Fun-with-IELTS_Blank-fillers - 1 sentences.
-                                    Speaking comprehension - Speaking part 1 + listaning anakysis, speaking part 2"</a></p>
-                                <hr>
-                                <p>"1. https://skell.sketchengine.eu/#home?lang=en
-                                    2. Fun-with-IELTS_Blank-fillers
-                                    Complete the 2nd sentence in each category 3 times. So, you should have 9 senetnces in the end.
-                                    They must be logical, grammatically correct and topic-relevant.
-                                    3. Listen to the answers of a student. Analyse them in terms of the use of English, range of vocabulary, confedence"</p>
-                                <hr>
-                                <p>"1. https://skell.sketchengine.eu/#home?lang=en
-                                    2. Fun-with-IELTS_Blank-fillers
-                                    Complete the 2nd sentence in each category 3 times. So, you should have 9 senetnces in the end.
-                                    They must be logical, grammatically correct and topic-relevant.
-                                    3. Listen to the answers of a student. Analyse them in terms of the use of English, range of vocabulary, confedence"</p>
-                            </div>
-                        </div>
-                        <div class="card">
-                            <div class="card-header">12.12.2023 - 15:00 | Planned</div>
-                            <div class="card-body">
-                                <p><a href="lesson-single.html">"Fun-with-IELTS_Blank-fillers - 1 sentences.
-                                    Speaking comprehension - Speaking part 1 + listaning anakysis, speaking part 2"</a></p>
-                                <hr>
-                                <p>"1. https://skell.sketchengine.eu/#home?lang=en
-                                    2. Fun-with-IELTS_Blank-fillers
-                                    Complete the 2nd sentence in each category 3 times. So, you should have 9 senetnces in the end.
-                                    They must be logical, grammatically correct and topic-relevant.
-                                    3. Listen to the answers of a student. Analyse them in terms of the use of English, range of vocabulary, confedence"</p>
-                                <hr>
-                                <p>"1. https://skell.sketchengine.eu/#home?lang=en
-                                    2. Fun-with-IELTS_Blank-fillers
-                                    Complete the 2nd sentence in each category 3 times. So, you should have 9 senetnces in the end.
-                                    They must be logical, grammatically correct and topic-relevant.
-                                    3. Listen to the answers of a student. Analyse them in terms of the use of English, range of vocabulary, confedence"</p>
-                            </div>
-                        </div>
-                        <div class="card">
-                            <div class="card-header">12.12.2023 - 15:00 | Planned</div>
-                            <div class="card-body">
-                                <p><a href="lesson-single.html">"Fun-with-IELTS_Blank-fillers - 1 sentences.
-                                    Speaking comprehension - Speaking part 1 + listaning anakysis, speaking part 2"</a></p>
-                                <hr>
-                                <p>"1. https://skell.sketchengine.eu/#home?lang=en
-                                    2. Fun-with-IELTS_Blank-fillers
-                                    Complete the 2nd sentence in each category 3 times. So, you should have 9 senetnces in the end.
-                                    They must be logical, grammatically correct and topic-relevant.
-                                    3. Listen to the answers of a student. Analyse them in terms of the use of English, range of vocabulary, confedence"</p>
-                                <hr>
-                                <p>"1. https://skell.sketchengine.eu/#home?lang=en
-                                    2. Fun-with-IELTS_Blank-fillers
-                                    Complete the 2nd sentence in each category 3 times. So, you should have 9 senetnces in the end.
-                                    They must be logical, grammatically correct and topic-relevant.
-                                    3. Listen to the answers of a student. Analyse them in terms of the use of English, range of vocabulary, confedence"</p>
-                            </div>
-                        </div>
-                        <div class="card">
-                            <div class="card-header">12.12.2023 - 15:00 | Planned</div>
-                            <div class="card-body">
-                                <p><a href="lesson-single.html">"Fun-with-IELTS_Blank-fillers - 1 sentences.
-                                    Speaking comprehension - Speaking part 1 + listaning anakysis, speaking part 2"</a></p>
-                                <hr>
-                                <p>"1. https://skell.sketchengine.eu/#home?lang=en
-                                    2. Fun-with-IELTS_Blank-fillers
-                                    Complete the 2nd sentence in each category 3 times. So, you should have 9 senetnces in the end.
-                                    They must be logical, grammatically correct and topic-relevant.
-                                    3. Listen to the answers of a student. Analyse them in terms of the use of English, range of vocabulary, confedence"</p>
-                                <hr>
-                                <p>"1. https://skell.sketchengine.eu/#home?lang=en
-                                    2. Fun-with-IELTS_Blank-fillers
-                                    Complete the 2nd sentence in each category 3 times. So, you should have 9 senetnces in the end.
-                                    They must be logical, grammatically correct and topic-relevant.
-                                    3. Listen to the answers of a student. Analyse them in terms of the use of English, range of vocabulary, confedence"</p>
-                            </div>
-                        </div>
-                        <div class="card">
-                            <div class="card-header">12.12.2023 - 15:00 | Planned</div>
-                            <div class="card-body">
-                                <p><a href="lesson-single.html">"Fun-with-IELTS_Blank-fillers - 1 sentences.
-                                    Speaking comprehension - Speaking part 1 + listaning anakysis, speaking part 2"</a></p>
-                                <hr>
-                                <p>"1. https://skell.sketchengine.eu/#home?lang=en
-                                    2. Fun-with-IELTS_Blank-fillers
-                                    Complete the 2nd sentence in each category 3 times. So, you should have 9 senetnces in the end.
-                                    They must be logical, grammatically correct and topic-relevant.
-                                    3. Listen to the answers of a student. Analyse them in terms of the use of English, range of vocabulary, confedence"</p>
-                                <hr>
-                                <p>"1. https://skell.sketchengine.eu/#home?lang=en
-                                    2. Fun-with-IELTS_Blank-fillers
-                                    Complete the 2nd sentence in each category 3 times. So, you should have 9 senetnces in the end.
-                                    They must be logical, grammatically correct and topic-relevant.
-                                    3. Listen to the answers of a student. Analyse them in terms of the use of English, range of vocabulary, confedence"</p>
-                            </div>
-                        </div>
-                        <div class="card">
-                            <div class="card-header">12.12.2023 - 15:00 | Planned</div>
-                            <div class="card-body">
-                                <p><a href="lesson-single.html">"Fun-with-IELTS_Blank-fillers - 1 sentences.
-                                    Speaking comprehension - Speaking part 1 + listaning anakysis, speaking part 2"</a></p>
-                                <hr>
-                                <p>"1. https://skell.sketchengine.eu/#home?lang=en
-                                    2. Fun-with-IELTS_Blank-fillers
-                                    Complete the 2nd sentence in each category 3 times. So, you should have 9 senetnces in the end.
-                                    They must be logical, grammatically correct and topic-relevant.
-                                    3. Listen to the answers of a student. Analyse them in terms of the use of English, range of vocabulary, confedence"</p>
-                                <hr>
-                                <p>"1. https://skell.sketchengine.eu/#home?lang=en
-                                    2. Fun-with-IELTS_Blank-fillers
-                                    Complete the 2nd sentence in each category 3 times. So, you should have 9 senetnces in the end.
-                                    They must be logical, grammatically correct and topic-relevant.
-                                    3. Listen to the answers of a student. Analyse them in terms of the use of English, range of vocabulary, confedence"</p>
-                            </div>
-                        </div>
-                        <div class="card">
-                            <div class="card-header">12.12.2023 - 15:00 | Planned</div>
-                            <div class="card-body">
-                                <p><a href="lesson-single.html">"Fun-with-IELTS_Blank-fillers - 1 sentences.
-                                    Speaking comprehension - Speaking part 1 + listaning anakysis, speaking part 2"</a></p>
-                                <hr>
-                                <p>"1. https://skell.sketchengine.eu/#home?lang=en
-                                    2. Fun-with-IELTS_Blank-fillers
-                                    Complete the 2nd sentence in each category 3 times. So, you should have 9 senetnces in the end.
-                                    They must be logical, grammatically correct and topic-relevant.
-                                    3. Listen to the answers of a student. Analyse them in terms of the use of English, range of vocabulary, confedence"</p>
-                                <hr>
-                                <p>"1. https://skell.sketchengine.eu/#home?lang=en
-                                    2. Fun-with-IELTS_Blank-fillers
-                                    Complete the 2nd sentence in each category 3 times. So, you should have 9 senetnces in the end.
-                                    They must be logical, grammatically correct and topic-relevant.
-                                    3. Listen to the answers of a student. Analyse them in terms of the use of English, range of vocabulary, confedence"</p>
-                            </div>
-                        </div>
-                        <div class="card">
-                            <div class="card-header">12.12.2023 - 15:00 | Planned</div>
-                            <div class="card-body">
-                                <p><a href="lesson-single.html">"Fun-with-IELTS_Blank-fillers - 1 sentences.
-                                    Speaking comprehension - Speaking part 1 + listaning anakysis, speaking part 2"</a></p>
-                                <hr>
-                                <p>"1. https://skell.sketchengine.eu/#home?lang=en
-                                    2. Fun-with-IELTS_Blank-fillers
-                                    Complete the 2nd sentence in each category 3 times. So, you should have 9 senetnces in the end.
-                                    They must be logical, grammatically correct and topic-relevant.
-                                    3. Listen to the answers of a student. Analyse them in terms of the use of English, range of vocabulary, confedence"</p>
-                                <hr>
-                                <p>"1. https://skell.sketchengine.eu/#home?lang=en
-                                    2. Fun-with-IELTS_Blank-fillers
-                                    Complete the 2nd sentence in each category 3 times. So, you should have 9 senetnces in the end.
-                                    They must be logical, grammatically correct and topic-relevant.
-                                    3. Listen to the answers of a student. Analyse them in terms of the use of English, range of vocabulary, confedence"</p>
-                            </div>
-                        </div>
-                        <div class="card">
-                            <div class="card-header">12.12.2023 - 15:00 | Planned</div>
-                            <div class="card-body">
-                                <p><a href="lesson-single.html">"Fun-with-IELTS_Blank-fillers - 1 sentences.
-                                    Speaking comprehension - Speaking part 1 + listaning anakysis, speaking part 2"</a></p>
-                                <hr>
-                                <p>"1. https://skell.sketchengine.eu/#home?lang=en
-                                    2. Fun-with-IELTS_Blank-fillers
-                                    Complete the 2nd sentence in each category 3 times. So, you should have 9 senetnces in the end.
-                                    They must be logical, grammatically correct and topic-relevant.
-                                    3. Listen to the answers of a student. Analyse them in terms of the use of English, range of vocabulary, confedence"</p>
-                                <hr>
-                                <p>"1. https://skell.sketchengine.eu/#home?lang=en
-                                    2. Fun-with-IELTS_Blank-fillers
-                                    Complete the 2nd sentence in each category 3 times. So, you should have 9 senetnces in the end.
-                                    They must be logical, grammatically correct and topic-relevant.
-                                    3. Listen to the answers of a student. Analyse them in terms of the use of English, range of vocabulary, confedence"</p>
-                            </div>
-                        </div>
-                        <div class="card">
-                            <div class="card-header">12.12.2023 - 15:00 | Planned</div>
-                            <div class="card-body">
-                                <p><a href="lesson-single.html">"Fun-with-IELTS_Blank-fillers - 1 sentences.
-                                    Speaking comprehension - Speaking part 1 + listaning anakysis, speaking part 2"</a></p>
-                                <hr>
-                                <p>"1. https://skell.sketchengine.eu/#home?lang=en
-                                    2. Fun-with-IELTS_Blank-fillers
-                                    Complete the 2nd sentence in each category 3 times. So, you should have 9 senetnces in the end.
-                                    They must be logical, grammatically correct and topic-relevant.
-                                    3. Listen to the answers of a student. Analyse them in terms of the use of English, range of vocabulary, confedence"</p>
-                                <hr>
-                                <p>"1. https://skell.sketchengine.eu/#home?lang=en
-                                    2. Fun-with-IELTS_Blank-fillers
-                                    Complete the 2nd sentence in each category 3 times. So, you should have 9 senetnces in the end.
-                                    They must be logical, grammatically correct and topic-relevant.
-                                    3. Listen to the answers of a student. Analyse them in terms of the use of English, range of vocabulary, confedence"</p>
-                            </div>
-                        </div>
-                        <div class="card">
-                            <div class="card-header">12.12.2023 - 15:00 | Planned</div>
-                            <div class="card-body">
-                                <p><a href="lesson-single.html">"Fun-with-IELTS_Blank-fillers - 1 sentences.
-                                    Speaking comprehension - Speaking part 1 + listaning anakysis, speaking part 2"</a></p>
-                                <hr>
-                                <p>"1. https://skell.sketchengine.eu/#home?lang=en
-                                    2. Fun-with-IELTS_Blank-fillers
-                                    Complete the 2nd sentence in each category 3 times. So, you should have 9 senetnces in the end.
-                                    They must be logical, grammatically correct and topic-relevant.
-                                    3. Listen to the answers of a student. Analyse them in terms of the use of English, range of vocabulary, confedence"</p>
-                                <hr>
-                                <p>"1. https://skell.sketchengine.eu/#home?lang=en
-                                    2. Fun-with-IELTS_Blank-fillers
-                                    Complete the 2nd sentence in each category 3 times. So, you should have 9 senetnces in the end.
-                                    They must be logical, grammatically correct and topic-relevant.
-                                    3. Listen to the answers of a student. Analyse them in terms of the use of English, range of vocabulary, confedence"</p>
-                            </div>
-                        </div>
-                        <div class="card">
-                            <div class="card-header">12.12.2023 - 15:00 | Planned</div>
-                            <div class="card-body">
-                                <p><a href="lesson-single.html">"Fun-with-IELTS_Blank-fillers - 1 sentences.
-                                    Speaking comprehension - Speaking part 1 + listaning anakysis, speaking part 2"</a></p>
-                                <hr>
-                                <p>"1. https://skell.sketchengine.eu/#home?lang=en
-                                    2. Fun-with-IELTS_Blank-fillers
-                                    Complete the 2nd sentence in each category 3 times. So, you should have 9 senetnces in the end.
-                                    They must be logical, grammatically correct and topic-relevant.
-                                    3. Listen to the answers of a student. Analyse them in terms of the use of English, range of vocabulary, confedence"</p>
-                                <hr>
-                                <p>"1. https://skell.sketchengine.eu/#home?lang=en
-                                    2. Fun-with-IELTS_Blank-fillers
-                                    Complete the 2nd sentence in each category 3 times. So, you should have 9 senetnces in the end.
-                                    They must be logical, grammatically correct and topic-relevant.
-                                    3. Listen to the answers of a student. Analyse them in terms of the use of English, range of vocabulary, confedence"</p>
-                            </div>
-                        </div>
-                        <div class="card">
-                            <div class="card-header">12.12.2023 - 15:00 | Planned</div>
-                            <div class="card-body">
-                                <p><a href="lesson-single.html">"Fun-with-IELTS_Blank-fillers - 1 sentences.
-                                    Speaking comprehension - Speaking part 1 + listaning anakysis, speaking part 2"</a></p>
-                                <hr>
-                                <p>"1. https://skell.sketchengine.eu/#home?lang=en
-                                    2. Fun-with-IELTS_Blank-fillers
-                                    Complete the 2nd sentence in each category 3 times. So, you should have 9 senetnces in the end.
-                                    They must be logical, grammatically correct and topic-relevant.
-                                    3. Listen to the answers of a student. Analyse them in terms of the use of English, range of vocabulary, confedence"</p>
-                                <hr>
-                                <p>"1. https://skell.sketchengine.eu/#home?lang=en
-                                    2. Fun-with-IELTS_Blank-fillers
-                                    Complete the 2nd sentence in each category 3 times. So, you should have 9 senetnces in the end.
-                                    They must be logical, grammatically correct and topic-relevant.
-                                    3. Listen to the answers of a student. Analyse them in terms of the use of English, range of vocabulary, confedence"</p>
-                            </div>
-                        </div>
-<!--                        -->
-                    </div>
-                </div>
+<div class="container-xxl flex-grow-1 container-p-y">
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="page-header">
+                <h1 class="h2 m-0">{{ title }}</h1>
             </div>
         </div>
     </div>
+    <!-- Users List Table -->
+    <div class="card">
+        <div class="card-table table-responsive">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th class="text-center" style="width: 1%;">Actions</th>
+                    <th>Student</th>
+                    <th>Company</th>
+                    <th>Status</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for student in students %}
+                <tr>
+                    <td style="width: 1%;">
+                        <div class="btn-group">
+                            <a href="{% url 'school:student-view' pk=student.id %}" class="btn btn-icon btn-outline-secondary">
+                                <i class='tf-icons bx bx-show'></i>
+                            </a>
+                          {% if current.user.is_staff %}
+                            <a href="#" class="btn btn-icon btn-danger">
+                                <i class='tf-icons bx bx-trash'></i>
+                            </a>
+                          {% endif %}
+                        </div>
+                    </td>
+                    <td>{{ student }}</td>
+                    <td>
+                      {% if student.company != None %}
+                        {{ student.company }}
+                      {% endif %}
+                    </td>
+                    <td>
+                      {% if student.user.is_active == True %}
+                        <span class="badge bg-label-success">ACTIVE</span>
+                      {% else %}
+                        <span class="badge bg-label-danger">INACTIVE</span>
+                      {% endif %}
+                    </td>
+
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% if students.paginator.num_pages > 1 %}
+        <div class="card-footer">
+            <nav aria-label="Page navigation">
+                <ul class="pagination m-0">
+                    {% if students.has_previous %}
+                    <li class="page-item prev">
+                        <a class="page-link" href="?page={{ students.previous_page_number }}">
+                          <i class="tf-icon bx bx-chevron-left"></i>
+                        </a>
+                    </li>
+                    {% endif %}
+                    {% for number in page_range %}
+                        {% if number != students.number %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ number }}">{{ number }}</a>
+                            </li>
+                        {% else %}
+                            <li class="page-item active">
+                                <a class="page-link">{{ number }}</a>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                    {% if students.has_next %}
+                    <li class="page-item next">
+                        <a class="page-link" href="?page={{ students.next_page_number }}">
+                          <i class="tf-icon bx bx-chevron-right"></i>
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+        {% endif %}
+    </div>
+</div>
 {% endblock %}

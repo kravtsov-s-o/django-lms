@@ -15,6 +15,14 @@ GROUP_DISCOUNT = {
 }
 
 
+def payment_description(lesson):
+    students = ', '.join(
+        [f'{student.user.first_name} {student.user.last_name}' for student in lesson.students.all()])
+    date = lesson.date.strftime("%d.%m.%Y")
+    time = lesson.time.strftime("%H:%M")
+    return f"For lesson {date} - {time}; Students: {students}"
+
+
 def lesson_finished(teacher, lesson_id, status):
     lesson = get_object_or_404(Lesson, pk=lesson_id, teacher=teacher)
     company = get_students_company(lesson.students.all())
@@ -72,7 +80,7 @@ def set_company_transaction(company, lesson):
     price = calculate_company_price(company, duration, number_of_students)
     student_names = ', '.join(
         [f'{student.user.first_name} {student.user.last_name}' for student in lesson.students.all()])
-    description = f"Add for lesson {lesson.date} - {lesson.time}; Students: {student_names}"
+    description = payment_description(lesson)
     CompanyPayment(lesson=lesson, price=price, description=description, company=company).save()
     company.wallet -= price
     company.save()
@@ -82,7 +90,7 @@ def set_teacher_transaction(teacher, lesson):
     duration = lesson.duration.time
     number_of_students = len(lesson.students.all())
     price = calculate_teacher_price(teacher, duration, lesson, number_of_students)
-    description = f"Add for lesson {lesson.date} - {lesson.time}"
+    description = payment_description(lesson)
     TeacherPayment(lesson=lesson, price=price, description=description, teacher=teacher).save()
 
 
@@ -90,7 +98,7 @@ def set_student_transaction(student, lesson, company):
     duration = lesson.duration.time
     number_of_students = len(lesson.students.all())
     price = calculate_student_price(student.rate, duration, number_of_students, company)
-    description = f"Add for lesson {lesson.date} - {lesson.time}"
+    description = payment_description(lesson)
     StudentPayment(lesson=lesson, price=price, description=description, student=student).save()
     student.wallet -= price
     student.save()
