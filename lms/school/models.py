@@ -4,7 +4,6 @@ from django.db import models
 from users.models import User
 from settings.models import Currency, Language, Duration
 from companies.models import Company
-from django.conf import settings as django_settings
 
 
 # Create your models here.
@@ -63,3 +62,15 @@ class Lesson(models.Model):
 
     def __str__(self):
         return self.theme
+
+
+class StudentProgress(models.Model):
+    date = models.DateTimeField(auto_now_add=True)
+    title = models.CharField(max_length=255)
+    description = models.TextField(blank=True, null=True)
+    student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    teacher = models.ForeignKey(Teacher, on_delete=models.SET_NULL, null=True)
+
+    def __str__(self):
+        return self.title
+

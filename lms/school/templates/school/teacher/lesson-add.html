@@ -104,7 +104,8 @@
 <script src="{% static './vendor/libs/select2/select2.js' %}"></script>
 <script src="{% static './vendor/libs/quill/quill.js' %}"></script>
 <script src="{% static './vendor/libs/quill/katex.js' %}"></script>
-
+<script src="{% static './vendor/libs/cleavejs/cleave.js' %}"></script>
+<script src="{% static './vendor/libs/cleavejs/cleave-phone.js' %}"></script>
 <script>
     $("#id_students").select2();
 
@@ -193,5 +194,33 @@
         fullEditorNote.root.innerHTML = notes;
         fullEditorHW.root.innerHTML = homework;
     };
+
+new Cleave(".time-mask", {
+        time: true,
+        timePattern: ["h", "m"]
+    });
+
+    let timeOptions = [];
+
+for (let hour = 0; hour < 24; hour++) {
+    for (let minute = 0; minute < 60; minute += 15) {
+        let formattedHour = ("0" + hour).slice(-2);
+        let formattedMinute = ("0" + minute).slice(-2);
+        timeOptions.push(`${formattedHour}:${formattedMinute}`);
+    }
+}
+
+let datalist = document.createElement('datalist');
+datalist.id = 'time-options';
+
+timeOptions.forEach(time => {
+    let option = document.createElement('option');
+    option.value = time;
+    datalist.appendChild(option);
+});
+
+let inputTime = document.getElementById('id_time');
+inputTime.insertAdjacentElement('afterend', datalist);
+
 </script>
 {% endblock %}

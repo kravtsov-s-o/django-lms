@@ -1,0 +1,114 @@
+{% load crispy_forms_tags %}
+<div class="card-header">
+    <div class=" d-flex flex-wrap justify-content-between align-items-center gap-3 w-100">
+        <h5 class="card-title m-0">Student progress</h5>
+        <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newComment">Add
+            note</a>
+    </div>
+    <p class="text-muted m-0">To be completed by the teacher as he or she learns and passes the
+        subjects</p>
+</div>
+<hr class="my-1">
+{% if not progress_list %}
+<div class="card-body">
+    <h6 class="m-0">Progress list is empty!</h6>
+</div>
+{% else %}
+<!-- Activity Timeline -->
+<div class="card-body">
+    <ul class="timeline">
+        {% for stage in progress_list %}
+        <li class="timeline-item timeline-item-transparent">
+            <span class="timeline-point timeline-point-primary"></span>
+            <div class="timeline-event">
+                <div class="timeline-header gap-2 mb-1">
+                    <h6 class="mb-0">{{ stage.title }}</h6>
+                    <div>
+                        <small class="text-muted">{{ stage.date|date:"d.m.Y" }}</small>
+                        {% if stage.teacher == student.teacher or request.user.is_staff %}
+                        <form method="POST" action="{% url 'school:student-delete' pk=student.id pk2=stage.id %}" class="ms-2" style="display:inline-block;">
+                            {% csrf_token %}
+                            <button class="btn p-0" type="submit"><i class="bx bx-trash"></i></button>
+                        </form>
+                        {% endif %}
+                    </div>
+                </div>
+                {% if stage.description %}
+                <p style="white-space: pre-line" class="mb-2">{{ stage.description }}</p>
+                {% endif %}
+            </div>
+        </li>
+        {% endfor %}
+        <li class="timeline-end-indicator">
+            <i class="bx bx-check-circle"></i>
+        </li>
+    </ul>
+</div>
+<!-- /Activity Timeline -->
+{% endif %}
+{% if students.paginator.num_pages > 1 %}
+<hr class="m-0">
+<div class="card-footer">
+    <nav aria-label="Page navigation">
+        <ul class="pagination m-0">
+            {% if students.has_previous %}
+            <li class="page-item prev">
+                <a class="page-link" href="?page={{ students.previous_page_number }}">
+                    <i class="tf-icon bx bx-chevron-left"></i>
+                </a>
+            </li>
+            {% endif %}
+            {% for number in page_range %}
+            {% if number != students.number %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ number }}">{{ number }}</a>
+            </li>
+            {% else %}
+            <li class="page-item active">
+                <a class="page-link">{{ number }}</a>
+            </li>
+            {% endif %}
+            {% endfor %}
+            {% if students.has_next %}
+            <li class="page-item next">
+                <a class="page-link" href="?page={{ students.next_page_number }}">
+                    <i class="tf-icon bx bx-chevron-right"></i>
+                </a>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+</div>
+{% endif %}
+
+<!-- Modal -->
+<!-- Edit User Modal -->
+<div class="modal fade" id="newComment" tabindex="-1" aria-labelledby="newCommentLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="newComment">New Note</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                </button>
+            </div>
+            <form action="{% url 'school:student-progress' pk=student.id %}" method="post">
+                {% csrf_token %}
+                <div class="modal-body">
+                    {{ progress_form.title|as_crispy_field }}
+                    {{ progress_form.description|as_crispy_field }}
+                    {{ progress_form.student|as_crispy_field }}
+                    {{ progress_form.teacher|as_crispy_field }}
+                </div>
+                <div class="modal-footer">
+                    <div class="d-flex flex-wrap justify-content-between w-100 gap-3">
+                        <button type="reset" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Save</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!--/ Edit User Modal -->
+
+<!-- /Modal -->

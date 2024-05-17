@@ -5,13 +5,31 @@ from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.views import View
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.views.generic.edit import DeleteView
 from datetime import datetime
-from .models import Student, Teacher, Lesson
-from .forms import LessonForm, LessonMoveForm
+from .models import Student, Teacher, Lesson, StudentProgress
+from .forms import LessonForm, LessonMoveForm, ProgressStageForm
 from .services import lesson_finished
 
 
 # Create your views here.
+def get_paginator(items, items_per_page, request):
+    paginator = Paginator(items, items_per_page)
+
+    page = request.GET.get("page")
+
+    try:
+        items_page = paginator.page(page)
+    except PageNotAnInteger:
+        items_page = paginator.page(1)
+    except EmptyPage:
+        items_page = paginator.page(paginator.num_pages)
+
+    page_range = range(1, items_page.paginator.num_pages + 1)
+
+    return items_page, page_range
+
+
 @method_decorator(login_required(login_url='/login/'), name='dispatch')
 class MainView(View):
     def get(self, request):
@@ -61,6 +79,7 @@ class LessonAdd(View):
                               'title': 'Add new lesson',
                               'form': form
                           })
+
 
 @method_decorator(login_required(login_url='/login/'), name='dispatch')
 class LessonEdit(View):
@@ -168,22 +187,12 @@ class LessonPlanned(UpdateLessonStatusView):
 @method_decorator(login_required(login_url='/login/'), name='dispatch')
 class StudentsView(View):
     def get(self, request):
-        students = Student.objects.filter(teacher__user=request.user, user__is_active=True).order_by('user__first_name', 'user__last_name')
+        students = Student.objects.filter(teacher__user=request.user, user__is_active=True).order_by('user__first_name',
+                                                                                                     'user__last_name')
 
         # Start Paginator
         items_per_page = 20
-        paginator = Paginator(students, items_per_page)
-
-        page = request.GET.get("page")
-
-        try:
-            students_page = paginator.page(page)
-        except PageNotAnInteger:
-            students_page = paginator.page(1)
-        except EmptyPage:
-            students_page = paginator.page(paginator.num_pages)
-
-        page_range = range(1, students_page.paginator.num_pages + 1)
+        students_page, page_range = get_paginator(students, items_per_page, request)
         # End Paginator
 
         return render(request, 'school/teacher/students.html',
@@ -196,6 +205,82 @@ class StudentsView(View):
 
 
 @method_decorator(login_required(login_url='/login/'), name='dispatch')
-class StudentView(View):
+class StudentLessons(View):
     def get(self, request, pk):
-        pass
+        student = get_object_or_404(Student, pk=pk)
+        lessons = Lesson.objects.filter(students=student)
+
+        student_rate = int(student.rate)
+
+        items_per_page = 20
+        lessons_page, page_range = get_paginator(lessons, items_per_page, request)
+
+        return render(request, 'school/teacher/student-about.html',
+                      context={
+                          'title': 'Profile',
+                          'tab': 'lessons',
+                          'student_rate': student_rate,
+                          'student': student,
+                          'lessons': lessons_page,
+                          'page_range': page_range
+                      })
+
+
+@method_decorator(login_required(login_url='/login/'), name='dispatch')
+class StudentProgressView(View):
+    def _get_teacher(self, request):
+        return Teacher.objects.filter(user=request.user).first()
+
+    def _get_student(self, pk):
+        return get_object_or_404(Student, pk=pk)
+
+    def get(self, request, pk):
+        student = self._get_student(pk)
+        teacher = self._get_teacher(request)
+        student_rate = int(student.rate)
+
+        progress_list = StudentProgress.objects.filter(student=student).order_by('-date')
+        print(progress_list)
+
+        items_per_page = 20
+
+        return render(request, 'school/teacher/student-about.html',
+                      context={
+                          'title': 'Profile',
+                          'tab': 'progress',
+                          'student_rate': student_rate,
+                          'student': student,
+                          'progress_list': progress_list,
+                          'progress_form': ProgressStageForm(student, teacher)
+                      })
+
+    def post(self, request, pk):
+        student = self._get_student(pk)
+        teacher = self._get_teacher(request)
+        form = ProgressStageForm(student, teacher, request.POST)
+
+        print(form.is_valid())
+
+        if form.is_valid():
+            form.save()
+            return redirect(request.META.get('HTTP_REFERER', '/'))
+        else:
+            student_rate = int(student.rate)
+            progress_list = StudentProgress.objects.filter(student=student)
+            return render(request, 'school/teacher/student-about.html',
+                          context={
+                              'title': 'Profile',
+                              'tab': 'progress',
+                              'student_rate': student_rate,
+                              'student': student,
+                              'progress_list': progress_list,
+                              'progress_form': form
+                          })
+
+
+@method_decorator(login_required(login_url='/login/'), name='dispatch')
+class StudentProgressDelete(DeleteView):
+    def post(self, request, pk, pk2):
+        if request.method == "POST":
+            StudentProgress.objects.filter(pk=pk2).delete()
+            return redirect(request.META.get('HTTP_REFERER', '/'))

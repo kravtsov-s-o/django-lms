@@ -1,13 +1,15 @@
 from django.urls import path
 from .views import MainView, LessonAdd, LessonEdit, LessonView, LessonMove, LessonDelete, LessonConducted, LessonMissed, \
-    LessonPlanned, StudentsView, StudentView
+    LessonPlanned, StudentsView, StudentLessons, StudentProgressView, StudentProgressDelete
 
 app_name = 'school'
 
 urlpatterns = [
     path('', MainView.as_view(), name='main'),
     path('students/', StudentsView.as_view(), name='students'),
-    path('student/<int:pk>/view/', StudentView.as_view(), name='student-view'),
+    path('student/<int:pk>/lessons/', StudentLessons.as_view(), name='student-lessons'),
+    path('student/<int:pk>/progress/', StudentProgressView.as_view(), name='student-progress'),
+    path('student/<int:pk>/progress/<int:pk2>/delete/', StudentProgressDelete.as_view(), name='student-delete'),
     path('lesson/add/', LessonAdd.as_view(), name='lesson-add'),
     path('lesson/<int:pk>/view/', LessonView.as_view(), name='lesson-view'),
     path('lesson/<int:pk>/edit/', LessonEdit.as_view(), name='lesson-edit'),

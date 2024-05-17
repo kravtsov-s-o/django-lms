@@ -28,7 +28,7 @@
                 <tr>
                     <td style="width: 1%;">
                         <div class="btn-group">
-                            <a href="{% url 'school:student-view' pk=student.id %}" class="btn btn-icon btn-outline-secondary">
+                            <a href="{% url 'school:student-lessons' pk=student.id %}" class="btn btn-icon btn-outline-secondary">
                                 <i class='tf-icons bx bx-show'></i>
                             </a>
                           {% if current.user.is_staff %}

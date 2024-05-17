@@ -1,0 +1,213 @@
+{% extends 'school/base-template.html' %}
+{% block page-title %}{{ student }}{% endblock %}
+{% load static %}
+{% load extract_languages %}
+{% block extra_css %}
+
+{% endblock %}
+{% block content %}
+
+<!-- Content -->
+
+<div class="container-xxl flex-grow-1 container-p-y">
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="page-header">
+                <h1 class="h2 m-0">{{ student }}</h1>
+            </div>
+        </div>
+    </div>
+    <div class="row gy-4">
+        <!-- User Sidebar -->
+        <div class="col-xl-4 col-lg-5 col-md-5 order-1 order-md-0">
+            <!-- User Card -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div class="user-avatar-section mb-5">
+                        <div class="d-flex align-items-center flex-column">
+                            {% if not student.avatar %}
+                            <img class="img-fluid rounded my-4" src="{% static './img/default_avatar.png' %}" height="110"
+                                 width="110" alt="User avatar"/>
+                            {% else %}
+                            <img class="img-fluid rounded my-4" src="{{ student.avatar }}" height="110"
+                                 width="110" alt="User avatar"/>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <h5 class="pb-2 border-bottom mb-4">Details</h5>
+                    <div class="info-container">
+                        <ul class="list-unstyled">
+                            <li class="mb-3">
+                                <span class="fw-bold me-2">Username:</span>
+                                <span>{{ student.user.username }}</span>
+                            </li>
+                            <li class="mb-3">
+                                <span class="fw-bold me-2">Email:</span>
+                                <span><a href="mailto:{{ student.user.email }}">{{ student.user.email }}</a></span>
+                            </li>
+                            <li class="mb-3">
+                                <span class="fw-bold me-2">Status:</span>
+                                {% if student.user.is_active == True %}
+                                <span class="badge bg-label-success">ACTIVE</span>
+                                {% else %}
+                                <span class="badge bg-label-danger">INACTIVE</span>
+                                {% endif %}
+                            </li>
+<!--                            <li class="mb-3">-->
+<!--                                <span class="fw-bold me-2">Contact:</span>-->
+<!--                                <span>(123) 456-7890</span>-->
+<!--                            </li>-->
+                            <li class="mb-3">
+                                <span class="fw-bold me-2">Languages:</span>
+                                <span>{{ student.language|extract_languages }}</span>
+                            </li>
+                            <li class="mb-3">
+                                <span class="fw-bold me-2">Teacher:</span>
+                                <span>{{ student.teacher }}</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <!-- /User Card -->
+            <!-- Plan Card -->
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <span class="badge bg-label-primary">Rate</span>
+                        <div class="d-flex justify-content-center">
+                            <sup class="h5 pricing-currency mt-3 mt-sm-4 mb-0 me-1 text-primary">{{ student.currency }}</sup>
+                            <h1 class="display-3 fw-normal mb-0 text-primary">{{ student_rate }}</h1>
+                            <sub class="fs-6 pricing-duration mt-auto mb-4">per hour</sub>
+                        </div>
+                    </div>
+                    <ul class="list-unstyled mb-3">
+                        <li class="h5 mb-2">Balance</li>
+                        <li class="display-6 fw-bold mb-0">{{ student.wallet }}</li>
+                    </ul>
+                    <span>Enough for about <span class="fw-bold">3</span> hour(s) / lesson(s)</span>
+                    <div class="d-grid w-100 mt-3 pt-2"
+                         data-bs-toggle="tooltip" data-bs-offset="0,4" data-bs-placement="top" title="Coming Soon">
+                        <button class="btn btn-primary" disabled>
+                            Pay
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <!-- /Plan Card -->
+        </div>
+        <!--/ User Sidebar -->
+
+        <!-- User Content -->
+        <div class="col-xl-8 col-lg-7 col-md-7 order-0 order-md-1">
+            <!-- User Pills -->
+            <ul class="nav nav-pills flex-column flex-md-row mb-3">
+                <li class="nav-item">
+                    <a class="nav-link active" href="student-lessons.html"><i class="bx bxs-school me-1"></i>Lessons</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="student-progress.html">
+                        <i class="bx bxs-graduation me-1"></i>Progress</a
+                    >
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="student-payments.html">
+                        <i class="bx bx-detail me-1"></i>Payments</a>
+                </li>
+            </ul>
+            <!--/ User Pills -->
+
+            <!-- Project table -->
+            <div class="card mb-4">
+                {% if not lessons %}
+                <div class="card-body">
+                    <h6 class="m-0">Lessons not found</h6>
+                </div>
+                {% else %}
+                <div class="card-table table-responsive">
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th class="text-center" style="width: 1%;">Date</th>
+                            <th class="text-center" style="width: 1%;">Time</th>
+                            <th class="text-center" style="width: 1%;">Status</th>
+                            <th>Theme</th>
+                            <th class="text-center" style="width: 1%;">Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody class="table-border-bottom-0">
+                        {% for lesson in lessons %}
+                        <tr>
+                            <td style="width: 1%;">{{ lesson.date|date:"d.m.Y" }}</td>
+                            <td style="width: 1%;">{{ lesson.time|time:"H:i" }}</td>
+                            <td style="width: 1%;">
+                                {% if lesson.status == 'planned' %}
+                                <span class="badge bg-label-info">{{ lesson.status }}</span>
+                                {% elif lesson.status == 'сonducted' %}
+                                <span class="badge bg-label-success">{{ lesson.status }}</span>
+                                {% elif lesson.status == 'missed' %}
+                                <span class="badge bg-label-danger">{{ lesson.status }}</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ lesson.theme }}</td>
+                            <td style="width: 1%;">
+                                <div class="dropdown btn-group">
+                                    <a href="{% url 'school:lesson-view' pk=lesson.id %}"
+                                       class="btn btn-icon btn-outline-secondary">
+                                        <i class='bx bx-show'></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% endif %}
+                {% if students.paginator.num_pages > 1 %}
+                <hr class="m-0">
+                <div class="card-footer">
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination m-0">
+                            {% if students.has_previous %}
+                            <li class="page-item prev">
+                                <a class="page-link" href="?page={{ students.previous_page_number }}">
+                                  <i class="tf-icon bx bx-chevron-left"></i>
+                                </a>
+                            </li>
+                            {% endif %}
+                            {% for number in page_range %}
+                                {% if number != students.number %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page={{ number }}">{{ number }}</a>
+                                    </li>
+                                {% else %}
+                                    <li class="page-item active">
+                                        <a class="page-link">{{ number }}</a>
+                                    </li>
+                                {% endif %}
+                            {% endfor %}
+                            {% if students.has_next %}
+                            <li class="page-item next">
+                                <a class="page-link" href="?page={{ students.next_page_number }}">
+                                  <i class="tf-icon bx bx-chevron-right"></i>
+                                </a>
+                            </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                </div>
+                {% endif %}
+            </div>
+            <!-- /Project table -->
+        </div>
+        <!--/ User Content -->
+    </div>
+</div>
+<!-- / Content -->
+
+{% endblock %}
+
+{% block extra_js %}
+
+{% endblock %}

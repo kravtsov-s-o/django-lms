@@ -1,5 +1,5 @@
 from django import forms
-from .models import Teacher, Student, Lesson
+from .models import Teacher, Student, Lesson, StudentProgress
 from settings.models import Language
 
 
@@ -49,11 +49,12 @@ class LessonForm(forms.ModelForm):
         fields = ('date', 'time', 'duration', 'students', 'teacher', 'theme', 'notes', 'homework')
         widgets = {
             'date': forms.DateInput(attrs={'type': 'date'}),
-            'time': forms.TimeInput(attrs={'type': 'time'}, format='%H:%M'),
+            'time': forms.TextInput(attrs={'type': 'text', 'class': 'time-mask', 'value': '',  'placeholder': 'HH:mm', 'list': 'time-options'}),
             'notes': forms.HiddenInput(),
             'homework': forms.HiddenInput(),
             'teacher': forms.HiddenInput()
         }
+
 
 class LessonMoveForm(forms.ModelForm):
     class Meta:
@@ -62,5 +63,19 @@ class LessonMoveForm(forms.ModelForm):
         fields = ('date', 'time')
         widgets = {
             'date': forms.DateInput(attrs={'type': 'date'}),
-            'time': forms.TimeInput(attrs={'type': 'time'}, format='%H:%M')
+            'time': forms.TextInput(attrs={'type': 'text', 'class': 'time-mask', 'value': '',  'placeholder': 'HH:mm', 'list': 'time-options'}),
+        }
+
+
+class ProgressStageForm(forms.ModelForm):
+    def __init__(self, student, teacher, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['student'].initial = student
+        self.fields['teacher'].initial = teacher
+    class Meta:
+        model = StudentProgress
+        fields = ('title', 'description', 'student', 'teacher')
+        widgets = {
+            'student': forms.HiddenInput(),
+            'teacher': forms.HiddenInput()
         }
