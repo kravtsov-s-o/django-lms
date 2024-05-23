@@ -9,7 +9,8 @@ from django.views.generic.edit import DeleteView
 from datetime import datetime
 from .models import Student, Teacher, Lesson, StudentProgress
 from .forms import LessonForm, LessonMoveForm, ProgressStageForm
-from .services import lesson_finished
+from .services import lesson_finished, user_is_student_or_teacher_or_staff
+from users.models import User
 
 
 # Create your views here.
@@ -32,6 +33,11 @@ def get_paginator(items, items_per_page, request):
 
 @method_decorator(login_required(login_url='/login/'), name='dispatch')
 class MainView(View):
+    def get(self, request):
+        return redirect(to='school:profile-lessons', pk=request.user.id)
+
+@method_decorator(login_required(login_url='/login/'), name='dispatch')
+class ScheduleView(View):
     def get(self, request):
         current_date = datetime.today()
 
@@ -71,7 +77,7 @@ class LessonAdd(View):
 
         if form.is_valid():
             form.save()
-            return redirect(to='school:main')
+            return redirect(to='school:cabinet-schedule')
         else:
             return render(request,
                           'school/teacher/lesson-add.html',
@@ -107,7 +113,7 @@ class LessonEdit(View):
 
         if form.is_valid():
             form.save()
-            return redirect(to='school:main')
+            return redirect(to='school:cabinet-schedule')
         else:
             return render(request,
                           'school/teacher/lesson-add.html',
@@ -148,7 +154,7 @@ class LessonMove(View):
                 new_time = form.cleaned_data['time']
                 teacher = Teacher.objects.filter(user=request.user).first()
                 Lesson.objects.filter(pk=pk, teacher=teacher).update(date=new_date, time=new_time)
-                return redirect(to='school:main')
+                return redirect(to='school:cabinet-schedule')
             return redirect(request.META.get('HTTP_REFERER', '/'))
 
 
@@ -187,8 +193,8 @@ class LessonPlanned(UpdateLessonStatusView):
 @method_decorator(login_required(login_url='/login/'), name='dispatch')
 class StudentsView(View):
     def get(self, request):
-        students = Student.objects.filter(teacher__user=request.user, user__is_active=True).order_by('user__first_name',
-                                                                                                     'user__last_name')
+        students = (Student.objects.filter(teacher__user=request.user, user__is_active=True)
+                    .order_by('user__first_name', 'user__last_name'))
 
         # Start Paginator
         items_per_page = 20
@@ -205,29 +211,35 @@ class StudentsView(View):
 
 
 @method_decorator(login_required(login_url='/login/'), name='dispatch')
-class StudentLessons(View):
+@method_decorator(user_is_student_or_teacher_or_staff, name='dispatch')
+class ProfileLessons(View):
     def get(self, request, pk):
-        student = get_object_or_404(Student, pk=pk)
-        lessons = Lesson.objects.filter(students=student)
+        user = get_object_or_404(User, pk=pk)
+        if user.school_role == 'student':
+            current_user = get_object_or_404(Student, user=user.id)
+            lessons = Lesson.objects.filter(students=current_user).order_by('-date')
+        else:
+            current_user = get_object_or_404(Teacher, user=user.id)
+            lessons = Lesson.objects.filter(teacher=current_user).order_by('-date')
 
-        student_rate = int(student.rate)
+        current_user_rate = int(current_user.rate)
 
         items_per_page = 20
         lessons_page, page_range = get_paginator(lessons, items_per_page, request)
 
-        return render(request, 'school/teacher/student-about.html',
+        return render(request, 'school/profile/index.html',
                       context={
                           'title': 'Profile',
                           'tab': 'lessons',
-                          'student_rate': student_rate,
-                          'student': student,
+                          'current_user_rate': current_user_rate,
+                          'current_user': current_user,
                           'lessons': lessons_page,
                           'page_range': page_range
                       })
 
 
 @method_decorator(login_required(login_url='/login/'), name='dispatch')
-class StudentProgressView(View):
+class ProfileProgressView(View):
     def _get_teacher(self, request):
         return Teacher.objects.filter(user=request.user).first()
 
@@ -240,16 +252,15 @@ class StudentProgressView(View):
         student_rate = int(student.rate)
 
         progress_list = StudentProgress.objects.filter(student=student).order_by('-date')
-        print(progress_list)
 
         items_per_page = 20
 
-        return render(request, 'school/teacher/student-about.html',
+        return render(request, 'school/profile/index.html',
                       context={
                           'title': 'Profile',
                           'tab': 'progress',
                           'student_rate': student_rate,
-                          'student': student,
+                          'current_user': student,
                           'progress_list': progress_list,
                           'progress_form': ProgressStageForm(student, teacher)
                       })
@@ -267,19 +278,19 @@ class StudentProgressView(View):
         else:
             student_rate = int(student.rate)
             progress_list = StudentProgress.objects.filter(student=student)
-            return render(request, 'school/teacher/student-about.html',
+            return render(request, 'school/profile/index.html',
                           context={
                               'title': 'Profile',
                               'tab': 'progress',
                               'student_rate': student_rate,
-                              'student': student,
+                              'current_user': student,
                               'progress_list': progress_list,
                               'progress_form': form
                           })
 
 
 @method_decorator(login_required(login_url='/login/'), name='dispatch')
-class StudentProgressDelete(DeleteView):
+class ProfileProgressDelete(DeleteView):
     def post(self, request, pk, pk2):
         if request.method == "POST":
             StudentProgress.objects.filter(pk=pk2).delete()

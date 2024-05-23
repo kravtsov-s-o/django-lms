@@ -1,7 +1,7 @@
 {% load static %}
 <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
     <div class="app-brand demo">
-        <a href="{% url 'school:main' %}" class="app-brand-link">
+        <a href="{% url 'school:cabinet-schedule' %}" class="app-brand-link">
                     <span class="app-brand-logo demo">
                         <img src="{% static './img/logo.svg' %}" alt="Ruslana.English">
                     </span>
@@ -17,20 +17,24 @@
     </div>
 
     <ul class="menu-inner py-2">
+        {% if request.user.school_role == 'teacher' %}
+        <li class="menu-header small text-uppercase">
+          <span class="menu-header-text" data-i18n="Apps &amp; Pages">Cabinet</span>
+        </li>
         <!-- Page -->
         <li class="menu-item {% if current_page == 'schedule' %}active{% endif %}">
-            <a href="{% url 'school:main' %}" class="menu-link">
+            <a href="{% url 'school:cabinet-schedule' %}" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-home-circle"></i>
-                <div>Lessons</div>
+                <div>Schedule</div>
             </a>
         </li>
         <li class="menu-item {% if current_page == 'students' %}active{% endif %}">
-            <a href="{% url 'school:students' %}" class="menu-link">
+            <a href="{% url 'school:cabinet-students' %}" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-detail"></i>
                 <div data-i18n="Page 2">Students</div>
             </a>
         </li>
-        {% if current_user.is_staff %}
+        {% if request.user.is_staff %}
         <li class="menu-item disabled  {% if current_page == 'statistics' %}active{% endif %}">
             <a href="#" class="menu-link "
                         data-bs-toggle="tooltip"
@@ -41,5 +45,44 @@
             </a>
         </li>
         {% endif %}
+        {% endif %}
+        <li class="menu-header small text-uppercase">
+          <span class="menu-header-text" data-i18n="Apps &amp; Pages">Profile</span>
+        </li>
+        <li class="menu-item  {% if current_page == 'lessons' %}active{% endif %}">
+            <a href="{% url 'school:profile-lessons' pk=request.user.id %}" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-detail"></i>
+                <div data-i18n="Page 2">Lessons</div>
+            </a>
+        </li>
+        {% if current_user.school_role == 'student' %}
+        <li class="menu-item disabled  {% if current_page == 'progress' %}active{% endif %}">
+            <a href="#" class="menu-link "
+                        data-bs-toggle="tooltip"
+                        data-bs-placement="right"
+                        title="Coming Soon">
+                <i class="menu-icon tf-icons bx bx-detail"></i>
+                <div data-i18n="Page 2">Progress</div>
+            </a>
+        </li>
+        {% endif %}
+        <li class="menu-item disabled  {% if current_page == 'payments' %}active{% endif %}">
+            <a href="#" class="menu-link "
+                        data-bs-toggle="tooltip"
+                        data-bs-placement="right"
+                        title="Coming Soon">
+                <i class="menu-icon tf-icons bx bx-detail"></i>
+                <div data-i18n="Page 2">Payments</div>
+            </a>
+        </li>
+        <li class="menu-item disabled  {% if current_page == 'settings' %}active{% endif %}">
+            <a href="#" class="menu-link "
+                        data-bs-toggle="tooltip"
+                        data-bs-placement="right"
+                        title="Coming Soon">
+                <i class="menu-icon tf-icons bx bx-detail"></i>
+                <div data-i18n="Page 2">Settings</div>
+            </a>
+        </li>
     </ul>
 </aside>

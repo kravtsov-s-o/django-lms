@@ -1,12 +1,14 @@
 {% load crispy_forms_tags %}
 <div class="card-header">
     <div class=" d-flex flex-wrap justify-content-between align-items-center gap-3 w-100">
-        <h5 class="card-title m-0">Student progress</h5>
+        <h5 class="card-title m-0">Your progress and levels</h5>
+        {% if current.user.school_role == 'teacher' %}
         <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newComment">Add
             note</a>
+        {% endif %}
     </div>
     <p class="text-muted m-0">To be completed by the teacher as he or she learns and passes the
-        subjects</p>
+        themes.</p>
 </div>
 <hr class="my-1">
 {% if not progress_list %}
@@ -25,8 +27,8 @@
                     <h6 class="mb-0">{{ stage.title }}</h6>
                     <div>
                         <small class="text-muted">{{ stage.date|date:"d.m.Y" }}</small>
-                        {% if stage.teacher == student.teacher or request.user.is_staff %}
-                        <form method="POST" action="{% url 'school:student-delete' pk=student.id pk2=stage.id %}" class="ms-2" style="display:inline-block;">
+                        {% if stage.teacher == current_user.teacher or request.user.is_staff %}
+                        <form method="POST" action="{% url 'school:progress-delete' pk=current_user.user.id pk2=stage.id %}" class="ms-2" style="display:inline-block;">
                             {% csrf_token %}
                             <button class="btn p-0" type="submit"><i class="bx bx-trash"></i></button>
                         </form>
@@ -81,8 +83,9 @@
 </div>
 {% endif %}
 
+{% if current.user.school_role == 'teacher' %}
 <!-- Modal -->
-<!-- Edit User Modal -->
+<!-- Add progress note Modal -->
 <div class="modal fade" id="newComment" tabindex="-1" aria-labelledby="newCommentLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
@@ -91,7 +94,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                 </button>
             </div>
-            <form action="{% url 'school:student-progress' pk=student.id %}" method="post">
+            <form action="{% url 'school:profile-progress' pk=current_user.user.id %}" method="post">
                 {% csrf_token %}
                 <div class="modal-body">
                     {{ progress_form.title|as_crispy_field }}
@@ -109,6 +112,6 @@
         </div>
     </div>
 </div>
-<!--/ Edit User Modal -->
-
+<!--/ Add progress note Modal -->
 <!-- /Modal -->
+{% endif %}

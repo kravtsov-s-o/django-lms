@@ -8,7 +8,7 @@ from .forms import LoginForm
 class LoginView(View):
     def get(self, request):
         if request.user.is_authenticated:
-            return redirect(to='school:main')
+            return redirect(to='school:profile-lessons', pk=request.user.id)
 
         form = LoginForm()
         return render(request, 'users/login.html', context={'title': 'Login', 'form': form})
@@ -21,4 +21,4 @@ class LoginView(View):
             return redirect(to='users:login')
 
         login(request, user)
-        return redirect(to='school:main')
+        return redirect(to='school:profile-lessons', pk=request.user.id)
