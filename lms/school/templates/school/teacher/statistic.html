@@ -1,0 +1,42 @@
+{% extends 'school/base-template.html' %}
+{% load static %}
+{% load extract_students %}
+{% block extra_css %}
+
+{% endblock %}
+
+{% block page-title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid flex-grow-1 container-p-y">
+    <div class="row">
+        <div class="col-xl-12">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th>Month</th>
+                            <th>Part of month</th>
+                            <th>Sum</th>
+                        </tr>
+                        </thead>
+                        {% for i in sum %}
+                        <tr>
+                            <td>{{i.month|date:"M"}}</td>
+                            <td>{{i.half_month}}</td>
+                            <td>{{i.total_price}}</td>
+                        </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}
+{% block extra_js %}
+
+{% endblock %}

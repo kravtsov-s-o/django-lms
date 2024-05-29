@@ -243,3 +243,15 @@ def user_is_student_or_teacher_or_staff(view_func):
             raise PermissionDenied
 
     return _wrapped_view
+
+
+# =================================================================
+# Time left
+def count_time_left(user):
+    if user.wallet <= 0:
+        return '0 hour(s)'
+    time_left = user.wallet / user.rate
+    hours = int(time_left)
+    minutes = int((time_left - hours) * 60)
+    return f"{hours} hour(s) {minutes} minutes"
+# =================================================================

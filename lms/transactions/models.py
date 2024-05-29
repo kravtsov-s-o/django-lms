@@ -1,6 +1,8 @@
 from datetime import datetime
 
 from django.db import models
+from django.db.models import Sum, Case, When, IntegerField, Value
+from django.db.models.functions import TruncMonth
 from school.models import Lesson, Teacher, Student
 from companies.models import Company
 
@@ -23,8 +25,30 @@ class StudentPayment(TransactionBase):
         return f"{self.student.user.first_name} {self.student.user.last_name}"
 
 
+class TeacherPaymentManager(models.Manager):
+    def get_half_month_summaries(self, year):
+        # Фильтруем данные за указанный год
+        qs = self.filter(created_at__year=year)
+
+        # Разбиваем на первую и вторую половину месяца
+        half_month_aggregates = qs.annotate(
+            half_month=Case(
+                When(created_at__day__lte=15, then=Value(1)),
+                When(created_at__day__gte=16, then=Value(2)),
+                output_field=IntegerField(),
+            ),
+            month=TruncMonth('created_at')
+        ).values('month', 'half_month').annotate(
+            total_price=Sum('price')
+        ).order_by('month', 'half_month')
+
+        return half_month_aggregates
+
+
 class TeacherPayment(TransactionBase):
     teacher = models.ForeignKey(Teacher, on_delete=models.CASCADE)
+
+    objects = TeacherPaymentManager()
 
     def __str__(self):
         return f"{self.teacher.user.first_name} {self.teacher.user.last_name}"

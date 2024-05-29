@@ -1,6 +1,7 @@
 from django.urls import path
 from .views import MainView, LessonAdd, LessonEdit, LessonView, LessonMove, LessonDelete, LessonConducted, LessonMissed, \
-    LessonPlanned, StudentsView, ProfileLessons, ProfileProgressView, ProfileProgressDelete, ScheduleView
+    LessonPlanned, StudentsView, ProfileLessons, ProfileSettings, ProfilePayments, ProfileProgressView, \
+    ProfileProgressDelete, ScheduleView, TeacherStatistic
 
 app_name = 'school'
 
@@ -9,12 +10,13 @@ urlpatterns = [
 
     path('cabinet/schedule/', ScheduleView.as_view(), name='cabinet-schedule'),
     path('cabinet/students/', StudentsView.as_view(), name='cabinet-students'),
+    path('cabinet/statistics/', TeacherStatistic.as_view(), name='cabinet-statistics'),
 
     path('profile/<int:pk>/lessons/', ProfileLessons.as_view(), name='profile-lessons'),
     path('profile/<int:pk>/progress/', ProfileProgressView.as_view(), name='profile-progress'),
     path('profile/<int:pk>/progress/<int:pk2>/delete/', ProfileProgressDelete.as_view(), name='progress-delete'),
-    path('profile/<int:pk>/payments/', ProfileLessons.as_view(), name='profile-payments'),
-    path('profile/<int:pk>/settings/', ProfileLessons.as_view(), name='profile-settings'),
+    path('profile/<int:pk>/payments/', ProfilePayments.as_view(), name='profile-payments'),
+    path('profile/<int:pk>/settings/', ProfileSettings.as_view(), name='profile-settings'),
 
     path('lesson/add/', LessonAdd.as_view(), name='lesson-add'),
     path('lesson/<int:pk>/view/', LessonView.as_view(), name='lesson-view'),

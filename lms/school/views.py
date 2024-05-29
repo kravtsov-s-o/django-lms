@@ -8,9 +8,11 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.views.generic.edit import DeleteView
 from datetime import datetime
 from .models import Student, Teacher, Lesson, StudentProgress
-from .forms import LessonForm, LessonMoveForm, ProgressStageForm
-from .services import lesson_finished, user_is_student_or_teacher_or_staff
+from .forms import LessonForm, LessonMoveForm, ProgressStageForm, UserChangePassword, UserCombineCommonForm
+from .services import lesson_finished, user_is_student_or_teacher_or_staff, count_time_left
 from users.models import User
+
+from transactions.models import StudentPayment, TeacherPayment
 
 
 # Create your views here.
@@ -35,6 +37,7 @@ def get_paginator(items, items_per_page, request):
 class MainView(View):
     def get(self, request):
         return redirect(to='school:profile-lessons', pk=request.user.id)
+
 
 @method_decorator(login_required(login_url='/login/'), name='dispatch')
 class ScheduleView(View):
@@ -124,10 +127,11 @@ class LessonEdit(View):
 
 
 @method_decorator(login_required(login_url='/login/'), name='dispatch')
+# @method_decorator(user_is_student_or_teacher_or_staff, name='dispatch')
+# TODO add/fix check for student or teacher or staff for lesson
 class LessonView(View):
     def get(self, request, pk):
-        teacher = Teacher.objects.filter(user=request.user).first()
-        lesson = get_object_or_404(Lesson, pk=pk, teacher=teacher)
+        lesson = get_object_or_404(Lesson, pk=pk)
         return render(request, 'school/lesson-single.html',
                       context={'lesson': lesson, 'lesson_move_form': LessonMoveForm})
 
@@ -209,6 +213,18 @@ class StudentsView(View):
                           'current_page': 'students'}
                       )
 
+@method_decorator(login_required(login_url='/login/'), name='dispatch')
+class TeacherStatistic(View):
+    def get(self, request):
+        current_year = datetime.now().year
+        half_month_summaries = TeacherPayment.objects.get_half_month_summaries(current_year)
+        print(half_month_summaries)
+
+        return render(request, 'school/teacher/statistic.html', context={
+            'current_page': 'statistics',
+            'sum': half_month_summaries,
+        })
+
 
 @method_decorator(login_required(login_url='/login/'), name='dispatch')
 @method_decorator(user_is_student_or_teacher_or_staff, name='dispatch')
@@ -218,27 +234,34 @@ class ProfileLessons(View):
         if user.school_role == 'student':
             current_user = get_object_or_404(Student, user=user.id)
             lessons = Lesson.objects.filter(students=current_user).order_by('-date')
+            lessons_left = count_time_left(current_user)
         else:
             current_user = get_object_or_404(Teacher, user=user.id)
             lessons = Lesson.objects.filter(teacher=current_user).order_by('-date')
+            lessons_left = 0
 
         current_user_rate = int(current_user.rate)
 
         items_per_page = 20
         lessons_page, page_range = get_paginator(lessons, items_per_page, request)
 
+        active_page = 'lessons'
+
         return render(request, 'school/profile/index.html',
                       context={
                           'title': 'Profile',
-                          'tab': 'lessons',
+                          'tab': active_page,
+                          'current_page': active_page,
                           'current_user_rate': current_user_rate,
                           'current_user': current_user,
+                          'lessons_left': lessons_left,
                           'lessons': lessons_page,
                           'page_range': page_range
                       })
 
 
 @method_decorator(login_required(login_url='/login/'), name='dispatch')
+@method_decorator(user_is_student_or_teacher_or_staff, name='dispatch')
 class ProfileProgressView(View):
     def _get_teacher(self, request):
         return Teacher.objects.filter(user=request.user).first()
@@ -255,10 +278,13 @@ class ProfileProgressView(View):
 
         items_per_page = 20
 
+        active_page = 'progress'
+
         return render(request, 'school/profile/index.html',
                       context={
                           'title': 'Profile',
-                          'tab': 'progress',
+                          'tab': active_page,
+                          'current_page': active_page,
                           'student_rate': student_rate,
                           'current_user': student,
                           'progress_list': progress_list,
@@ -295,3 +321,100 @@ class ProfileProgressDelete(DeleteView):
         if request.method == "POST":
             StudentProgress.objects.filter(pk=pk2).delete()
             return redirect(request.META.get('HTTP_REFERER', '/'))
+
+
+@method_decorator(login_required(login_url='/login/'), name='dispatch')
+@method_decorator(user_is_student_or_teacher_or_staff, name='dispatch')
+class ProfilePayments(View):
+    def get(self, request, pk):
+        user = get_object_or_404(User, pk=pk)
+        if user.school_role == 'student':
+            current_user = get_object_or_404(Student, user=user.id)
+            payments = StudentPayment.objects.filter(student=current_user).order_by('-created_at')
+        else:
+            current_user = get_object_or_404(Teacher, user=user.id)
+            payments = TeacherPayment.objects.filter(teacher=current_user).order_by('-created_at')
+
+        current_user_rate = int(current_user.rate)
+
+        items_per_page = 20
+        payments_page, page_range = get_paginator(payments, items_per_page, request)
+
+        active_page = 'payments'
+
+        return render(request, 'school/profile/index.html',
+                      context={
+                          'title': 'Profile',
+                          'tab': active_page,
+                          'current_page': active_page,
+                          'current_user_rate': current_user_rate,
+                          'current_user': current_user,
+                          'payments': payments_page,
+                          'page_range': page_range
+                      })
+
+
+@method_decorator(login_required(login_url='/login/'), name='dispatch')
+@method_decorator(user_is_student_or_teacher_or_staff, name='dispatch')
+class ProfileSettings(View):
+    def _get_user(self, pk):
+        return get_object_or_404(User, pk=pk)
+
+    def _get_sub_info(self, user):
+        if user.school_role == 'student':
+            current_user = get_object_or_404(Student, user=user.id)
+        else:
+            current_user = get_object_or_404(Teacher, user=user.id)
+
+        return current_user
+
+    def _render_page(self, request, active_page, current_user_rate, current_user, common_form, password_form):
+        return render(request, 'school/profile/index.html',
+                      context={
+                          'title': 'Profile',
+                          'tab': active_page,
+                          'current_page': active_page,
+                          'current_user_rate': current_user_rate,
+                          'current_user': current_user,
+                          'common_form': common_form,
+                          'password_form': password_form
+                      })
+
+    def get(self, request, pk):
+        active_page = 'settings'
+        user = self._get_user(pk)
+        current_user = self._get_sub_info(user)
+        teacher = current_user if user.school_role == 'teacher' else None
+        current_user_rate = int(current_user.rate)
+
+        common_form = UserCombineCommonForm(user=user, teacher=teacher)
+
+        return self._render_page(request, active_page, current_user_rate, current_user, common_form, UserChangePassword)
+
+    def post(self, request, pk, *args, **kwargs):
+        if request.method == "POST":
+            user = self._get_user(pk)
+            current_user = self._get_sub_info(user)
+            teacher = current_user if user.school_role == 'teacher' else None
+            current_user_rate = int(current_user.rate)
+            active_page = 'settings'
+
+            if 'change-password' in request.POST:
+                form = UserChangePassword(request.POST, user=user)
+
+                if form.is_valid():
+                    form.save()
+                else:
+                    common_form = UserCombineCommonForm(user=user, teacher=teacher)
+
+                    return self._render_page(request, active_page, current_user_rate, current_user, common_form, form)
+
+            if 'common-information' in request.POST:
+                form = UserCombineCommonForm(request.POST, user=user, teacher=teacher)
+
+                if form.is_valid():
+                    form.save(user=user, teacher=teacher)
+                else:
+                    return self._render_page(request, active_page, current_user_rate, current_user, form, UserChangePassword)
+
+        return redirect(request.META.get('HTTP_REFERER', '/'))
