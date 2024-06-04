@@ -2,13 +2,35 @@
 {% load static %}
 {% load extract_students %}
 {% block extra_css %}
-
+<!--<script src="{% static './vendor/libs/apex-charts/apex-charts.css' %}"></script>-->
 {% endblock %}
 
 {% block page-title %}{{ title }}{% endblock %}
 
 {% block content %}
 <div class="container-fluid flex-grow-1 container-p-y">
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body d-flex justify-content-between">
+                    <div class="card-info">
+                        <h5 class="card-title mb-0 me-2">${{ teacher_salary.total_price }}</h5>
+                        <small class="text-muted">{{ now_date|date:"M Y" }}</small>
+                    </div>
+                    <div id="conversationChart"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-9">
+            <div class="card">
+                <div class="card-body">
+                    <div id="barChart"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3"></div>
+        <div class="col-md-3"></div>
+    </div>
     <div class="row">
         <div class="col-xl-12">
             <div class="card mb-4">
@@ -18,7 +40,7 @@
                         <tr>
                             <th>Month</th>
                             <th>Part of month</th>
-                            <th>Sum</th>
+                            <th>Sum)</th>
                         </tr>
                         </thead>
                         {% for i in sum %}
@@ -38,5 +60,136 @@
 
 {% endblock %}
 {% block extra_js %}
+<script src="{% static './vendor/libs/apex-charts/apexcharts.js' %}"></script>
+<!--<script src="{% static './js/charts-apex.js' %}"></script>-->
+<script>
+let cardColor, headingColor, labelColor, borderColor, legendColor, radialTrackColor;
+    isDarkStyle = false;
+  if (isDarkStyle) {
+    cardColor = config.colors_dark.cardColor;
+    headingColor = config.colors_dark.headingColor;
+    labelColor = config.colors_dark.textMuted;
+    legendColor = config.colors_dark.bodyColor;
+    borderColor = config.colors_dark.borderColor;
+    radialTrackColor = '#36435C';
+  } else {
+    cardColor = config.colors.cardColor;
+    headingColor = config.colors.headingColor;
+    labelColor = config.colors.textMuted;
+    legendColor = config.colors.bodyColor;
+    borderColor = config.colors.borderColor;
+    radialTrackColor = config.colors_label.secondary;
+  }
 
+  // Color constant
+  const chartColors = {
+    column: {
+      series1: '#e2b143',
+      series2: '#7b9042',
+      series3: '#ac7561',
+      bg: '#DAddd1'
+    },
+    donut: {
+      series1: '#e2b143',
+      series2: '#7b9042',
+      series3: '#ac7561',
+      series4: '#2b9bf4'
+    },
+    area: {
+      series1: '#29dac7',
+      series2: '#60f2ca',
+      series3: '#a5f8cd'
+    }
+  };
+
+    const chartData = JSON.parse('{{ chart_data|escapejs }}');
+
+        const barChartEl = document.querySelector('#barChart'),
+              barChartConfig = {
+                  chart: {
+                      height: 400,
+                      type: 'bar',
+                      stacked: true,
+                      parentHeightOffset: 0,
+                      toolbar: {
+                          show: false
+                      }
+                  },
+                  plotOptions: {
+                      bar: {
+                          columnWidth: '15%',
+                          colors: {
+                              backgroundBarColors: [
+                                  chartColors.column.bg,
+                                  chartColors.column.bg,
+                                  chartColors.column.bg,
+                                  chartColors.column.bg,
+                                  chartColors.column.bg
+                              ],
+                              backgroundBarRadius: 10
+                          }
+                      }
+                  },
+                  dataLabels: {
+                      enabled: false
+                  },
+                  legend: {
+                      show: true,
+                      position: 'top',
+                      horizontalAlign: 'start',
+                      labels: {
+                          colors: legendColor,
+                          useSeriesColors: false
+                      }
+                  },
+                  colors: [chartColors.column.series1, chartColors.column.series2, chartColors.column.series3],  // Добавьте цвета для каждой валюты
+                  stroke: {
+                      show: true,
+                      colors: ['transparent']
+                  },
+                  grid: {
+                      borderColor: borderColor,
+                      xaxis: {
+                          lines: {
+                              show: true
+                          }
+                      }
+                  },
+                  series: Object.keys(chartData.series).map(currency => ({
+                      name: currency,
+                      data: chartData.series[currency]
+                  })),
+                  xaxis: {
+                      categories: chartData.months,
+                      axisBorder: {
+                          show: false
+                      },
+                      axisTicks: {
+                          show: false
+                      },
+                      labels: {
+                          style: {
+                              colors: labelColor,
+                              fontSize: '13px'
+                          }
+                      }
+                  },
+                  yaxis: {
+                      labels: {
+                          style: {
+                              colors: labelColor,
+                              fontSize: '13px'
+                          }
+                      }
+                  },
+                  fill: {
+                      opacity: 1
+                  }
+              };
+
+          if (typeof barChartEl !== undefined && barChartEl !== null) {
+              const barChart = new ApexCharts(barChartEl, barChartConfig);
+              barChart.render();
+          }
+</script>
 {% endblock %}

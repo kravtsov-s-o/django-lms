@@ -1,5 +1,8 @@
+import json
 from abc import ABC, abstractmethod
 from django.db import transaction
+from django.db.models import Sum
+from django.db.models.functions import TruncMonth
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
@@ -216,13 +219,50 @@ class StudentsView(View):
 @method_decorator(login_required(login_url='/login/'), name='dispatch')
 class TeacherStatistic(View):
     def get(self, request):
-        current_year = datetime.now().year
-        half_month_summaries = TeacherPayment.objects.get_half_month_summaries(current_year)
-        print(half_month_summaries)
+        date = datetime.now()
+        current_month = date.month
+        current_year = date.year
+        half_month_summaries = TeacherPayment.objects.get_half_month_summaries(request.user, current_year)
+
+        # =================================================================
+        teacher_salary = ((TeacherPayment
+                          .objects
+                          .filter(teacher__user=request.user, created_at__month=current_month, created_at__year=current_year))
+                          .aggregate(total_price=Sum('price')))
+
+        lessons = (
+            Lesson.objects
+            .filter(teacher__user=request.user, date__year=current_year)
+            .annotate(month=TruncMonth('date'))
+            .values('month', 'currency__name')
+            .annotate(total_price=Sum('price'))
+            .order_by('month', 'currency__name')
+        )
+
+        data = {}
+        for lesson in lessons:
+            month = lesson['month'].strftime('%Y-%m')
+            currency = lesson['currency__name']
+            total_price = float(lesson['total_price'])
+            if month not in data:
+                data[month] = {}
+            data[month][currency] = total_price
+
+        chart_data = {
+            'months': sorted(data.keys()),
+            'currencies': list({currency for month in data.values() for currency in month.keys()}),
+            'series': {currency: [data[month].get(currency, 0) for month in sorted(data.keys())] for currency in
+                       {currency for month in data.values() for currency in month.keys()}}
+        }
+
+        # =================================================================
 
         return render(request, 'school/teacher/statistic.html', context={
             'current_page': 'statistics',
             'sum': half_month_summaries,
+            'chart_data': json.dumps(chart_data),
+            'teacher_salary': teacher_salary,
+            'now_date': date,
         })
 
 
