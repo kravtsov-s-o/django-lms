@@ -4,7 +4,7 @@ from .models import Language, Duration, Currency
 
 # Register your models here.
 class CurrencyAdmin(admin.ModelAdmin):
-    list_display = ['name', 'exchange', 'default']
+    list_display = ['name', 'symbol', 'exchange', 'default']
 
 
 admin.site.register(Language)

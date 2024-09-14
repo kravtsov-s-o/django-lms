@@ -1,7 +1,7 @@
 {% load static %}
 <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
     <div class="app-brand demo">
-        <a href="{% url 'school:cabinet-schedule' %}" class="app-brand-link">
+        <a href="{% url 'school:cabinet-schedule' pk=request.user.id %}" class="app-brand-link">
                     <span class="app-brand-logo demo">
                         <img src="{% static './img/logo.svg' %}" alt="Ruslana.English">
                     </span>
@@ -23,20 +23,20 @@
         </li>
         <!-- Page -->
         <li class="menu-item {% if current_page == 'schedule' %}active{% endif %}">
-            <a href="{% url 'school:cabinet-schedule' %}" class="menu-link">
+            <a href="{% url 'school:cabinet-schedule' pk=request.user.id %}" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-home-circle"></i>
                 <div>Schedule</div>
             </a>
         </li>
         <li class="menu-item {% if current_page == 'students' %}active{% endif %}">
-            <a href="{% url 'school:cabinet-students' %}" class="menu-link">
+            <a href="{% url 'school:cabinet-students' pk=request.user.id %}" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-detail"></i>
                 <div data-i18n="Page 2">Students</div>
             </a>
         </li>
         {% if request.user.is_staff %}
         <li class="menu-item  {% if current_page == 'statistics' %}active{% endif %}">
-            <a href="{% url 'school:cabinet-statistics' %}" class="menu-link">
+            <a href="{% url 'school:cabinet-statistics' pk=request.user.id %}" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-bar-chart-alt-2"></i>
                 <div data-i18n="Page 2">Statistics</div>
             </a>

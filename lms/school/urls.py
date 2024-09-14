@@ -8,9 +8,9 @@ app_name = 'school'
 urlpatterns = [
     path('', MainView.as_view(), name='main'),
 
-    path('cabinet/schedule/', ScheduleView.as_view(), name='cabinet-schedule'),
-    path('cabinet/students/', StudentsView.as_view(), name='cabinet-students'),
-    path('cabinet/statistics/', TeacherStatistic.as_view(), name='cabinet-statistics'),
+    path('cabinet/<int:pk>/schedule/', ScheduleView.as_view(), name='cabinet-schedule'),
+    path('cabinet/<int:pk>/students/', StudentsView.as_view(), name='cabinet-students'),
+    path('cabinet/<int:pk>/statistics/', TeacherStatistic.as_view(), name='cabinet-statistics'),
 
     path('profile/<int:pk>/lessons/', ProfileLessons.as_view(), name='profile-lessons'),
     path('profile/<int:pk>/progress/', ProfileProgressView.as_view(), name='profile-progress'),

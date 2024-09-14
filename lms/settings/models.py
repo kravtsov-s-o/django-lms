@@ -18,6 +18,7 @@ class Duration(models.Model):
 
 class Currency(models.Model):
     name = models.CharField(max_length=3, unique=True, null=False)
+    symbol = models.CharField(max_length=3, null=True, blank=True)
     exchange = models.DecimalField(max_digits=10, decimal_places=5, null=False)
     default = models.BooleanField(default=False)
 

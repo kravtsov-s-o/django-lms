@@ -45,13 +45,16 @@ class MainView(View):
 @method_decorator(login_required(login_url='/login/'), name='dispatch')
 @method_decorator(user_is_teacher, name='dispatch')
 class ScheduleView(View):
-    def get(self, request):
+    def get(self, request, pk):
         current_date = datetime.today()
+
+        user = get_object_or_404(User, pk=pk)
+        current_user = get_object_or_404(Teacher, user=user.id)
 
         if request.GET.get('date'):
             current_date = datetime.strptime(request.GET.get('date'), '%Y-%m-%d')
 
-        lessons = Lesson.objects.filter(teacher__user=request.user, date=current_date).order_by('time')
+        lessons = Lesson.objects.filter(teacher=current_user, date=current_date).order_by('time')
 
         return render(request, 'school/teacher/index.html',
                       context={
@@ -59,11 +62,13 @@ class ScheduleView(View):
                           'date': current_date,
                           'lessons': lessons,
                           'lesson_move_form': LessonMoveForm(),
+                          'current_user': current_user,
                           'current_page': 'schedule'
                       })
 
 
 @method_decorator(login_required(login_url='/login/'), name='dispatch')
+@method_decorator(user_is_teacher, name='dispatch')
 class LessonAdd(View):
     def get_teacher(self, request):
         return Teacher.objects.filter(user=request.user).first()
@@ -84,7 +89,7 @@ class LessonAdd(View):
 
         if form.is_valid():
             form.save()
-            return redirect(to='school:cabinet-schedule')
+            return redirect(to='school:cabinet-schedule', pk=request.user.id)
         else:
             return render(request,
                           'school/teacher/lesson-add.html',
@@ -95,6 +100,7 @@ class LessonAdd(View):
 
 
 @method_decorator(login_required(login_url='/login/'), name='dispatch')
+@method_decorator(user_is_teacher, name='dispatch')
 class LessonEdit(View):
     def get_teacher(self, request):
         return Teacher.objects.filter(user=request.user).first()
@@ -120,7 +126,7 @@ class LessonEdit(View):
 
         if form.is_valid():
             form.save()
-            return redirect(to='school:cabinet-schedule')
+            return redirect(to='school:cabinet-schedule', pk=request.user.id)
         else:
             return render(request,
                           'school/teacher/lesson-add.html',
@@ -141,6 +147,7 @@ class LessonView(View):
 
 
 @method_decorator(login_required(login_url='/login/'), name='dispatch')
+@method_decorator(user_is_teacher, name='dispatch')
 class LessonDelete(View):
     def post(self, request, pk):
         teacher = Teacher.objects.filter(user=request.user).first()
@@ -148,10 +155,11 @@ class LessonDelete(View):
 
         if request.method == "POST":
             lesson.delete()
-            return redirect(request.META.get('HTTP_REFERER', '/'))
+            return redirect(to='school:cabinet-schedule', pk=request.user.id)
 
 
 @method_decorator(login_required(login_url='/login/'), name='dispatch')
+@method_decorator(user_is_teacher, name='dispatch')
 class LessonMove(View):
     def post(self, request, pk):
         if request.method == "POST":
@@ -200,7 +208,7 @@ class LessonPlanned(UpdateLessonStatusView):
 
 @method_decorator(login_required(login_url='/login/'), name='dispatch')
 class StudentsView(View):
-    def get(self, request):
+    def get(self, request, pk):
         students = (Student.objects.filter(teacher__user=request.user, user__is_active=True)
                     .order_by('user__first_name', 'user__last_name'))
 
@@ -219,7 +227,7 @@ class StudentsView(View):
 
 @method_decorator(login_required(login_url='/login/'), name='dispatch')
 class TeacherStatistic(View):
-    def get(self, request):
+    def get(self, request, pk):
         date = datetime.now()
         current_month = date.month
         current_year = date.year

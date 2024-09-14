@@ -28,7 +28,9 @@ environ.Env.read_env(BASE_DIR / '.env')
 SECRET_KEY = env('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
+# run server with styles when debug false
+# python manage.py runserver --insecure
 
 ALLOWED_HOSTS = ['*', '127.0.0.1', '192.168.0.26', '0.0.0.0', 'localhost']
 

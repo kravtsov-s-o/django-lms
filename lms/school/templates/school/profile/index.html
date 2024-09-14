@@ -72,7 +72,7 @@
                             {% if request.user.is_staff %}
                             <li class="mb-3">
                                 <span class="fw-bold me-2">Rate:</span>
-                                <span>{{ current_user_rate }} {{ current_user.currency }}</span>
+                                <span>{{ current_user.currency.symbol }}{{ current_user_rate }}</span>
                             </li>
                             {% endif %}
                         </ul>
@@ -88,7 +88,7 @@
                         <span class="badge bg-label-primary">Rate</span>
                         <div class="d-flex justify-content-center">
                             <sup class="h5 pricing-currency mt-3 mt-sm-4 mb-0 me-1 text-primary">
-                                {{ current_user.currency }}</sup>
+                                {{ current_user.currency.symbol }}</sup>
                             <h1 class="display-3 fw-normal mb-0 text-primary">{{ current_user_rate }}</h1>
                             <sub class="fs-6 pricing-duration mt-auto mb-4">/hour</sub>
                         </div>

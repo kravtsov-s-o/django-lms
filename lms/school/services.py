@@ -249,7 +249,7 @@ def user_is_teacher(view_func):
     @wraps(view_func)
     def _wrapped_view(request, *args, **kwargs):
         # Проверяем роль текущего пользователя
-        if request.user.school_role == 'teacher' or request.user.is_staff:
+        if request.user.school_role == 'teacher':
             return view_func(request, *args, **kwargs)
         else:
             raise PermissionDenied  # Возвращаем ошибку 403, если не учитель
