@@ -19,8 +19,43 @@ from django.urls import path, include
 from django.conf.urls.static import static
 from django.conf import settings
 
+from django.shortcuts import render
+
+
+def custom_page_not_found_view(request, exception):
+    context = {
+        'code': 404,
+        'title': "Page Not Found :(",
+        'message': "We couldn't find the page you are looking for",
+        'error': str(exception),
+    }
+    return render(request, "404.html", context, status=404)
+
+
+def custom_server_error_view(request):
+    context = {
+        'code': 500,
+        'title': "Something went wrong.",
+        'message': "We already working on it.",
+    }
+    return render(request, '500.html', context, status=500)
+
+
+def custom_page_access_denied_view(request, exception):
+    context = {
+        'code': 403,
+        'title': "Access Denied",
+        'error': str(exception),
+    }
+    return render(request, '403.html', context, status=403)
+
+
 urlpatterns = [
-    path('admin/', admin.site.urls, name='admin'),
-    path('', include('users.urls')),
-    path('', include('school.urls'))
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+                  path('admin/', admin.site.urls, name='admin'),
+                  path('', include('users.urls')),
+                  path('', include('school.urls')),
+              ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+handler404 = 'lms.urls.custom_page_not_found_view'
+handler403 = 'lms.urls.custom_page_access_denied_view'
+handler500 = 'lms.urls.custom_server_error_view'

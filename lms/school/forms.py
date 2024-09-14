@@ -1,11 +1,16 @@
 from django import forms
+from django.utils.functional import lazy
 from .models import Teacher, Student, Lesson, StudentProgress
 from settings.models import Language
 from users.models import User
 
 
+def get_language_choices():
+    return Language.objects.all().values_list('id', 'name')
+
+
 class TeacherForm(forms.ModelForm):
-    language_choices = Language.objects.all().values_list('id', 'name')
+    language_choices = lazy(get_language_choices, list)
     language = forms.MultipleChoiceField(
         choices=language_choices,
         widget=forms.CheckboxSelectMultiple
@@ -22,7 +27,7 @@ class TeacherForm(forms.ModelForm):
 
 
 class StudentForm(forms.ModelForm):
-    language_choices = Language.objects.all().values_list('id', 'name')
+    language_choices = lazy(get_language_choices, list)
     language = forms.MultipleChoiceField(
         choices=language_choices,
         widget=forms.CheckboxSelectMultiple
@@ -99,7 +104,7 @@ class ProgressStageForm(forms.ModelForm):
 class UserCommonForm(forms.ModelForm):
     class Meta:
         model = User
-        fields = ['username', 'email',  'first_name', 'last_name']
+        fields = ['username', 'email', 'first_name', 'last_name']
 
 
 class TeacherCommonFrom(forms.ModelForm):
@@ -142,7 +147,6 @@ class UserCombineCommonForm(forms.Form):
         if teacher:
             teacher.about = self.cleaned_data['about']
             teacher.save()
-
 
 
 class UserChangePassword(forms.ModelForm):

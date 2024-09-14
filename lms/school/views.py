@@ -12,7 +12,7 @@ from django.views.generic.edit import DeleteView
 from datetime import datetime
 from .models import Student, Teacher, Lesson, StudentProgress
 from .forms import LessonForm, LessonMoveForm, ProgressStageForm, UserChangePassword, UserCombineCommonForm
-from .services import lesson_finished, user_is_student_or_teacher_or_staff, count_time_left
+from .services import lesson_finished, user_is_student_or_teacher_or_staff, count_time_left, user_is_teacher
 from users.models import User
 
 from transactions.models import StudentPayment, TeacherPayment
@@ -43,6 +43,7 @@ class MainView(View):
 
 
 @method_decorator(login_required(login_url='/login/'), name='dispatch')
+@method_decorator(user_is_teacher, name='dispatch')
 class ScheduleView(View):
     def get(self, request):
         current_date = datetime.today()
