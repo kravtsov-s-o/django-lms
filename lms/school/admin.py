@@ -14,6 +14,13 @@ class TeacherAdmin(admin.ModelAdmin):
 
     form = TeacherForm
 
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        field = super().formfield_for_foreignkey(db_field, request, **kwargs)
+        if db_field.name == 'user':
+            # Фильтруем пользователей по school_role='student'
+            field.queryset = User.objects.filter(school_role='teacher')
+        return field
+
     def get_name(self, obj):
         if obj.user.first_name == '' and obj.user.last_name == '':
             return f'{obj.user.username}'
@@ -34,6 +41,13 @@ class StudentAdmin(admin.ModelAdmin):
     list_filter = ['language', 'company', 'teacher', 'user__is_active']
 
     form = StudentForm
+
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        field = super().formfield_for_foreignkey(db_field, request, **kwargs)
+        if db_field.name == 'user':
+            # Фильтруем пользователей по school_role='student'
+            field.queryset = User.objects.filter(school_role='student')
+        return field
 
     def get_name(self, obj):
         if obj.user.first_name == '' and obj.user.last_name == '':

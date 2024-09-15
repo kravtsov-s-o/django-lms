@@ -169,7 +169,7 @@ class LessonMove(View):
                 new_time = form.cleaned_data['time']
                 teacher = Teacher.objects.filter(user=request.user).first()
                 Lesson.objects.filter(pk=pk, teacher=teacher).update(date=new_date, time=new_time)
-                return redirect(to='school:cabinet-schedule')
+                return redirect(to='school:cabinet-schedule', pk=request.user.id)
             return redirect(request.META.get('HTTP_REFERER', '/'))
 
 
@@ -233,20 +233,23 @@ class StudentsView(View):
 @method_decorator(user_is_teacher, name='dispatch')
 class TeacherStatistic(View):
     def get(self, request, pk):
+        current_user = get_object_or_404(Teacher, user=request.user)
         date = datetime.now()
         current_month = date.month
         current_year = date.year
         half_month_summaries = TeacherPayment.objects.get_half_month_summaries(request.user, current_year)
 
         # =================================================================
-        teacher_salary = ((TeacherPayment
+        month_salary = ((TeacherPayment
                           .objects
-                          .filter(teacher__user=request.user, created_at__month=current_month, created_at__year=current_year))
+                          .filter(teacher=current_user, created_at__month=current_month, created_at__year=current_year))
                           .aggregate(total_price=Sum('price')))
+
+        teacher_salary = month_salary.get('total_price') if month_salary.get('total_price') is not None else '0.00'
 
         lessons = (
             Lesson.objects
-            .filter(teacher__user=request.user, date__year=current_year)
+            .filter(teacher=current_user, date__year=current_year)
             .annotate(month=TruncMonth('date'))
             .values('month', 'currency__name')
             .annotate(total_price=Sum('price'))
@@ -277,6 +280,7 @@ class TeacherStatistic(View):
             'chart_data': json.dumps(chart_data),
             'teacher_salary': teacher_salary,
             'now_date': date,
+            'current_user': current_user
         })
 
 

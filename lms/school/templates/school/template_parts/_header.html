@@ -83,7 +83,7 @@
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end">
                         <li>
-                            <a class="dropdown-item" href="pages-account-settings-account.html">
+                            <a class="dropdown-item" href="{% url 'school:profile-lessons' pk=request.user.id %}">
                                 <div class="d-flex">
                                     <div class="flex-shrink-0 me-3">
                                         <div class="avatar avatar-online">
@@ -105,12 +105,7 @@
                         <li>
                             <div class="dropdown-divider"></div>
                         </li>
-                        <li>
-                            <a class="dropdown-item" href="pages-profile-user.html">
-                                <i class="bx bx-user me-2"></i>
-                                <span class="align-middle">My Profile</span>
-                            </a>
-                        </li>
+                        {% if request.user.is_staff %}
                         <li>
                             <a class="dropdown-item" href="{% url 'admin:index' %}" target="_blank">
                                 <i class="bx bx-cog me-2"></i>
@@ -120,6 +115,7 @@
                         <li>
                             <div class="dropdown-divider"></div>
                         </li>
+                        {% endif %}
                         <li>
                             <form action="{% url 'users:logout' %}" method="POST">
                                 {% csrf_token %}
