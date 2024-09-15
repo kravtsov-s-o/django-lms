@@ -12,7 +12,7 @@ from django.views.generic.edit import DeleteView
 from datetime import datetime
 from .models import Student, Teacher, Lesson, StudentProgress
 from .forms import LessonForm, LessonMoveForm, ProgressStageForm, UserChangePassword, UserCombineCommonForm
-from .services import lesson_finished, user_is_student_or_teacher_or_staff, count_time_left, user_is_teacher
+from .services import lesson_finished, user_is_student_or_teacher, count_time_left, user_is_teacher
 from users.models import User
 
 from transactions.models import StudentPayment, TeacherPayment
@@ -137,8 +137,7 @@ class LessonEdit(View):
 
 
 @method_decorator(login_required(login_url='/login/'), name='dispatch')
-# @method_decorator(user_is_student_or_teacher_or_staff, name='dispatch')
-# TODO add/fix check for student or teacher or staff for lesson
+@method_decorator(user_is_student_or_teacher, name='dispatch')
 class LessonView(View):
     def get(self, request, pk):
         lesson = get_object_or_404(Lesson, pk=pk)
@@ -175,6 +174,7 @@ class LessonMove(View):
 
 
 @method_decorator(login_required(login_url='/login/'), name='dispatch')
+@method_decorator(user_is_teacher, name='dispatch')
 class UpdateLessonStatusView(ABC, View):
     @abstractmethod
     def get_status(self):
@@ -191,22 +191,26 @@ class UpdateLessonStatusView(ABC, View):
         return redirect(request.META.get('HTTP_REFERER', '/'))
 
 
+@method_decorator(user_is_teacher, name='dispatch')
 class LessonConducted(UpdateLessonStatusView):
     def get_status(self):
         return 'сonducted'
 
 
+@method_decorator(user_is_teacher, name='dispatch')
 class LessonMissed(UpdateLessonStatusView):
     def get_status(self):
         return 'missed'
 
 
+@method_decorator(user_is_teacher, name='dispatch')
 class LessonPlanned(UpdateLessonStatusView):
     def get_status(self):
         return 'planned'
 
 
 @method_decorator(login_required(login_url='/login/'), name='dispatch')
+@method_decorator(user_is_teacher, name='dispatch')
 class StudentsView(View):
     def get(self, request, pk):
         students = (Student.objects.filter(teacher__user=request.user, user__is_active=True)
@@ -226,6 +230,7 @@ class StudentsView(View):
                       )
 
 @method_decorator(login_required(login_url='/login/'), name='dispatch')
+@method_decorator(user_is_teacher, name='dispatch')
 class TeacherStatistic(View):
     def get(self, request, pk):
         date = datetime.now()
@@ -276,7 +281,7 @@ class TeacherStatistic(View):
 
 
 @method_decorator(login_required(login_url='/login/'), name='dispatch')
-@method_decorator(user_is_student_or_teacher_or_staff, name='dispatch')
+@method_decorator(user_is_student_or_teacher, name='dispatch')
 class ProfileLessons(View):
     def get(self, request, pk):
         user = get_object_or_404(User, pk=pk)
@@ -310,7 +315,7 @@ class ProfileLessons(View):
 
 
 @method_decorator(login_required(login_url='/login/'), name='dispatch')
-@method_decorator(user_is_student_or_teacher_or_staff, name='dispatch')
+@method_decorator(user_is_student_or_teacher, name='dispatch')
 class ProfileProgressView(View):
     def _get_teacher(self, request):
         return Teacher.objects.filter(user=request.user).first()
@@ -365,6 +370,7 @@ class ProfileProgressView(View):
 
 
 @method_decorator(login_required(login_url='/login/'), name='dispatch')
+@method_decorator(user_is_teacher, name='dispatch')
 class ProfileProgressDelete(DeleteView):
     def post(self, request, pk, pk2):
         if request.method == "POST":
@@ -373,7 +379,7 @@ class ProfileProgressDelete(DeleteView):
 
 
 @method_decorator(login_required(login_url='/login/'), name='dispatch')
-@method_decorator(user_is_student_or_teacher_or_staff, name='dispatch')
+@method_decorator(user_is_student_or_teacher, name='dispatch')
 class ProfilePayments(View):
     def get(self, request, pk):
         user = get_object_or_404(User, pk=pk)
@@ -404,7 +410,7 @@ class ProfilePayments(View):
 
 
 @method_decorator(login_required(login_url='/login/'), name='dispatch')
-@method_decorator(user_is_student_or_teacher_or_staff, name='dispatch')
+@method_decorator(user_is_student_or_teacher, name='dispatch')
 class ProfileSettings(View):
     def _get_user(self, pk):
         return get_object_or_404(User, pk=pk)

@@ -10,6 +10,7 @@ from transactions.models import StudentPayment, TeacherPayment, CompanyPayment
 from functools import wraps
 from django.core.exceptions import PermissionDenied
 from users.models import User
+
 # =================================================================
 
 DEFAULT_LESSON_DURATION = 60  # minutes
@@ -228,8 +229,9 @@ def calculate_teacher_price(teacher: Teacher, duration: int, lesson: Lesson, num
 
     return calculate_price(teacher_rate, duration, number_of_students) * number_of_students
 
+
 # =================================================================
-def user_is_student_or_teacher_or_staff(view_func):
+def user_is_student_or_teacher(view_func):
     @wraps(view_func)
     def _wrapped_view(request, *args, **kwargs):
         profile_id = kwargs.get('pk')
@@ -237,12 +239,13 @@ def user_is_student_or_teacher_or_staff(view_func):
         if user.school_role == 'student':
             profile = get_object_or_404(Student, user=user)
 
-        if request.user == user or profile.teacher.user == request.user or request.user.is_staff:
+        if request.user == user or profile.teacher.user == request.user:
             return view_func(request, *args, **kwargs)
         else:
             raise PermissionDenied
 
     return _wrapped_view
+
 
 # =================================================================
 def user_is_teacher(view_func):
