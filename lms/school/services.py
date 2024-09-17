@@ -234,12 +234,15 @@ def calculate_teacher_price(teacher: Teacher, duration: int, lesson: Lesson, num
 def user_is_student_or_teacher(view_func):
     @wraps(view_func)
     def _wrapped_view(request, *args, **kwargs):
-        profile_id = kwargs.get('pk')
-        user = get_object_or_404(User, pk=profile_id)
+        # profile_id = kwargs.get('pk')
+        # user = get_object_or_404(User, pk=profile_id)
+        user = request.user
         if user.school_role == 'student':
             profile = get_object_or_404(Student, user=user)
+        elif user.school_role == 'teacher':
+            profile = get_object_or_404(Teacher, user=user)
 
-        if request.user == user or profile.teacher.user == request.user:
+        if request.user == profile.user or (hasattr(profile, 'teacher') and profile.teacher.user == request.user):
             return view_func(request, *args, **kwargs)
         else:
             raise PermissionDenied

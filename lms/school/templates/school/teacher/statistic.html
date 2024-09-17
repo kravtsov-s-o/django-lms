@@ -1,5 +1,6 @@
 {% extends 'school/base-template.html' %}
 {% load static %}
+{% load url_params %}
 {% load extract_students %}
 {% block extra_css %}
 <!--<script src="{% static './vendor/libs/apex-charts/apex-charts.css' %}"></script>-->
@@ -10,10 +11,76 @@
 {% block content %}
 <div class="container-fluid flex-grow-1 container-p-y">
     <div class="row mb-4">
-        <div class="col-md-3">
+
+    </div>
+    <div class="row">
+        <div class="col-xl-12">
+            <div class="card mb-4">
+                <div class="card-header  d-flex justify-content-end">
+                    <div class="btn-group me-3">
+                        <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuMonth"
+                                data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            {% for month in month_list %}
+                            {% if month.number == current_month %}{{ month.title }} {% endif %}
+                            {% endfor %}
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuMonth">
+                            {% for month in month_list %}
+                            <li><a class="dropdown-item" href="?{% param_replace month=month.number %}">{{ month.title }}</a></li>
+<!--                            <li><a class="dropdown-item" href="?month={{ month.number }}">{{ month.title }}</a></li>-->
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    <div class="btn-group me-3">
+                        <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuYear"
+                                data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            {{ current_year }}
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuYear">
+                            {% for year in available_years %}
+                            <li><a class="dropdown-item" href="?year={{ year }}">{{ year }}</a></li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+                <div class="card-body table-responsive">
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th class="text-center">Student</th>
+                            {% for time in durations %}
+                            <th class="text-center">{{ time }}</th>
+                            {% endfor %}
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for student in queryset %}
+                        <tr>
+                            <td>{{ student.lesson__students__user__first_name }}
+                                {{ student.lesson__students__user__last_name }}
+                            </td>
+                            {% for time in durations %}
+                            <td class="text-center">
+                                {% if time.time == student.lesson__duration__time %}
+                                {{ student.lesson_count }}
+                                {% endif %}
+                            </td>
+                            {% endfor %}
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                    <!--<pre>{{ json_data|safe }}</pre>-->
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-3">
             <div class="card">
                 <div class="card-body d-flex justify-content-between">
                     <div class="card-info">
+                        <p class="card-title">Month Salary</p>
                         <h5 class="card-title mb-0 me-2">
                             {{ current_user.currency.symbol }}{{ teacher_salary }}
                         </h5>
@@ -23,21 +90,10 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-9">
-            <div class="card">
-                <div class="card-body">
-                    <div id="barChart"></div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3"></div>
-        <div class="col-md-3"></div>
-    </div>
-    <div class="row">
-        <div class="col-xl-12">
+        <div class="col-lg-9">
             <div class="card mb-4">
-                <div class="card-body">
-                    <table class="table">
+                <div class="card-body table-responsive">
+                    <table class="table table-striped">
                         <thead>
                         <tr>
                             <th>Month</th>
@@ -48,8 +104,8 @@
                         {% for i in sum %}
                         <tr>
                             <td>{{i.month|date:"M"}}</td>
-                            <td>{{i.half_month}}</td>
-                            <td>{{i.total_price}}</td>
+                            <td>{% if i.half_month == 1 %} First part {% else %} Second part {% endif %}</td>
+                            <td>{{ current_user.currency.symbol }}{{i.total_price}}</td>
                         </tr>
                         {% endfor %}
                     </table>
@@ -58,6 +114,7 @@
         </div>
     </div>
 </div>
+</div>
 
 
 {% endblock %}
@@ -65,133 +122,133 @@
 <script src="{% static './vendor/libs/apex-charts/apexcharts.js' %}"></script>
 <!--<script src="{% static './js/charts-apex.js' %}"></script>-->
 <script>
-let cardColor, headingColor, labelColor, borderColor, legendColor, radialTrackColor;
-    isDarkStyle = false;
-  if (isDarkStyle) {
-    cardColor = config.colors_dark.cardColor;
-    headingColor = config.colors_dark.headingColor;
-    labelColor = config.colors_dark.textMuted;
-    legendColor = config.colors_dark.bodyColor;
-    borderColor = config.colors_dark.borderColor;
-    radialTrackColor = '#36435C';
-  } else {
-    cardColor = config.colors.cardColor;
-    headingColor = config.colors.headingColor;
-    labelColor = config.colors.textMuted;
-    legendColor = config.colors.bodyColor;
-    borderColor = config.colors.borderColor;
-    radialTrackColor = config.colors_label.secondary;
-  }
+    let cardColor, headingColor, labelColor, borderColor, legendColor, radialTrackColor;
+        isDarkStyle = false;
+      if (isDarkStyle) {
+        cardColor = config.colors_dark.cardColor;
+        headingColor = config.colors_dark.headingColor;
+        labelColor = config.colors_dark.textMuted;
+        legendColor = config.colors_dark.bodyColor;
+        borderColor = config.colors_dark.borderColor;
+        radialTrackColor = '#36435C';
+      } else {
+        cardColor = config.colors.cardColor;
+        headingColor = config.colors.headingColor;
+        labelColor = config.colors.textMuted;
+        legendColor = config.colors.bodyColor;
+        borderColor = config.colors.borderColor;
+        radialTrackColor = config.colors_label.secondary;
+      }
 
-  // Color constant
-  const chartColors = {
-    column: {
-      series1: '#e2b143',
-      series2: '#7b9042',
-      series3: '#ac7561',
-      bg: '#DAddd1'
-    },
-    donut: {
-      series1: '#e2b143',
-      series2: '#7b9042',
-      series3: '#ac7561',
-      series4: '#2b9bf4'
-    },
-    area: {
-      series1: '#29dac7',
-      series2: '#60f2ca',
-      series3: '#a5f8cd'
-    }
-  };
+      // Color constant
+      const chartColors = {
+        column: {
+          series1: '#e2b143',
+          series2: '#7b9042',
+          series3: '#ac7561',
+          bg: '#DAddd1'
+        },
+        donut: {
+          series1: '#e2b143',
+          series2: '#7b9042',
+          series3: '#ac7561',
+          series4: '#2b9bf4'
+        },
+        area: {
+          series1: '#29dac7',
+          series2: '#60f2ca',
+          series3: '#a5f8cd'
+        }
+      };
 
-    const chartData = JSON.parse('{{ chart_data|escapejs }}');
+        const chartData = JSON.parse('{{ chart_data|escapejs }}');
 
-        const barChartEl = document.querySelector('#barChart'),
-              barChartConfig = {
-                  chart: {
-                      height: 400,
-                      type: 'bar',
-                      stacked: true,
-                      parentHeightOffset: 0,
-                      toolbar: {
-                          show: false
-                      }
-                  },
-                  plotOptions: {
-                      bar: {
-                          columnWidth: '15%',
-                          colors: {
-                              backgroundBarColors: [
-                                  chartColors.column.bg,
-                                  chartColors.column.bg,
-                                  chartColors.column.bg,
-                                  chartColors.column.bg,
-                                  chartColors.column.bg
-                              ],
-                              backgroundBarRadius: 10
+            const barChartEl = document.querySelector('#barChart'),
+                  barChartConfig = {
+                      chart: {
+                          height: 400,
+                          type: 'bar',
+                          stacked: true,
+                          parentHeightOffset: 0,
+                          toolbar: {
+                              show: false
                           }
-                      }
-                  },
-                  dataLabels: {
-                      enabled: false
-                  },
-                  legend: {
-                      show: true,
-                      position: 'top',
-                      horizontalAlign: 'start',
-                      labels: {
-                          colors: legendColor,
-                          useSeriesColors: false
-                      }
-                  },
-                  colors: [chartColors.column.series1, chartColors.column.series2, chartColors.column.series3],  // Добавьте цвета для каждой валюты
-                  stroke: {
-                      show: true,
-                      colors: ['transparent']
-                  },
-                  grid: {
-                      borderColor: borderColor,
+                      },
+                      plotOptions: {
+                          bar: {
+                              columnWidth: '15%',
+                              colors: {
+                                  backgroundBarColors: [
+                                      chartColors.column.bg,
+                                      chartColors.column.bg,
+                                      chartColors.column.bg,
+                                      chartColors.column.bg,
+                                      chartColors.column.bg
+                                  ],
+                                  backgroundBarRadius: 10
+                              }
+                          }
+                      },
+                      dataLabels: {
+                          enabled: false
+                      },
+                      legend: {
+                          show: true,
+                          position: 'top',
+                          horizontalAlign: 'start',
+                          labels: {
+                              colors: legendColor,
+                              useSeriesColors: false
+                          }
+                      },
+                      colors: [chartColors.column.series1, chartColors.column.series2, chartColors.column.series3],  // Добавьте цвета для каждой валюты
+                      stroke: {
+                          show: true,
+                          colors: ['transparent']
+                      },
+                      grid: {
+                          borderColor: borderColor,
+                          xaxis: {
+                              lines: {
+                                  show: true
+                              }
+                          }
+                      },
+                      series: Object.keys(chartData.series).map(currency => ({
+                          name: currency,
+                          data: chartData.series[currency]
+                      })),
                       xaxis: {
-                          lines: {
-                              show: true
+                          categories: chartData.months,
+                          axisBorder: {
+                              show: false
+                          },
+                          axisTicks: {
+                              show: false
+                          },
+                          labels: {
+                              style: {
+                                  colors: labelColor,
+                                  fontSize: '13px'
+                              }
                           }
-                      }
-                  },
-                  series: Object.keys(chartData.series).map(currency => ({
-                      name: currency,
-                      data: chartData.series[currency]
-                  })),
-                  xaxis: {
-                      categories: chartData.months,
-                      axisBorder: {
-                          show: false
                       },
-                      axisTicks: {
-                          show: false
+                      yaxis: {
+                          labels: {
+                              style: {
+                                  colors: labelColor,
+                                  fontSize: '13px'
+                              }
+                          }
                       },
-                      labels: {
-                          style: {
-                              colors: labelColor,
-                              fontSize: '13px'
-                          }
+                      fill: {
+                          opacity: 1
                       }
-                  },
-                  yaxis: {
-                      labels: {
-                          style: {
-                              colors: labelColor,
-                              fontSize: '13px'
-                          }
-                      }
-                  },
-                  fill: {
-                      opacity: 1
-                  }
-              };
+                  };
 
-          if (typeof barChartEl !== undefined && barChartEl !== null) {
-              const barChart = new ApexCharts(barChartEl, barChartConfig);
-              barChart.render();
-          }
+              if (typeof barChartEl !== undefined && barChartEl !== null) {
+                  const barChart = new ApexCharts(barChartEl, barChartConfig);
+                  barChart.render();
+              }
 </script>
 {% endblock %}

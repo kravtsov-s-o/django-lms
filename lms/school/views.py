@@ -1,8 +1,8 @@
 import json
 from abc import ABC, abstractmethod
 from django.db import transaction
-from django.db.models import Sum
-from django.db.models.functions import TruncMonth
+from django.db.models import Sum, Count
+from django.db.models.functions import TruncMonth, ExtractYear
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
@@ -16,6 +16,8 @@ from .services import lesson_finished, user_is_student_or_teacher, count_time_le
 from users.models import User
 
 from transactions.models import StudentPayment, TeacherPayment
+
+from settings.models import Duration
 
 
 # Create your views here.
@@ -214,7 +216,7 @@ class LessonPlanned(UpdateLessonStatusView):
 class StudentsView(View):
     def get(self, request, pk):
         students = (Student.objects.filter(teacher__user=request.user, user__is_active=True)
-                    .order_by('user__first_name', 'user__last_name'))
+                    .order_by('company', 'user__first_name', 'user__last_name'))
 
         # Start Paginator
         items_per_page = 20
@@ -247,40 +249,93 @@ class TeacherStatistic(View):
 
         teacher_salary = month_salary.get('total_price') if month_salary.get('total_price') is not None else '0.00'
 
-        lessons = (
-            Lesson.objects
-            .filter(teacher=current_user, date__year=current_year)
-            .annotate(month=TruncMonth('date'))
-            .values('month', 'currency__name')
-            .annotate(total_price=Sum('price'))
-            .order_by('month', 'currency__name')
-        )
-
-        data = {}
-        for lesson in lessons:
-            month = lesson['month'].strftime('%Y-%m')
-            currency = lesson['currency__name']
-            total_price = float(lesson['total_price'])
-            if month not in data:
-                data[month] = {}
-            data[month][currency] = total_price
-
-        chart_data = {
-            'months': sorted(data.keys()),
-            'currencies': list({currency for month in data.values() for currency in month.keys()}),
-            'series': {currency: [data[month].get(currency, 0) for month in sorted(data.keys())] for currency in
-                       {currency for month in data.values() for currency in month.keys()}}
-        }
-
         # =================================================================
 
+        if 'month' in request.GET:
+            current_month = int(request.GET['month'])
+
+        if 'year' in request.GET:
+            current_year = int(request.GET['year'])
+
+        queryset = ((TeacherPayment
+                          .objects
+                          .filter(teacher=current_user, created_at__month=current_month, created_at__year=current_year))
+                          .values('lesson__students__id', 'lesson__students__user__first_name', 'lesson__students__user__last_name', 'lesson__duration__time')
+                          .annotate(lesson_count=Count('lesson__id'))
+                          .order_by('lesson__students__user__username'))
+
+        durations = Duration.objects.all()
+        data = list(queryset)
+        # =================================================================
+
+        month_list = [
+            {
+                'title': 'Jan',
+                'number': 1,
+            },
+            {
+                'title': 'Feb',
+                'number': 2,
+            },
+            {
+                'title': 'Mar',
+                'number': 3,
+            },
+            {
+                'title': 'Apr',
+                'number': 4,
+            },
+            {
+                'title': 'May',
+                'number': 5,
+            },
+            {
+                'title': 'Jun',
+                'number': 6,
+            },
+            {
+                'title': 'Jul',
+                'number': 7,
+            },
+            {
+                'title': 'Aug',
+                'number': 8,
+            },
+            {
+                'title': 'Sep',
+                'number': 9,
+            },
+            {
+                'title': 'Oct',
+                'number': 10,
+            },
+            {
+                'title': 'Nov',
+                'number': 11,
+            },
+            {
+                'title': 'Dec',
+                'number': 12,
+            },
+        ]
+
+        available_years = TeacherPayment.objects.annotate(year=ExtractYear('created_at')).values_list('year', flat=True).distinct().order_by(
+            'year')
+
         return render(request, 'school/teacher/statistic.html', context={
+            'title': 'Statistics',
             'current_page': 'statistics',
             'sum': half_month_summaries,
-            'chart_data': json.dumps(chart_data),
             'teacher_salary': teacher_salary,
             'now_date': date,
-            'current_user': current_user
+            'current_user': current_user,
+            'current_month': current_month,
+            'current_year': current_year,
+            'available_years': available_years,
+            'durations': durations,
+            'queryset': queryset,
+            'month_list': month_list,
+            'json_data': json.dumps(data, indent=4)
         })
 
 
