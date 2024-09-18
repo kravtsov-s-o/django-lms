@@ -44,25 +44,23 @@
                     </div>
                 </div>
                 <div class="card-body table-responsive">
-                    <table class="table">
+                    <table class="table table-hover">
                         <thead>
                         <tr>
-                            <th class="text-center">Student</th>
+                            <th style="width: 25%" class="text-center">Student</th>
                             {% for time in durations %}
                             <th class="text-center">{{ time }}</th>
                             {% endfor %}
                         </tr>
                         </thead>
                         <tbody>
-                        {% for student in queryset %}
+                        {% for item in result %}
                         <tr>
-                            <td>{{ student.lesson__students__user__first_name }}
-                                {{ student.lesson__students__user__last_name }}
-                            </td>
+                            <td style="width: 25%">{{ item.students }}</td>
                             {% for time in durations %}
                             <td class="text-center">
-                                {% if time.time == student.lesson__duration__time %}
-                                {{ student.lesson_count }}
+                                {% if time.time == item.duration %}
+                                {{ item.count }}
                                 {% endif %}
                             </td>
                             {% endfor %}
@@ -70,7 +68,7 @@
                         {% endfor %}
                         </tbody>
                     </table>
-                    <!--<pre>{{ json_data|safe }}</pre>-->
+<!--                    <pre>{{ json_data|safe }}</pre>-->
                 </div>
             </div>
         </div>
@@ -86,7 +84,6 @@
                         </h5>
                         <small class="text-muted">{{ now_date|date:"M Y" }}</small>
                     </div>
-                    <div id="conversationChart"></div>
                 </div>
             </div>
         </div>

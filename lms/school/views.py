@@ -1,5 +1,8 @@
+import calendar
 import json
 from abc import ABC, abstractmethod
+from collections import defaultdict
+
 from django.db import transaction
 from django.db.models import Sum, Count
 from django.db.models.functions import TruncMonth, ExtractYear
@@ -257,66 +260,52 @@ class TeacherStatistic(View):
         if 'year' in request.GET:
             current_year = int(request.GET['year'])
 
-        queryset = ((TeacherPayment
-                          .objects
-                          .filter(teacher=current_user, created_at__month=current_month, created_at__year=current_year))
-                          .values('lesson__students__id', 'lesson__students__user__first_name', 'lesson__students__user__last_name', 'lesson__duration__time')
-                          .annotate(lesson_count=Count('lesson__id'))
-                          .order_by('lesson__students__user__username'))
+        queryset_lessons = ((TeacherPayment
+                              .objects
+                              .filter(teacher=current_user, created_at__month=current_month, created_at__year=current_year))
+                              .values('lesson__id', 'lesson__duration__time')
+                              .order_by('lesson__id'))
+
+        # =================================================================
+        queryset = []
+        for lesson in queryset_lessons:
+            lesson_students = (Lesson
+                               .objects
+                               .filter(pk=lesson["lesson__id"])
+                               .values_list('students__user__first_name', 'students__user__last_name'))
+
+            item = {
+                'lesson_id': lesson["lesson__id"],
+                'students': ', '.join([f"{first_name} {last_name}" for first_name, last_name in lesson_students]),
+                'duration': lesson["lesson__duration__time"],
+            }
+
+            queryset.append(item)
+
+        combined_data = defaultdict(lambda: {"students": "", "duration": 0, "count": 0})
+
+        for entry in queryset:
+            key = (entry["students"], entry["duration"])
+            if combined_data[key]["students"] == "":
+                combined_data[key]["students"] = entry["students"]
+                combined_data[key]["duration"] = entry["duration"]
+            combined_data[key]["count"] += 1
+
+        # Преобразовать в список
+        result = list(combined_data.values())
+
+        # =================================================================
 
         durations = Duration.objects.all()
-        data = list(queryset)
+        data = list(result)
         # =================================================================
 
         month_list = [
             {
-                'title': 'Jan',
-                'number': 1,
-            },
-            {
-                'title': 'Feb',
-                'number': 2,
-            },
-            {
-                'title': 'Mar',
-                'number': 3,
-            },
-            {
-                'title': 'Apr',
-                'number': 4,
-            },
-            {
-                'title': 'May',
-                'number': 5,
-            },
-            {
-                'title': 'Jun',
-                'number': 6,
-            },
-            {
-                'title': 'Jul',
-                'number': 7,
-            },
-            {
-                'title': 'Aug',
-                'number': 8,
-            },
-            {
-                'title': 'Sep',
-                'number': 9,
-            },
-            {
-                'title': 'Oct',
-                'number': 10,
-            },
-            {
-                'title': 'Nov',
-                'number': 11,
-            },
-            {
-                'title': 'Dec',
-                'number': 12,
-            },
+                'title': calendar.month_abbr[i],
+                'number': i
+            }
+            for i in range(1, 13)
         ]
 
         available_years = TeacherPayment.objects.annotate(year=ExtractYear('created_at')).values_list('year', flat=True).distinct().order_by(
@@ -333,9 +322,9 @@ class TeacherStatistic(View):
             'current_year': current_year,
             'available_years': available_years,
             'durations': durations,
-            'queryset': queryset,
+            'result': result,
             'month_list': month_list,
-            'json_data': json.dumps(data, indent=4)
+            'json_data': json.dumps(data, indent=4, ensure_ascii=False)
         })
 
 
