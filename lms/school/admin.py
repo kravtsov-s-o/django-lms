@@ -4,6 +4,8 @@ from .forms import TeacherForm, StudentForm
 from users.models import User
 from django.contrib.auth.forms import UserChangeForm
 
+from .services import lesson_finished
+
 
 # Register your models here.
 @admin.register(Teacher)
@@ -69,9 +71,34 @@ class StudentAdmin(admin.ModelAdmin):
     get_balance.short_description = 'Wallet'
 
 
+def make_conducted(modeladmin, request, queryset):
+    for lesson in queryset:
+        lesson_finished(lesson.teacher, lesson.id, 'conducted')
+
+
+def make_missed(modeladmin, request, queryset):
+    for lesson in queryset:
+        lesson_finished(lesson.teacher, lesson.id, 'missed')
+
+
+def make_planned(modeladmin, request, queryset):
+    for lesson in queryset:
+        lesson_finished(lesson.teacher, lesson.id, 'planned')
+
+
+make_conducted.short_description = "Conducted - only for 'Planned' lessons"
+make_missed.short_description = "Missed - only for 'Planned' lessons"
+make_planned.short_description = "Planned - only for 'Conducted' and 'Missed' lessons"
+
+
 @admin.register(Lesson)
 class LessonAdmin(admin.ModelAdmin):
-    # search_fields = ['user__username', 'user__first_name', 'user__last_name', 'user__email']
-    list_display = ['theme', 'date', 'time', 'status', 'teacher', 'price', 'currency']
-    # list_filter = ['language', 'company', 'teacher', 'user__is_active']
+    search_fields = ['students__user__username', 'students__user__first_name', 'students__user__last_name',
+                     'students__user__email']
+    list_display = ['theme', 'date', 'time', 'status', 'get_students', 'teacher', 'price', 'currency']
+    list_filter = ['status', 'students', 'teacher']
 
+    def get_students(self, obj):
+        return ", ".join([str(student) for student in obj.students.all()])
+
+    actions = [make_conducted, make_missed, make_planned]

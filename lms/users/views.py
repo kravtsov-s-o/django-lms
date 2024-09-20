@@ -21,4 +21,7 @@ class LoginView(View):
             return redirect(to='users:login')
 
         login(request, user)
-        return redirect(to='school:profile-lessons', pk=request.user.id)
+        if request.user.school_role in ['None', 'none', None] and (request.user.is_staff or request.user.is_superuser):
+            return redirect(to='admin:index')
+        else:
+            return redirect(to='school:profile-lessons', pk=request.user.id)

@@ -4,8 +4,8 @@ from abc import ABC, abstractmethod
 from collections import defaultdict
 
 from django.db import transaction
-from django.db.models import Sum, Count
-from django.db.models.functions import TruncMonth, ExtractYear
+from django.db.models import Sum
+from django.db.models.functions import ExtractYear
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
@@ -44,7 +44,10 @@ def get_paginator(items, items_per_page, request):
 @method_decorator(login_required(login_url='/login/'), name='dispatch')
 class MainView(View):
     def get(self, request):
-        return redirect(to='school:profile-lessons', pk=request.user.id)
+        if request.user.school_role in ['None', 'none', None] and (request.user.is_staff or request.user.is_superuser):
+            return redirect(to='admin:index')
+        else:
+            return redirect(to='school:profile-lessons', pk=request.user.id)
 
 
 @method_decorator(login_required(login_url='/login/'), name='dispatch')
