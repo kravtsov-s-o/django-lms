@@ -261,6 +261,17 @@ def user_is_teacher(view_func):
             raise PermissionDenied  # Возвращаем ошибку 403, если не учитель
 
     return _wrapped_view
+# =================================================================
+def user_is_staff(view_func):
+    @wraps(view_func)
+    def _wrapped_view(request, *args, **kwargs):
+        # Проверяем роль текущего пользователя
+        if request.user.is_staff or request.user.is_superuser:
+            return view_func(request, *args, **kwargs)
+        else:
+            raise PermissionDenied  # Возвращаем ошибку 403, если не учитель
+
+    return _wrapped_view
 
 
 # =================================================================

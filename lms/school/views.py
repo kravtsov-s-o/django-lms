@@ -15,12 +15,15 @@ from django.views.generic.edit import DeleteView
 from datetime import datetime
 from .models import Student, Teacher, Lesson, StudentProgress
 from .forms import LessonForm, LessonMoveForm, ProgressStageForm, UserChangePassword, UserCombineCommonForm
-from .services import lesson_finished, user_is_student_or_teacher, count_time_left, user_is_teacher
+from .services import lesson_finished, user_is_student_or_teacher, count_time_left, user_is_teacher, user_is_staff
 from users.models import User
 
 from transactions.models import StudentPayment, TeacherPayment
 
 from settings.models import Duration
+
+from companies.models import Company
+from transactions.models import CompanyPayment
 
 
 # Create your views here.
@@ -237,6 +240,7 @@ class StudentsView(View):
                           'current_page': 'students'}
                       )
 
+
 @method_decorator(login_required(login_url='/login/'), name='dispatch')
 @method_decorator(user_is_teacher, name='dispatch')
 class TeacherStatistic(View):
@@ -249,9 +253,9 @@ class TeacherStatistic(View):
 
         # =================================================================
         month_salary = ((TeacherPayment
-                          .objects
-                          .filter(teacher=current_user, created_at__month=current_month, created_at__year=current_year))
-                          .aggregate(total_price=Sum('price')))
+                         .objects
+                         .filter(teacher=current_user, created_at__month=current_month, created_at__year=current_year))
+                        .aggregate(total_price=Sum('price')))
 
         teacher_salary = month_salary.get('total_price') if month_salary.get('total_price') is not None else '0.00'
 
@@ -264,43 +268,16 @@ class TeacherStatistic(View):
             current_year = int(request.GET['year'])
 
         queryset_lessons = ((TeacherPayment
-                              .objects
-                              .filter(teacher=current_user, created_at__month=current_month, created_at__year=current_year))
-                              .values('lesson__id', 'lesson__duration__time')
-                              .order_by('lesson__id'))
+                             .objects
+                             .filter(teacher=current_user, created_at__month=current_month,
+                                     created_at__year=current_year))
+                            .values('lesson__id', 'lesson__duration__time')
+                            .order_by('lesson__id'))
 
         # =================================================================
-        queryset = []
-        for lesson in queryset_lessons:
-            lesson_students = (Lesson
-                               .objects
-                               .filter(pk=lesson["lesson__id"])
-                               .values_list('students__user__first_name', 'students__user__last_name'))
-
-            item = {
-                'lesson_id': lesson["lesson__id"],
-                'students': ', '.join([f"{first_name} {last_name}" for first_name, last_name in lesson_students]),
-                'duration': lesson["lesson__duration__time"],
-            }
-
-            queryset.append(item)
-
-        combined_data = defaultdict(lambda: {"students": "", "duration": 0, "count": 0})
-
-        for entry in queryset:
-            key = (entry["students"], entry["duration"])
-            if combined_data[key]["students"] == "":
-                combined_data[key]["students"] = entry["students"]
-                combined_data[key]["duration"] = entry["duration"]
-            combined_data[key]["count"] += 1
-
-        # Преобразовать в список
-        result = list(combined_data.values())
-
-        # =================================================================
+        result = sort_data_for_analytics(queryset_lessons)
 
         durations = Duration.objects.all()
-        data = list(result)
         # =================================================================
 
         month_list = [
@@ -311,8 +288,9 @@ class TeacherStatistic(View):
             for i in range(1, 13)
         ]
 
-        available_years = TeacherPayment.objects.annotate(year=ExtractYear('created_at')).values_list('year', flat=True).distinct().order_by(
-            'year')
+        available_years = (TeacherPayment.objects
+                           .annotate(year=ExtractYear('created_at'))
+                           .values_list('year', flat=True).distinct().order_by('year'))
 
         return render(request, 'school/teacher/statistic.html', context={
             'title': 'Statistics',
@@ -326,8 +304,7 @@ class TeacherStatistic(View):
             'available_years': available_years,
             'durations': durations,
             'result': result,
-            'month_list': month_list,
-            'json_data': json.dumps(data, indent=4, ensure_ascii=False)
+            'month_list': month_list
         })
 
 
@@ -521,6 +498,158 @@ class ProfileSettings(View):
                 if form.is_valid():
                     form.save(user=user, teacher=teacher)
                 else:
-                    return self._render_page(request, active_page, current_user_rate, current_user, form, UserChangePassword)
+                    return self._render_page(request, active_page, current_user_rate, current_user, form,
+                                             UserChangePassword)
 
         return redirect(request.META.get('HTTP_REFERER', '/'))
+
+
+@method_decorator(login_required(login_url='/login/'), name='dispatch')
+@method_decorator(user_is_staff, name='dispatch')
+class AnalyticTeachers(View):
+    def get(self, request):
+        teachers_list = Teacher.objects.filter(user__is_active=True).order_by('user__username')
+        date = datetime.now()
+        current_month = date.month
+        current_year = date.year
+        current_teacher = teachers_list.first()
+
+        # =================================================================
+
+        if 'month' in request.GET:
+            current_month = int(request.GET['month'])
+
+        if 'year' in request.GET:
+            current_year = int(request.GET['year'])
+
+        if 'teacher' in request.GET:
+            current_teacher = int(request.GET['teacher'])
+
+        queryset_lessons = ((TeacherPayment
+                             .objects
+                             .filter(teacher=current_teacher, created_at__month=current_month,
+                                     created_at__year=current_year))
+                            .values('lesson__id', 'lesson__duration__time')
+                            .order_by('lesson__id'))
+
+        # =================================================================
+        result = sort_data_for_analytics(queryset_lessons)
+
+        # =================================================================
+
+        durations = Duration.objects.all()
+        data = list(result)
+        # =================================================================
+
+        month_list = [
+            {
+                'title': calendar.month_abbr[i],
+                'number': i
+            }
+            for i in range(1, 13)
+        ]
+
+        available_years = (TeacherPayment.objects.annotate(year=ExtractYear('created_at'))
+                           .values_list('year', flat=True).distinct().order_by('year'))
+
+        return render(request, 'school/analytics/teachers.html', context={
+            'title': 'Teacher Analytics',
+            'current_page': 'teacher-analytics',
+            'current_month': current_month,
+            'current_year': current_year,
+            'current_teacher': current_teacher,
+            'durations': durations,
+            'result': result,
+            'teachers_list': teachers_list,
+            'month_list': month_list,
+            'available_years': available_years,
+            'json_data': json.dumps(data, indent=4, ensure_ascii=False)
+        })
+
+
+@method_decorator(login_required(login_url='/login/'), name='dispatch')
+@method_decorator(user_is_staff, name='dispatch')
+class AnalyticCompanies(View):
+    def get(self, request):
+        companies_list = Company.objects.filter(is_active=True).order_by('name')
+        date = datetime.now()
+        current_month = date.month
+        current_year = date.year
+        current_company = companies_list.first()
+
+        # =================================================================
+
+        if 'month' in request.GET:
+            current_month = int(request.GET['month'])
+
+        if 'year' in request.GET:
+            current_year = int(request.GET['year'])
+
+        if 'company' in request.GET:
+            current_company = int(request.GET['company'])
+
+        queryset_companies = ((CompanyPayment
+                               .objects
+                               .filter(company=current_company, created_at__month=current_month,
+                                       created_at__year=current_year, lesson__isnull=False))
+                              .values('lesson__id', 'lesson__duration__time')
+                              .order_by('lesson__id'))
+
+        # =================================================================
+        result = sort_data_for_analytics(queryset_companies)
+
+        durations = Duration.objects.all()
+        # =================================================================
+
+        month_list = [
+            {
+                'title': calendar.month_abbr[i],
+                'number': i
+            }
+            for i in range(1, 13)
+        ]
+
+        available_years = (TeacherPayment.objects.annotate(year=ExtractYear('created_at'))
+                           .values_list('year', flat=True).distinct().order_by('year'))
+
+        return render(request, 'school/analytics/companies.html', context={
+            'title': 'Company Analytics',
+            'current_page': 'company-analytics',
+            'current_month': current_month,
+            'current_year': current_year,
+            'durations': durations,
+            'current_company': current_company,
+            'companies_list': companies_list,
+            'result': result,
+            'month_list': month_list,
+            'available_years': available_years,
+        })
+
+
+def sort_data_for_analytics(data):
+    queryset = []
+    for lesson in data:
+        lesson_students = (Lesson
+                           .objects
+                           .filter(pk=lesson["lesson__id"])
+                           .values_list('students__user__first_name', 'students__user__last_name'))
+
+        item = {
+            'lesson_id': lesson["lesson__id"],
+            'students': ', '.join([f"{first_name} {last_name}" for first_name, last_name in lesson_students]),
+            'duration': lesson["lesson__duration__time"],
+        }
+
+        queryset.append(item)
+
+    combined_data = defaultdict(lambda: {"students": "", "duration": 0, "count": 0})
+
+    for entry in queryset:
+        key = (entry["students"], entry["duration"])
+        if combined_data[key]["students"] == "":
+            combined_data[key]["students"] = entry["students"]
+            combined_data[key]["duration"] = entry["duration"]
+        combined_data[key]["count"] += 1
+
+    # Преобразовать в список
+    return list(combined_data.values())

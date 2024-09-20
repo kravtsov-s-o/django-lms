@@ -72,5 +72,22 @@
                 <div data-i18n="Page 2">Settings</div>
             </a>
         </li>
+        {% if request.user.is_staff or request.user.is_superuser %}
+        <li class="menu-header small text-uppercase">
+          <span class="menu-header-text" data-i18n="Apps &amp; Pages">School Analytics</span>
+        </li>
+        <li class="menu-item  {% if current_page == 'teacher-analytics' %}active{% endif %}">
+            <a href="{% url 'school:analytic-teachers' %}" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-line-chart"></i>
+                <div data-i18n="Page 2">Teachers</div>
+            </a>
+        </li>
+        <li class="menu-item  {% if current_page == 'company-analytics' %}active{% endif %}">
+            <a href="{% url 'school:analytic-companies' %}" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-pie-chart-alt-2"></i>
+                <div data-i18n="Page 2">Companies</div>
+            </a>
+        </li>
+        {% endif %}
     </ul>
 </aside>

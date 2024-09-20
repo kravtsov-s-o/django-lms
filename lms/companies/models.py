@@ -13,6 +13,7 @@ class Company(models.Model):
         MinValueValidator(0, "Discount cannot be less than 0."),
         MaxValueValidator(100, "Discount cannot be greater than 100."),
     ], default=0)
+    is_active = models.BooleanField(default=True)
 
     def __str__(self):
         return f"{self.name}"

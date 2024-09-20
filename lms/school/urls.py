@@ -1,7 +1,7 @@
 from django.urls import path
 from .views import MainView, LessonAdd, LessonEdit, LessonView, LessonMove, LessonDelete, LessonConducted, LessonMissed, \
     LessonPlanned, StudentsView, ProfileLessons, ProfileSettings, ProfilePayments, ProfileProgressView, \
-    ProfileProgressDelete, ScheduleView, TeacherStatistic
+    ProfileProgressDelete, ScheduleView, TeacherStatistic, AnalyticTeachers, AnalyticCompanies
 
 app_name = 'school'
 
@@ -26,6 +26,9 @@ urlpatterns = [
     path('lesson/<int:pk>/missed/', LessonMissed.as_view(), name='lesson-missed'),
     path('lesson/<int:pk>/planned/', LessonPlanned.as_view(), name='lesson-planned'),
     path('lesson/<int:pk>/delete/', LessonDelete.as_view(), name='lesson-delete'),
+
+    path('analytics/teachers/', AnalyticTeachers.as_view(), name='analytic-teachers'),
+    path('analytics/companies/', AnalyticCompanies.as_view(), name='analytic-companies'),
 ]
 
 
