@@ -292,9 +292,6 @@ class ProfileProgressView(View):
 
         progress_list = StudentProgress.objects.filter(student=student).order_by('-date')
 
-        items_per_page = 20
-        progress_page, page_range = get_paginator(progress_list, items_per_page, request)
-
         active_page = 'progress'
 
         return render(request, 'school/profile/index.html',
@@ -304,8 +301,7 @@ class ProfileProgressView(View):
                           'current_page': active_page,
                           'student_rate': student_rate,
                           'current_user': student,
-                          'progress_list': progress_page,
-                          'page_range': page_range,
+                          'progress_list': progress_list,
                           'progress_form': ProgressStageForm(student, teacher)
                       })
 

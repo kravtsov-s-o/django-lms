@@ -69,12 +69,6 @@
                                 <span><a href="#" data-bs-toggle="modal" data-bs-target="#about-teacher">{{ current_user.teacher }}</a></span>
                             </li>
                             {% endif %}
-                            {% if request.user.is_staff %}
-                            <li class="mb-3">
-                                <span class="fw-bold me-2">Rate:</span>
-                                <span>{{ current_user.currency.symbol }}{{ current_user_rate }}</span>
-                            </li>
-                            {% endif %}
                         </ul>
                     </div>
                 </div>
@@ -144,9 +138,7 @@
             </ul>
             <!--/ User Pills -->
 
-            <!-- Project table -->
-            <div class="card mb-4">
-                {% if tab == 'lessons' %}
+            {% if tab == 'lessons' %}
                 {% include 'school/profile/components/lessons.html' %}
                 {% elif tab == 'progress' %}
                 {% include 'school/profile/components/progress.html' %}
@@ -154,9 +146,7 @@
                 {% include 'school/profile/components/payments.html' %}
                 {% elif tab == 'settings' %}
                 {% include 'school/profile/components/settings.html' %}
-                {% endif %}
-            </div>
-            <!-- /Project table -->
+            {% endif %}
         </div>
         <!--/ User Content -->
     </div>
@@ -164,9 +154,9 @@
 <!-- / Content -->
 
 {% if current_user.user.school_role == 'student' %}
-<!-- Modal Move  -->
+<!-- Modal About Teacher  -->
 {% include 'school/modals/about-teacher.html' %}
-<!-- / Modal Move -->
+<!-- / Modal About Teacher -->
 {% endif %}
 
 {% endblock %}
