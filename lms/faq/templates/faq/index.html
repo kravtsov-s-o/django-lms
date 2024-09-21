@@ -1,0 +1,111 @@
+{% extends 'school/base-template.html' %}
+{% load static %}
+{% block page-title %}{{ title }}{% endblock %}
+{% block extra_css %}
+
+{% endblock %}
+
+{% block content %}
+<div class="container-xxl flex-grow-1 container-p-y">
+    <div class="faq-header pb-2 mb-4">
+        <h1 class="h3 text-center z-1">Hello, how can we help?</h1>
+    </div>
+
+    <div class="row mt-4">
+        <!-- Navigation -->
+        <div class="col-lg-3 col-md-4 col-12 mb-md-0 mb-3">
+            <div class="d-flex justify-content-between flex-column mb-2 mb-md-0">
+                <ul class="nav nav-align-left nav-pills flex-column">
+                    {% for category in categories %}
+                    <li class="nav-item">
+                        <a href="?category={{category.id}}"
+                           class="nav-link {% if category.id == current_category %} active {% endif %}">
+                            <span class="align-middle">{{ category.title }}</span>
+                        </a>
+                    </li>
+                    {% endfor %}
+                </ul>
+                <div class="d-none d-md-block">
+                    <div class="mt-5">
+                        <img
+                                src="{% static './img/pages/light-faq.png' %}"
+                                class="img-fluid scaleX-n1"
+                                alt="FAQ Image"
+                                data-app-light-img="/pages/light-faq.png"
+                                data-app-dark-img="/pages/dark-faq.png"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /Navigation -->
+
+        <!-- FAQ's -->
+        <div class="col-lg-9 col-md-8 col-12">
+            <div id="accordionPayment" class="accordion accordion-header-primary">
+                {% for question in questions %}
+                <div class="card accordion-item">
+                    <h2 class="accordion-header">
+                        <button
+                                class="accordion-button"
+                                type="button"
+                                data-bs-toggle="collapse"
+                                aria-expanded="true"
+                                data-bs-target="#accordionPayment-{{ question.id }}"
+                                aria-controls="accordionPayment-{{ question.id }}">
+                            {{ question.question }}
+                        </button>
+                    </h2>
+
+                    <div id="accordionPayment-{{ question.id }}" class="accordion-collapse collapse">
+                        <div class="accordion-body">
+                            {{ question.answer }}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        <!-- /FAQ's -->
+    </div>
+
+    <!-- Contact -->
+    <div class="row mt-5">
+        <div class="col-12 text-center mb-4">
+            <div class="badge bg-label-primary">Question?</div>
+            <h4 class="my-2">You still have a question?</h4>
+            <p>
+                If you cannot find a question in our FAQ, you can always contact us. We will answer to you shortly!
+            </p>
+        </div>
+    </div>
+    <div class="row text-center justify-content-center gap-sm-0 gap-3">
+        <div class="col-sm-6">
+            <div class="py-3 rounded text-center card">
+                <div class="card-body">
+                    <span class="badge bg-label-primary rounded-3 p-2 my-3">
+                      <i class="bx bx-phone bx-sm"></i>
+                    </span>
+                    <h4 class="mb-2"><a class="h4" href="tel:+(810)25482568">+ (810) 2548 2568</a></h4>
+                    <p>We are always happy to help</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="py-3 rounded text-center card">
+                <div class="card-body">
+                    <span class="badge bg-label-primary rounded-3 p-2 my-3">
+                      <i class="bx bx-envelope bx-sm"></i>
+                    </span>
+                    <h4 class="mb-2"><a class="h4" href="mailto:help@help.com">help@help.com</a></h4>
+                    <p>Best way to get a quick answer</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /Contact -->
+</div>
+{% endblock %}
+
+{% block extra_js %}
+
+{% endblock %}

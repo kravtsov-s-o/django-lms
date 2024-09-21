@@ -54,6 +54,7 @@ urlpatterns = [
                   path('admin/', admin.site.urls, name='admin'),
                   path('', include('users.urls')),
                   path('', include('school.urls')),
+                  path('', include('faq.urls')),
               ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 handler404 = 'lms.urls.custom_page_not_found_view'

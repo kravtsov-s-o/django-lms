@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'companies',
     'school',
     'transactions',
+    'faq',
 ]
 
 MIDDLEWARE = [
