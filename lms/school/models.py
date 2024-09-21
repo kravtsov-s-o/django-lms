@@ -44,7 +44,7 @@ class Student(CommonFields):
 class Lesson(models.Model):
     LESSON_STATUSES = [
         ('planned', 'Planned'),
-        ('сonducted', 'Conducted'),
+        ('conducted', 'Conducted'),
         ('missed', 'Missed'),
     ]
 

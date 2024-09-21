@@ -8,7 +8,6 @@ class MyUserCreationForm(UserCreationForm):
 
     class Meta:
         model = User
-        # fields = '__all__'
         fields = ('username', 'first_name', 'last_name', 'email', 'school_role', 'groups')
 
 
@@ -16,7 +15,6 @@ class MyUserChangeForm(UserChangeForm):
     email = forms.EmailField(required=True)
     class Meta:
         model = User
-        # fields = '__all__'
         fields = ('username', 'first_name', 'last_name', 'email', 'school_role', 'groups')
 
 

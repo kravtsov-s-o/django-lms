@@ -43,7 +43,7 @@ class Migration(migrations.Migration):
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('date', models.DateField(default=datetime.datetime.now)),
                 ('time', models.TimeField(default=datetime.datetime.now)),
-                ('status', models.CharField(choices=[('planned', 'Planned'), ('сonducted', 'Conducted'), ('missed', 'Missed')], default='planned', max_length=50)),
+                ('status', models.CharField(choices=[('planned', 'Planned'), ('conducted', 'Conducted'), ('missed', 'Missed')], default='planned', max_length=50)),
                 ('theme', models.CharField(max_length=255)),
                 ('notes', models.TextField(blank=True, null=True)),
                 ('homework', models.TextField(blank=True, null=True)),

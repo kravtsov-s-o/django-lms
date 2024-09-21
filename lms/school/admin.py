@@ -73,7 +73,7 @@ class StudentAdmin(admin.ModelAdmin):
 
 def make_conducted(modeladmin, request, queryset):
     for lesson in queryset:
-        lesson_finished(lesson.teacher, lesson.id, 'сonducted')
+        lesson_finished(lesson.teacher, lesson.id, 'conducted')
 
 
 def make_missed(modeladmin, request, queryset):

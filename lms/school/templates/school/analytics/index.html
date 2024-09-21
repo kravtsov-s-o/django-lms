@@ -26,13 +26,13 @@
                     <div class="btn-group me-3">
                         <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuMonth"
                                 data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            {% for teacher in teachers_list %}
-                            {% if teacher == current_teacher %}{{ teacher }} {% endif %}
+                            {% for item in item_list %}
+                            {% if item == current_item %}{{ item }} {% endif %}
                             {% endfor %}
                         </button>
                         <ul class="dropdown-menu" aria-labelledby="dropdownMenuMonth">
-                            {% for teacher in teachers_list %}
-                            <li><a class="dropdown-item" href="?{% param_replace teacher=teacher.id %}">{{ teacher }}</a></li>
+                            {% for item in item_list %}
+                            <li><a class="dropdown-item" href="?{% param_replace item=item.id %}">{{ item }}</a></li>
                             {% endfor %}
                         </ul>
                     </div>

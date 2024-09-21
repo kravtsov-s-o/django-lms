@@ -51,7 +51,6 @@ class LessonForm(forms.ModelForm):
 
     class Meta:
         model = Lesson
-        # fields = '__all__'
         fields = ('date', 'time', 'duration', 'students', 'teacher', 'theme', 'notes', 'homework')
         widgets = {
             'date': forms.DateInput(attrs={
@@ -107,7 +106,7 @@ class UserCommonForm(forms.ModelForm):
         fields = ['username', 'email', 'first_name', 'last_name']
 
 
-class TeacherCommonFrom(forms.ModelForm):
+class TeacherCommonForm(forms.ModelForm):
     class Meta:
         model = Teacher
         fields = ['about']
