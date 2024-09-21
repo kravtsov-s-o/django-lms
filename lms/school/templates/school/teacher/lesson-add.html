@@ -51,7 +51,7 @@
         {% csrf_token %}
         <div class="row">
             <div class="col-md-4">
-                <div class="card">
+                <div class="card" {% if lesson %}style="pointer-events:none;"{% endif %}>
                     <div class="card-body">
                         {% csrf_token %}
                         {{ form.date|as_crispy_field }}
@@ -73,6 +73,12 @@
             </div>
             <div class="col-md-8">
                 <div class="card">
+                    {% if lesson %}
+                    <div class="card-header">
+                        <p class="card-text">Lesson status: <b style="text-transform:capitalize;">{{ lesson.status }}</b></p>
+                        <p class="card-text">You can edit only Theme, Notes and HomeWork</p>
+                    </div>
+                    {% endif %}
                     <div class="card-body">
                         {{ form.theme|as_crispy_field }}
                         <div class="mb-3">

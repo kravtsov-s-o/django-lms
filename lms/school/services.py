@@ -375,6 +375,20 @@ def user_is_teacher(view_func):
     return _wrapped_view
 
 
+def user_is_lesson_teacher(view_func):
+    @wraps(view_func)
+    def _wrapped_view(request, *args, **kwargs):
+        lesson_pk = kwargs.get('pk')
+        lesson = get_object_or_404(Lesson, pk=lesson_pk)
+
+        if request.user.school_role == 'teacher' and request.user.id == lesson.teacher.user.id:
+            return view_func(request, *args, **kwargs)
+        else:
+            raise PermissionDenied
+
+    return _wrapped_view
+
+
 def user_is_staff(view_func):
     """
     Check user rights in Admin

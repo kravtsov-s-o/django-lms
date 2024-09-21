@@ -111,6 +111,8 @@
                                                data-id="{{ lesson.id }}" data-action="delete">
                                                 <i class="bx bx-trash me-1"></i> Delete</a>
                                             {% else %}
+                                            <a class="dropdown-item" href="{% url 'school:lesson-edit' pk=lesson.id %}">
+                                                <i class="bx bx-edit-alt me-1"></i>Edit</a>
                                             <a class="dropdown-item dropdown-item--planned" href="javascript:void(0);"
                                                data-bs-toggle="modal" data-bs-target="#planned" title="Planned"
                                                data-id="{{ lesson.id }}" data-action="planned">

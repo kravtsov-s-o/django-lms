@@ -49,7 +49,7 @@ class Lesson(models.Model):
     ]
 
     date = models.DateField(default=datetime.now, null=False)
-    time = models.TimeField(default=datetime.now, null=False)
+    time = models.TimeField(null=False)
     status = models.CharField(max_length=50,  choices=LESSON_STATUSES, default='planned')
     teacher = models.ForeignKey(Teacher, on_delete=models.SET_NULL, null=True)
     students = models.ManyToManyField(Student)

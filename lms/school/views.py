@@ -15,7 +15,7 @@ from users.models import User
 from transactions.models import StudentPayment, TeacherPayment, CompanyPayment
 from .services import user_is_student_or_teacher, count_time_left, user_is_teacher, user_is_staff, \
     get_paginator, get_teacher, get_duration_list, generate_month_list_for_filter, get_payment_year_list, \
-    sort_data_for_analytics
+    sort_data_for_analytics, user_is_lesson_teacher
 
 
 @method_decorator(login_required(login_url='/login/'), name='dispatch')
@@ -51,7 +51,7 @@ class ScheduleView(View):
 
 
 @method_decorator(login_required(login_url='/login/'), name='dispatch')
-@method_decorator(user_is_teacher, name='dispatch')
+# @method_decorator(user_is_teacher, name='dispatch')
 class LessonAdd(View):
     def get(self, request):
         teacher = get_teacher(request)
@@ -80,7 +80,7 @@ class LessonAdd(View):
 
 
 @method_decorator(login_required(login_url='/login/'), name='dispatch')
-@method_decorator(user_is_teacher, name='dispatch')
+@method_decorator(user_is_lesson_teacher, name='dispatch')
 class LessonEdit(View):
     def get(self, request, *args, **kwargs):
         pk = kwargs.get('pk', None)
@@ -123,7 +123,7 @@ class LessonView(View):
 
 
 @method_decorator(login_required(login_url='/login/'), name='dispatch')
-@method_decorator(user_is_teacher, name='dispatch')
+@method_decorator(user_is_lesson_teacher, name='dispatch')
 class LessonDelete(View):
     def post(self, request, pk):
         teacher = get_teacher(request)
@@ -135,7 +135,7 @@ class LessonDelete(View):
 
 
 @method_decorator(login_required(login_url='/login/'), name='dispatch')
-@method_decorator(user_is_teacher, name='dispatch')
+@method_decorator(user_is_lesson_teacher, name='dispatch')
 class LessonMove(View):
     def post(self, request, pk):
         if request.method == "POST":
@@ -153,21 +153,21 @@ class LessonMove(View):
 
 
 @method_decorator(login_required(login_url='/login/'), name='dispatch')
-@method_decorator(user_is_teacher, name='dispatch')
+@method_decorator(user_is_lesson_teacher, name='dispatch')
 class LessonConducted(UpdateLessonStatusView):
     def get_status(self):
         return 'conducted'
 
 
 @method_decorator(login_required(login_url='/login/'), name='dispatch')
-@method_decorator(user_is_teacher, name='dispatch')
+@method_decorator(user_is_lesson_teacher, name='dispatch')
 class LessonMissed(UpdateLessonStatusView):
     def get_status(self):
         return 'missed'
 
 
 @method_decorator(login_required(login_url='/login/'), name='dispatch')
-@method_decorator(user_is_teacher, name='dispatch')
+@method_decorator(user_is_lesson_teacher, name='dispatch')
 class LessonPlanned(UpdateLessonStatusView):
     def get_status(self):
         return 'planned'
