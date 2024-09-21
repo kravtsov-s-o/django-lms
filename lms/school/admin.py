@@ -73,7 +73,7 @@ class StudentAdmin(admin.ModelAdmin):
 
 def make_conducted(modeladmin, request, queryset):
     for lesson in queryset:
-        lesson_finished(lesson.teacher, lesson.id, 'conducted')
+        lesson_finished(lesson.teacher, lesson.id, 'сonducted')
 
 
 def make_missed(modeladmin, request, queryset):
@@ -97,6 +97,7 @@ class LessonAdmin(admin.ModelAdmin):
                      'students__user__email']
     list_display = ['theme', 'date', 'time', 'status', 'get_students', 'teacher', 'price', 'currency']
     list_filter = ['status', 'students', 'teacher']
+    readonly_fields = ['status', 'price', 'currency']
 
     def get_students(self, obj):
         return ", ".join([str(student) for student in obj.students.all()])
