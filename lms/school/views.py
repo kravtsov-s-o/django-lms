@@ -1,10 +1,13 @@
+import calendar
+from calendar import monthrange
+
 from django.db.models import Sum
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.views import View
 from django.views.generic.edit import DeleteView
-from datetime import datetime
+from datetime import datetime, date, timedelta
 
 from .AbstractClasses.BaseAnalyticView import BaseAnalyticView
 from .AbstractClasses.UpdateLessonStatusView import UpdateLessonStatusView
@@ -14,7 +17,7 @@ from companies.models import Company
 from users.models import User
 from transactions.models import StudentPayment, TeacherPayment, CompanyPayment
 from .services import user_is_student_or_teacher, count_time_left, user_is_teacher, user_is_staff, \
-    get_paginator, get_teacher, get_duration_list, generate_month_list_for_filter, get_payment_year_list, \
+    get_paginator, get_teacher, get_duration_list, generate_month_list_for_filter, get_year_list, \
     sort_data_for_analytics, user_is_lesson_teacher
 
 
@@ -39,6 +42,16 @@ class ScheduleView(View):
 
         lessons = Lesson.objects.filter(teacher=current_user, date=current_date).order_by('time')
 
+        # Lessons Filter as Calendar
+        year = int(request.GET.get('year', current_date.year))
+        month = int(request.GET.get('month', current_date.month))
+
+        month_calendar = calendar.monthcalendar(year, month)
+
+        lessons_list = Lesson.objects.filter(date__year=year, date__month=month)
+
+        lesson_dates = {lesson.date.day for lesson in lessons_list}
+
         return render(request, 'school/teacher/index.html',
                       context={
                           'title': 'Lesson',
@@ -46,7 +59,13 @@ class ScheduleView(View):
                           'lessons': lessons,
                           'lesson_move_form': LessonMoveForm(),
                           'current_user': current_user,
-                          'current_page': 'schedule'
+                          'current_page': 'schedule',
+                          'year': year,
+                          'month': month,
+                          'month_list': generate_month_list_for_filter(),
+                          'year_list': get_year_list(Lesson, 'date'),
+                          'month_calendar': month_calendar,
+                          'lesson_dates': lesson_dates,
                       })
 
 
@@ -239,7 +258,7 @@ class TeacherStatistic(View):
             'current_month': current_month,
             'current_year': current_year,
             'result': result,
-            'available_years': get_payment_year_list(TeacherPayment),
+            'available_years': get_year_list(TeacherPayment),
             'durations': get_duration_list(),
             'month_list': generate_month_list_for_filter()
         })

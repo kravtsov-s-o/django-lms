@@ -1,11 +1,21 @@
 {% extends 'school/base-template.html' %}
 {% load static %}
+{% load url_params %}
 {% load extract_students %}
 {% block extra_css %}
 <!--  Custom  -->
 <link rel="stylesheet" href="{% static './vendor/libs/quill/typography.css' %}"/>
 <link rel="stylesheet" href="{% static './vendor/libs/quill/katex.css' %}"/>
 <link rel="stylesheet" href="{% static './vendor/libs/quill/editor.css' %}"/>
+
+<style>
+    .dropdown-menu {
+        --bs-dropdown-min-width: 5rem !important;
+
+        max-height: 10rem;
+        overflow-y: auto;
+    }
+</style>
 {% endblock %}
 
 {% block page-title %}{{ title }}{% endblock %}
@@ -25,27 +35,84 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-xl-3">
+        <div class="col-lg-3">
             <div class="card mb-4">
-                <div class="card-header">
-                    <h2 class="h5 card-title m-0">Calendar</h2>
-                </div>
-                <hr class="m-0">
-                <div class="card-body">
-                    <form action="{% url 'school:cabinet-schedule' pk=request.user.id %}" method="GET">
-                        <label for="lessons-date" class="form-label">Choose date</label>
-                        <div class="d-flex gap-1">
-                            <input id="lessons-date" name="date" type="date" class="form-control mb-1"
-                                   placeholder="YYYY-MM-DD"
-                                   value="{{date|date:'Y-m-d'}}">
-                            <button type="submit" class="btn btn-icon btn-outline-primary"><span
-                                    class=" tf-icons bx bx-search"></span></button>
+                <div class="card-header d-flex justify-content-around align-items-center">
+                    <div class="dropdown">
+                        <button
+                                class="btn btn-sm btn-outline-secondary dropdown-toggle"
+                                type="button"
+                                id="month_filter"
+                                data-bs-toggle="dropdown"
+                                aria-haspopup="true"
+                                aria-expanded="false">
+                            {% for item in month_list %}
+                            {% if item.number == month %}{{ item.title }} {% endif %}
+                            {% endfor %}
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="month_filter">
+                            {% for item in month_list %}
+                            <li>
+                                <a class="dropdown-item" href="?{% param_replace month=item.number %}">{{ item.title }}</a>
+                            </li>
+                            {% endfor %}
                         </div>
-                    </form>
+                    </div>
+                    <div class="dropdown">
+                        <button
+                                class="btn btn-sm btn-outline-secondary dropdown-toggle"
+                                type="button"
+                                id="year_filter"
+                                data-bs-toggle="dropdown"
+                                aria-haspopup="true"
+                                aria-expanded="false">
+                            {% for item in year_list %}
+                            {% if item == year %}{{ item }} {% endif %}
+                            {% endfor %}
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="year_filter">
+                            {% for item in year_list %}
+                            <li><a class="dropdown-item" href="?{% param_replace year=item %}">{{ item }}</a></li>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                <hr class="my-0">
+                <div class="card-body">
+                    <table class="calendar" style="text-align:center;">
+                        <thead>
+                        <tr style="display: grid; grid-template-columns: repeat(7,1fr);">
+                            <th>Mon</th>
+                            <th>Tue</th>
+                            <th>Wed</th>
+                            <th>Thu</th>
+                            <th>Fri</th>
+                            <th>Sat</th>
+                            <th>Sun</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for week in month_calendar %}
+                        <tr style="display: grid; grid-template-columns: repeat(7,1fr);">
+                            {% for day in week %}
+                            <td>
+                                {% if day != 0 %}
+                                    {% if day in lesson_dates %}
+                                        <a href="?date={{ year }}-{{ month }}-{{ day }}" class="highlight">{{ day }}</a>
+                                    {% else %}
+                                        {{ day }}
+                                    {% endif %}
+                                {% endif %}
+                            </td>
+                            {% endfor %}
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
-        <div class="col-xl-9">
+        <div class="col-lg-9">
             <div class="card">
                 <div class="card-header d-flex flex-wrap justify-content-between align-items-center w-100 gap-3">
                     <span class="h5 m-0">{{ date|date:"d.m.Y" }}</span>
@@ -160,59 +227,59 @@
 <script src="{% static './vendor/libs/cleavejs/cleave.js' %}"></script>
 <script src="{% static './vendor/libs/cleavejs/cleave-phone.js' %}"></script>
 <script>
-function handleDropdownItemClick(action) {
-    let urls = {
-        'delete': "{% url 'school:lesson-delete' pk=0 %}",
-        'move': "{% url 'school:lesson-move' pk=0 %}",
-        'conducted': "{% url 'school:lesson-conducted' pk=0 %}",
-        'missed': "{% url 'school:lesson-missed' pk=0 %}",
-        'planned': "{% url 'school:lesson-planned' pk=0 %}",
-    };
+    function handleDropdownItemClick(action) {
+        let urls = {
+            'delete': "{% url 'school:lesson-delete' pk=0 %}",
+            'move': "{% url 'school:lesson-move' pk=0 %}",
+            'conducted': "{% url 'school:lesson-conducted' pk=0 %}",
+            'missed': "{% url 'school:lesson-missed' pk=0 %}",
+            'planned': "{% url 'school:lesson-planned' pk=0 %}",
+        };
 
-    document.querySelectorAll('.dropdown-item').forEach(function(item) {
-        item.addEventListener('click', function(event) {
-            var lessonId = this.getAttribute('data-id');
-            var url = urls[action].replace('0', lessonId);
-            document.querySelector('#' + action + ' form').setAttribute('action', url);
+        document.querySelectorAll('.dropdown-item').forEach(function(item) {
+            item.addEventListener('click', function(event) {
+                var lessonId = this.getAttribute('data-id');
+                var url = urls[action].replace('0', lessonId);
+                document.querySelector('#' + action + ' form').setAttribute('action', url);
+            });
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.dropdown-item').forEach(function(item) {
+            var action = item.getAttribute('data-action');
+            handleDropdownItemClick(action);
         });
     });
-}
-
-document.addEventListener('DOMContentLoaded', function() {
-    document.querySelectorAll('.dropdown-item').forEach(function(item) {
-        var action = item.getAttribute('data-action');
-        handleDropdownItemClick(action);
-    });
-});
 
 
 
-    new Cleave(".time-mask", {
-        time: true,
-        timePattern: ["h", "m"]
-    });
+        new Cleave(".time-mask", {
+            time: true,
+            timePattern: ["h", "m"]
+        });
 
-    let timeOptions = [];
+        let timeOptions = [];
 
-for (let hour = 0; hour < 24; hour++) {
-    for (let minute = 0; minute < 60; minute += 15) {
-        let formattedHour = ("0" + hour).slice(-2);
-        let formattedMinute = ("0" + minute).slice(-2);
-        timeOptions.push(`${formattedHour}:${formattedMinute}`);
+    for (let hour = 0; hour < 24; hour++) {
+        for (let minute = 0; minute < 60; minute += 15) {
+            let formattedHour = ("0" + hour).slice(-2);
+            let formattedMinute = ("0" + minute).slice(-2);
+            timeOptions.push(`${formattedHour}:${formattedMinute}`);
+        }
     }
-}
 
-let datalist = document.createElement('datalist');
-datalist.id = 'time-options';
+    let datalist = document.createElement('datalist');
+    datalist.id = 'time-options';
 
-timeOptions.forEach(time => {
-    let option = document.createElement('option');
-    option.value = time;
-    datalist.appendChild(option);
-});
+    timeOptions.forEach(time => {
+        let option = document.createElement('option');
+        option.value = time;
+        datalist.appendChild(option);
+    });
 
-let inputTime = document.getElementById('id_time');
-inputTime.insertAdjacentElement('afterend', datalist);
+    let inputTime = document.getElementById('id_time');
+    inputTime.insertAdjacentElement('afterend', datalist);
 
 </script>
 

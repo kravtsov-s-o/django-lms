@@ -476,7 +476,7 @@ def get_duration_list():
 def generate_month_list_for_filter():
     month_list = [
         {
-            'title': calendar.month_abbr[i],
+            'title': calendar.month_name[i],
             'number': i
         }
         for i in range(1, 13)
@@ -485,9 +485,9 @@ def generate_month_list_for_filter():
     return month_list
 
 
-def get_payment_year_list(model):
+def get_year_list(model, field='created_at'):
     return (model.objects
-                       .annotate(year=ExtractYear('created_at'))
+                       .annotate(year=ExtractYear(field))
                        .values_list('year', flat=True).distinct().order_by('year'))
 
 
