@@ -45,12 +45,14 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'crispy_forms',
     "crispy_bootstrap5",
+    "ckeditor",
     'settings',
     'users',
     'companies',
     'school',
     'transactions',
     'faq',
+    'pages',
 ]
 
 MIDDLEWARE = [
@@ -162,3 +164,16 @@ DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
 # Crispy settings
+
+# CKEditor
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
+
+CKEDITOR_CONFIGS = {
+    'default': {
+        'toolbar': 'full',
+        'height': 300,
+        'width': '100%',
+    },
+}
+# CKEditor
