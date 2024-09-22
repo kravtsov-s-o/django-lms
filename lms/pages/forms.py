@@ -1,10 +1,13 @@
 from django import forms
 from django.utils.text import slugify
+from django_ckeditor_5.fields import CKEditor5Field
 
 from .models import Page
 
 
 class PageForm(forms.ModelForm):
+    content = CKEditor5Field('Text', config_name='extends')
+
     class Meta:
         model = Page
         fields = '__all__'

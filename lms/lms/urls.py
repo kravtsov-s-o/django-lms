@@ -56,6 +56,7 @@ urlpatterns = [
                   path('', include('school.urls')),
                   path('', include('faq.urls')),
                   path('', include('pages.urls')),
+                  path('django_ckeditor_5/', include('django_ckeditor_5.urls')),
               ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 handler404 = 'lms.urls.custom_page_not_found_view'
