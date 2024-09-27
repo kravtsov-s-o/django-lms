@@ -71,24 +71,22 @@ class StudentAdmin(admin.ModelAdmin):
     get_balance.short_description = 'Wallet'
 
 
+@admin.action(description="Mark lesson as 'Conducted'")
 def make_conducted(modeladmin, request, queryset):
     for lesson in queryset:
         lesson_finished(lesson.teacher, lesson.id, 'conducted')
 
 
+@admin.action(description="Mark lesson as 'Missed'")
 def make_missed(modeladmin, request, queryset):
     for lesson in queryset:
         lesson_finished(lesson.teacher, lesson.id, 'missed')
 
 
+@admin.action(description="Mark lesson as 'Planned'")
 def make_planned(modeladmin, request, queryset):
     for lesson in queryset:
         lesson_finished(lesson.teacher, lesson.id, 'planned')
-
-
-make_conducted.short_description = "Conducted - only for 'Planned' lessons"
-make_missed.short_description = "Missed - only for 'Planned' lessons"
-make_planned.short_description = "Planned - only for 'Conducted' and 'Missed' lessons"
 
 
 @admin.register(Lesson)

@@ -68,8 +68,10 @@ def lesson_finished(teacher: Teacher, lesson_id: int, status: str):
 
     if status == 'planned':
         lesson_pay_back(lesson, status, company)
+    elif (lesson.status == 'conducted' and status == 'missed') or (lesson.status == 'missed' and status == 'conducted'):
+        lesson.status = status
+        lesson.save()
     else:
-
         lesson.status = status
         lesson.price = calculate_lesson_price(lesson.duration.time, lesson.students.all(), company)
         lesson.currency = set_lesson_currency(lesson.students.all())
