@@ -36,20 +36,18 @@ class BaseAnalyticView(ABC, View):
 
         return current_item
 
-    @abstractmethod
-    def get_queryset(self, current_item, current_month, current_year):
-        raise NotImplementedError("You must implement get_queryset() in subclasses.")
-
-    def get(self, request):
+    def get_context_data(self, request, **kwargs):
         item_list = self.get_item_list()
         current_item = self.get_current_item(request, item_list, self.current_item_field)
-
         current_month, current_year = self.get_current_month_and_year(request)
+
+        if 'item' in request.GET:
+            current_item = int(request.GET['item'])
 
         queryset = self.get_queryset(current_item, current_month, current_year)
         result = sort_data_for_analytics(queryset)
 
-        return render(request, self.template_name, context={
+        context = {
             'title': self.context_title,
             'current_page': self.current_page,
             'current_month': current_month,
@@ -60,8 +58,24 @@ class BaseAnalyticView(ABC, View):
             'available_years': get_year_list(self.model),
             'durations': get_duration_list(),
             'month_list': generate_month_list_for_filter()
-        })
+        }
+        context.update(kwargs)
+        return context
+
+    def render_page(self, request, **kwargs):
+        """
+        Вспомогательный метод для рендеринга страницы с заданным контекстом.
+        """
+        context = self.get_context_data(request, **kwargs)
+        return render(request, self.template_name, context)
+
+    def get(self, request):
+        return self.render_page(request)
 
     @abstractmethod
     def get_item_list(self):
         raise NotImplementedError("You must implement get_item_list() in subclasses.")
+
+    @abstractmethod
+    def get_queryset(self, current_item, current_month, current_year):
+        raise NotImplementedError("You must implement get_queryset() in subclasses.")

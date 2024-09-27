@@ -1,13 +1,13 @@
 import calendar
-from calendar import monthrange
 
 from django.db.models import Sum
+from django.db.models.functions import TruncMonth
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.views import View
 from django.views.generic.edit import DeleteView
-from datetime import datetime, date, timedelta
+from datetime import datetime
 
 from .AbstractClasses.BaseAnalyticView import BaseAnalyticView
 from .AbstractClasses.ProfileBaseView import ProfileBaseView
@@ -15,7 +15,6 @@ from .AbstractClasses.UpdateLessonStatusView import UpdateLessonStatusView
 from .models import Student, Teacher, Lesson, StudentProgress
 from .forms import LessonForm, LessonMoveForm, ProgressStageForm, UserChangePassword, UserCombineCommonForm
 from companies.models import Company
-from users.models import User
 from transactions.models import StudentPayment, TeacherPayment, CompanyPayment
 from .services import user_is_student_or_teacher, count_time_left, user_is_teacher, user_is_staff, \
     get_paginator, get_teacher, get_duration_list, generate_month_list_for_filter, get_year_list, \
@@ -222,7 +221,7 @@ class TeacherStatistic(View):
         date = datetime.now()
         current_month = date.month
         current_year = date.year
-        half_month_summaries = TeacherPayment.objects.get_half_month_summaries(request.user, current_year)
+        half_month_summaries = TeacherPayment.objects.get_half_month_summaries(current_user, current_year)
 
         # =================================================================
         month_salary = ((TeacherPayment
@@ -374,10 +373,25 @@ class AnalyticTeachers(BaseAnalyticView):
         return Teacher.objects.filter(user__is_active=True).order_by('user__first_name', 'user__last_name')
 
     def get_queryset(self, current_item, current_month, current_year):
-        return (TeacherPayment.objects
+        return (self.model.objects
                 .filter(teacher=current_item, created_at__month=current_month, created_at__year=current_year)
                 .values('lesson__id', 'lesson__duration__time')
                 .order_by('lesson__id'))
+
+    def get_month_payment(self, current_item, current_year):
+        return self.model.objects.get_half_month_summaries(current_item, current_year)
+
+    def get_context_data(self, request, **kwargs):
+        # Вызываем базовый метод, чтобы получить контекст с основными данными
+        context = super().get_context_data(request, **kwargs)
+
+        # Используем уже существующие данные из контекста
+        current_item = context['current_item']
+        current_year = context['current_year']
+
+        # Вызываем get_month_payment и добавляем результат в контекст
+        context['month_payment'] = self.get_month_payment(current_item, current_year)
+        return context
 
 
 @method_decorator(login_required(login_url='/login/'), name='dispatch')
@@ -393,8 +407,28 @@ class AnalyticCompanies(BaseAnalyticView):
         return Company.objects.filter(is_active=True).order_by('name')
 
     def get_queryset(self, current_item, current_month, current_year):
-        return (CompanyPayment.objects
-                .filter(company=current_item, created_at__month=current_month, created_at__year=current_year, lesson__isnull=False)
+        return (self.model.objects
+                .filter(company=current_item, created_at__month=current_month, created_at__year=current_year,
+                        lesson__isnull=False)
                 .values('lesson__id', 'lesson__duration__time')
                 .order_by('lesson__id'))
 
+    def get_month_payment(self, current_item, current_year):
+        return (self.model.objects
+                .filter(company=current_item, created_at__year=current_year)
+                .annotate(month=TruncMonth('created_at'))  # Извлекаем месяц из поля created_at
+                .values('month')  # Группируем по месяцу
+                .annotate(total_price=Sum('price'))  # Суммируем поле price для каждого месяца
+                .order_by('month'))
+
+    def get_context_data(self, request, **kwargs):
+        # Вызываем базовый метод, чтобы получить контекст с основными данными
+        context = super().get_context_data(request, **kwargs)
+
+        # Используем уже существующие данные из контекста
+        current_item = context['current_item']
+        current_year = context['current_year']
+
+        # Вызываем get_month_payment и добавляем результат в контекст
+        context['month_payment'] = self.get_month_payment(current_item, current_year)
+        return context

@@ -22,46 +22,61 @@
     <div class="row">
         <div class="col-xl-12">
             <div class="card mb-4">
-                <div class="card-header  d-flex justify-content-end">
-                    <div class="btn-group me-3">
-                        <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuMonth"
-                                data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            {% for item in item_list %}
-                            {% if item == current_item %}{{ item }} {% endif %}
-                            {% endfor %}
-                        </button>
-                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuMonth">
-                            {% for item in item_list %}
-                            <li><a class="dropdown-item" href="?{% param_replace item=item.id %}">{{ item }}</a></li>
-                            {% endfor %}
-                        </ul>
-                    </div>
-                    <div class="btn-group me-3">
-                        <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuMonth"
-                                data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            {% for month in month_list %}
-                            {% if month.number == current_month %}{{ month.title }} {% endif %}
-                            {% endfor %}
-                        </button>
-                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuMonth">
-                            {% for month in month_list %}
-                            <li><a class="dropdown-item" href="?{% param_replace month=month.number %}">{{ month.title }}</a></li>
-                            {% endfor %}
-                        </ul>
-                    </div>
-                    <div class="btn-group me-3">
-                        <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuYear"
-                                data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            {{ current_year }}
-                        </button>
-                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuYear">
-                            {% for year in available_years %}
-                            <li><a class="dropdown-item" href="?{% param_replace year=year %}">{{ year }}</a></li>
-                            {% endfor %}
-                        </ul>
+                <div class="card-header">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap" style="gap: 1em;">
+                        <div class="">
+                            <h2 class="h3 m-0">Lesson by Month</h2>
+                        </div>
+                        <div class="d-flex justify-content-end flex-wrap" style="gap: 1em;">
+                            <div class="btn-group">
+                                <button class="btn btn-outline-secondary dropdown-toggle" type="button"
+                                        id="dropdownMenuMonth"
+                                        data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    {% for item in item_list %}
+                                    {% if item.id == current_item or item == current_item %}{{ item }} {% endif %}
+                                    {% endfor %}
+                                </button>
+                                <ul class="dropdown-menu" aria-labelledby="dropdownMenuMonth">
+                                    {% for item in item_list %}
+                                    <li><a class="dropdown-item" href="?{% param_replace item=item.id %}">{{ item }}</a>
+                                    </li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                            <div class="btn-group">
+                                <button class="btn btn-outline-secondary dropdown-toggle" type="button"
+                                        id="dropdownMenuMonth"
+                                        data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    {% for month in month_list %}
+                                    {% if month.number == current_month %}{{ month.title }} {% endif %}
+                                    {% endfor %}
+                                </button>
+                                <ul class="dropdown-menu" aria-labelledby="dropdownMenuMonth">
+                                    {% for month in month_list %}
+                                    <li><a class="dropdown-item" href="?{% param_replace month=month.number %}">{{
+                                        month.title }}</a></li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                            <div class="btn-group">
+                                <button class="btn btn-outline-secondary dropdown-toggle" type="button"
+                                        id="dropdownMenuYear"
+                                        data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    {{ current_year }}
+                                </button>
+                                <ul class="dropdown-menu" aria-labelledby="dropdownMenuYear">
+                                    {% for year in available_years %}
+                                    <li><a class="dropdown-item" href="?{% param_replace year=year %}">{{ year }}</a>
+                                    </li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </div>
                     </div>
                 </div>
+                <hr class="m-0">
                 <div class="card-body table-responsive">
+                    {% if result %}
                     <table class="table table-hover">
                         <thead>
                         <tr>
@@ -86,6 +101,45 @@
                         {% endfor %}
                         </tbody>
                     </table>
+                    {% else %}
+                    <p class="text-center p-3 m-0" style="border: 1px solid"><b>Data is empty</b></p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="h3 m-0">Month payment sum</h2>
+                </div>
+                <hr class="m-0">
+                <div class="card-body">
+                    {% if month_payment %}
+                    <table class="table table-striped">
+                        <thead>
+                        <tr>
+                            <th>Month</th>
+                            <th>Part of month</th>
+                            <th>Sum</th>
+                        </tr>
+                        </thead>
+                        {% for i in month_payment %}
+                        <tr>
+                            <td>{{i.month|date:"F"}}</td>
+                            <td>
+                                {% if i.half_month %}
+                                {% if i.half_month == 1 %} First part {% else %} Second part {% endif %}
+                                {% endif %}
+                            </td>
+                            <td>{{ current_item.currency.symbol }}{{ i.total_price }}</td>
+                        </tr>
+                        {% endfor %}
+                    </table>
+                    {% else %}
+                    <p class="text-center p-3 m-0" style="border: 1px solid"><b>Data is empty</b></p>
+                    {% endif %}
                 </div>
             </div>
         </div>

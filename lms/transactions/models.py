@@ -35,9 +35,9 @@ class StudentPayment(TransactionBase):
 
 
 class TeacherPaymentManager(models.Manager):
-    def get_half_month_summaries(self, user, year):
+    def get_half_month_summaries(self, teacher, year):
         # Фильтруем данные за указанный год
-        qs = self.filter(teacher__user=user, created_at__year=year)
+        qs = self.filter(teacher=teacher, created_at__year=year)
 
         # Разбиваем на первую и вторую половину месяца
         half_month_aggregates = qs.annotate(
