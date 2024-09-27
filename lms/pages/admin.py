@@ -15,8 +15,7 @@ class PageAdmin(admin.ModelAdmin):
     list_filter = ['status', 'author']
     readonly_fields = ['author', 'created_at', 'updated_at']
 
-    class Media:
-        js = ('js/admin/admin_slug_generator.js',)
+    prepopulated_fields = {'slug': ('title',)}
 
     def save_model(self, request, obj, form, change):
         if not change or not obj.author:
