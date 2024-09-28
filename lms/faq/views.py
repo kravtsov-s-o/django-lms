@@ -3,6 +3,7 @@ from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.views import View
 from .models import Question, Category
+from django.utils.translation import gettext_lazy as _
 
 
 # Create your views here.
@@ -20,7 +21,7 @@ class FAQView(View):
 
         return render(request, 'faq/index.html',
                       context={
-                          'title': 'FAQ',
+                          'title': _('FAQ'),
                           'categories': categories,
                           'current_category': current_category,
                           'questions': questions,

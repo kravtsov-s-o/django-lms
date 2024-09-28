@@ -104,6 +104,21 @@ docs = ["furo (>=2021.8.17b43,<2021.9.dev0)", "sphinx (>=3.5.0)", "sphinx-notfou
 testing = ["coverage[toml] (>=5.0a4)", "pytest (>=4.6.11)"]
 
 [[package]]
+name = "django-modeltranslation"
+version = "0.19.9"
+description = "Translates Django models using a registration approach."
+optional = false
+python-versions = "*"
+files = [
+    {file = "django_modeltranslation-0.19.9-py3-none-any.whl", hash = "sha256:3474e61488201b7babdc575c1774f653574d09e410a8c96c5c6a8a84716f1dd6"},
+    {file = "django_modeltranslation-0.19.9.tar.gz", hash = "sha256:78f1bf32b0fb04e5970b988bd7cd17fe2bdfaae69012048c338af4610a7807db"},
+]
+
+[package.dependencies]
+Django = ">=4.2"
+typing-extensions = {version = ">=4.0.1", markers = "python_version < \"3.11\""}
+
+[[package]]
 name = "pillow"
 version = "10.4.0"
 description = "Python Imaging Library (Fork)"
@@ -344,4 +359,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "4da53e4b04fe4934b9df287304c98ac3fd2c137d969936956850734e692190bf"
+content-hash = "e091467053db86509ae146bd3b05137c3edf80ee86496a59f883e411206a78e3"

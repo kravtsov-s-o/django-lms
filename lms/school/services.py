@@ -14,6 +14,8 @@ from transactions.models import StudentPayment, TeacherPayment, CompanyPayment
 from functools import wraps
 from django.core.exceptions import PermissionDenied
 
+from django.utils.translation import gettext_lazy as _
+
 DEFAULT_LESSON_DURATION = 60  # minutes
 GROUP_DISCOUNT = {
     1: Decimal(1),
@@ -39,7 +41,7 @@ def payment_description(lesson: Lesson) -> str:
         [f'{student.user.first_name} {student.user.last_name}' for student in lesson.students.all()])
     date = lesson.date.strftime("%d.%m.%Y")
     time = lesson.time.strftime("%H:%M")
-    return f"For lesson {date} - {time}; Students: {students}"
+    return _("For lesson {date} - {time}; Students: {students}").format(date=date, time=time, students=students)
 
 
 def lesson_finished(teacher: Teacher, lesson_id: int, status: str):
@@ -432,11 +434,11 @@ def count_time_left(user):
         string: time left in format '10 hour(s) 30 minutes'
     """
     if user.wallet <= 0:
-        return '0 hour(s)'
+        return _('0 hour(s)')
     time_left = user.wallet / user.rate
     hours = int(time_left)
     minutes = int((time_left - hours) * 60)
-    return f"{hours} hour(s) {minutes} minutes"
+    return _("{hours} hour(s) {minutes} minutes").format(hours=hours, minutes=minutes)
 
 
 def get_paginator(items, items_per_page, request):

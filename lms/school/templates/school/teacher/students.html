@@ -1,5 +1,5 @@
 {% extends 'school/base-template.html' %}
-
+{% load i18n %}
 {% block page-title %}{{ title }}{% endblock %}
 
 {% block content %}
@@ -17,10 +17,10 @@
             <table class="table">
                 <thead>
                 <tr>
-                    <th class="text-center" style="width: 1%;">Actions</th>
-                    <th>Student</th>
-                    <th>Company</th>
-                    <th>Status</th>
+                    <th class="text-center" style="width: 1%;">{% trans 'Actions' %}</th>
+                    <th>{% trans 'Student' %}</th>
+                    <th>{% trans 'Company' %}</th>
+                    <th>{% trans 'Status' %}</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -46,9 +46,9 @@
                     </td>
                     <td>
                       {% if student.user.is_active == True %}
-                        <span class="badge bg-label-success">ACTIVE</span>
+                        <span class="badge bg-label-success">{% trans 'ACTIVE' %}</span>
                       {% else %}
-                        <span class="badge bg-label-danger">INACTIVE</span>
+                        <span class="badge bg-label-danger">{% trans 'INACTIVE' %}</span>
                       {% endif %}
                     </td>
 

@@ -1,7 +1,8 @@
 {% extends 'school/base-template.html' %}
-{% block page-title %}{{ current_user }}{% endblock %}
+{% load i18n %}
 {% load static %}
 {% load extract_languages %}
+{% block page-title %}{{ current_user }}{% endblock %}
 {% block extra_css %}
 
 {% endblock %}
@@ -13,7 +14,7 @@
     <div class="card mb-4">
         <div class="card-body">
             <div class="page-header">
-                <h1 class="h4 m-0">Profile: {{ current_user }}</h1>
+                <h1 class="h4 m-0">{% trans 'Profile:' %} {{ current_user }}</h1>
             </div>
         </div>
     </div>
@@ -35,37 +36,37 @@
                             {% endif %}
                         </div>
                     </div>
-                    <h5 class="pb-2 border-bottom mb-4">Details</h5>
+                    <h5 class="pb-2 border-bottom mb-4"></h5>
                     <div class="info-container">
                         <ul class="list-unstyled">
                             <li class="mb-3">
-                                <span class="fw-bold me-2">Username:</span>
+                                <span class="fw-bold me-2">{% trans 'Username:' %}</span>
                                 <span>{{ current_user.user.username }}</span>
                             </li>
                             <li class="mb-3">
-                                <span class="fw-bold me-2">Email:</span>
+                                <span class="fw-bold me-2">{% trans 'Email:' %}</span>
                                 <span><a
                                         href="mailto:{{ current_user.user.email }}">{{ current_user.user.email }}</a></span>
                             </li>
                             <li class="mb-3">
-                                <span class="fw-bold me-2">Status:</span>
+                                <span class="fw-bold me-2">{% trans 'Status:' %}</span>
                                 {% if current_user.user.is_active == True %}
-                                <span class="badge bg-label-success">ACTIVE</span>
+                                <span class="badge bg-label-success">{% trans 'ACTIVE' %}</span>
                                 {% else %}
-                                <span class="badge bg-label-danger">INACTIVE</span>
+                                <span class="badge bg-label-danger">{% trans 'INACTIVE' %}</span>
                                 {% endif %}
                             </li>
                             <!--<li class="mb-3">
-                                <span class="fw-bold me-2">Contact:</span>
+                                <span class="fw-bold me-2">{% trans 'Contact:' %}</span>
                                 <span>(123) 456-7890</span>
                             </li>-->
                             <li class="mb-3">
-                                <span class="fw-bold me-2">Languages:</span>
+                                <span class="fw-bold me-2">{% trans 'Languages:' %}</span>
                                 <span>{{ current_user.language|extract_languages }}</span>
                             </li>
                             {% if current_user.user.school_role == 'student' %}
                             <li class="mb-3">
-                                <span class="fw-bold me-2">Teacher:</span>
+                                <span class="fw-bold me-2">{% trans 'Teacher:' %}</span>
                                 <span><a href="#" data-bs-toggle="modal" data-bs-target="#about-teacher">{{ current_user.teacher }}</a></span>
                             </li>
                             {% endif %}
@@ -79,24 +80,24 @@
             <div class="card">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-start">
-                        <span class="badge bg-label-primary">Rate</span>
+                        <span class="badge bg-label-primary">{% trans 'Rate' %}</span>
                         <div class="d-flex justify-content-center">
                             <sup class="h5 pricing-currency mt-3 mt-sm-4 mb-0 me-1 text-primary">
                                 {{ current_user.currency.symbol }}</sup>
                             <h1 class="display-3 fw-normal mb-0 text-primary">{{ current_user_rate }}</h1>
-                            <sub class="fs-6 pricing-duration mt-auto mb-4">/hour</sub>
+                            <sub class="fs-6 pricing-duration mt-auto mb-4">{% trans '/hour' %}</sub>
                         </div>
                     </div>
                     {% if current_user.user.school_role == 'student' %}
                     <ul class="list-unstyled mb-3">
-                        <li class="h5 mb-2">Balance</li>
+                        <li class="h5 mb-2">{% trans 'Balance' %}</li>
                         <li class="display-6 fw-bold mb-0">{{ current_user.wallet }} {{ current_user.currency }}</li>
                     </ul>
-                    <span>Enough for about <b>{{ lessons_left }}</b></span>
+                    <span>{% trans 'Enough for about' %} <b>{{ lessons_left }}</b></span>
                     <div class="d-grid w-100 mt-3 pt-2"
                          data-bs-toggle="tooltip" data-bs-offset="0,4" data-bs-placement="top" title="Coming Soon">
                         <button class="btn btn-primary" disabled>
-                            Pay
+                            {% trans 'Pay' %}
                         </button>
                     </div>
                     {% endif %}
@@ -114,25 +115,25 @@
                 <li class="nav-item">
                     <a class="nav-link {% if tab == 'lessons' %}active{% endif %}"
                        href="{% url 'school:profile-lessons' pk=current_user.user.id %}">
-                        <i class="bx bxs-school me-1"></i>Lessons</a>
+                        <i class="bx bxs-school me-1"></i>{% trans 'Lessons' %}</a>
                 </li>
                 {% if current_user.user.school_role == 'student' %}
                 <li class="nav-item">
                     <a class="nav-link {% if tab == 'progress' %}active{% endif %}"
                        href="{% url 'school:profile-progress' pk=current_user.user.id %}">
-                        <i class="bx bxs-graduation me-1"></i>Progress</a>
+                        <i class="bx bxs-graduation me-1"></i>{% trans 'Progress' %}</a>
                 </li>
                 {% endif %}
                 {% if request.user == current_user.user %}
                 <li class="nav-item">
                     <a class="nav-link {% if tab == 'payments' %}active{% endif %}"
                        href="{% url 'school:profile-payments' pk=current_user.user.id %}">
-                        <i class="bx bx-money-withdraw me-1"></i>Payments</a>
+                        <i class="bx bx-money-withdraw me-1"></i>{% trans 'Payments' %}</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link {% if tab == 'settings' %}active{% endif %}"
                        href="{% url 'school:profile-settings' pk=current_user.user.id %}">
-                        <i class="bx bxs-cog me-1"></i>Settings</a>
+                        <i class="bx bxs-cog me-1"></i>{% trans 'Settings' %}</a>
                 </li>
                 {% endif %}
             </ul>
@@ -140,11 +141,11 @@
 
             {% if tab == 'lessons' %}
                 {% include 'school/profile/components/lessons.html' %}
-                {% elif tab == 'progress' %}
+            {% elif tab == 'progress' %}
                 {% include 'school/profile/components/progress.html' %}
-                {% elif tab == 'payments' %}
+            {% elif tab == 'payments' %}
                 {% include 'school/profile/components/payments.html' %}
-                {% elif tab == 'settings' %}
+            {% elif tab == 'settings' %}
                 {% include 'school/profile/components/settings.html' %}
             {% endif %}
         </div>

@@ -2,11 +2,12 @@ from django.contrib import admin
 
 from .models import Page
 from .forms import PageForm
+from modeltranslation.admin import TranslationAdmin
 
 
 # Register your models here.
 @admin.register(Page)
-class PageAdmin(admin.ModelAdmin):
+class PageAdmin(TranslationAdmin):
 
     form = PageForm
 
@@ -19,6 +20,5 @@ class PageAdmin(admin.ModelAdmin):
 
     def save_model(self, request, obj, form, change):
         if not change or not obj.author:
-            # Если это создание объекта или поле author пустое, заполняем автором текущего пользователя
             obj.author = request.user
         obj.save()

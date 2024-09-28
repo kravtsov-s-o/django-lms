@@ -1,4 +1,5 @@
 {% extends 'users/base-template.html' %}
+{% load i18n %}
 {% load static %}
 {% load crispy_forms_tags %}
 {% block page-title %}{{ title }}{% endblock %}
@@ -17,9 +18,9 @@
                         data-app-light-img="pages/light-login.png"
                         data-app-dark-img="pages/dark-login.png"/>
                 <div class="mx-auto">
-                    <h3>English for life and work 🥳</h3>
+                    <h3>{% trans 'English for life and work' %} 🥳</h3>
                     <p>
-                        Everything is difficult before it becomes easy.
+                        {% trans 'Everything is difficult before it becomes easy.' %}
                     </p>
                 </div>
             </div>
@@ -31,7 +32,7 @@
             <div class="w-px-400 mx-auto">
                 <!-- Logo -->
                 <div class="app-brand mb-4">
-                    <a href="index.html" class="app-brand-link gap-2 mb-2">
+                    <a href="{% url 'school:main' %}" class="app-brand-link gap-2 mb-2">
                 <span class="app-brand-logo demo">
                   <img src="{% static './img/logo-icon.svg' %}" alt="">
                 </span>
@@ -39,15 +40,15 @@
                     </a>
                 </div>
                 <!-- /Logo -->
-                <h4 class="mb-2">Welcome! 👋</h4>
-                <p class="mb-4">Please sign-in to your account</p>
+                <h4 class="mb-2">{% trans 'Welcome!' %} 👋</h4>
+                <p class="mb-4">{% trans 'Please sign-in to your account' %}</p>
 
                 <form id="formAuthentication" class="mb-3" action="{% url 'users:login' %}" method="POST">
                     {% csrf_token %}
                     {{ form|crispy }}
-                    <button class="btn btn-primary d-grid w-100" tabindex="4">Sign in</button>
+                    <button class="btn btn-primary d-grid w-100" tabindex="4">{% trans 'Sign in' %}</button>
                     <hr class="my-4">
-                    <p><a href="{% url 'users:password_reset' %}" class="text-muted">Forgot Password?</a></p>
+                    <p><a href="{% url 'users:password_reset' %}" class="text-muted">{% trans 'Forgot Password?' %}</a></p>
                 </form>
             </div>
         </div>

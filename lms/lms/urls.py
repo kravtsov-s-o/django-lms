@@ -18,7 +18,7 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf.urls.static import static
 from django.conf import settings
-
+from django.conf.urls.i18n import i18n_patterns
 from django.shortcuts import render
 
 
@@ -50,15 +50,24 @@ def custom_page_access_denied_view(request, exception):
     return render(request, '403.html', context, status=403)
 
 
-urlpatterns = [
-                  path('admin/', admin.site.urls, name='admin'),
-                  path('', include('users.urls')),
-                  path('', include('school.urls')),
-                  path('', include('faq.urls')),
-                  path('', include('pages.urls')),
-                  path('django_ckeditor_5/', include('django_ckeditor_5.urls')),
-              ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-
 handler404 = 'lms.urls.custom_page_not_found_view'
 handler403 = 'lms.urls.custom_page_access_denied_view'
 handler500 = 'lms.urls.custom_server_error_view'
+
+# urlpatterns = [
+#                   path('admin/', admin.site.urls, name='admin'),
+#                   path('', include('users.urls')),
+#                   path('', include('school.urls')),
+#                   path('', include('faq.urls')),
+#                   path('', include('pages.urls')),
+#                   path('django_ckeditor_5/', include('django_ckeditor_5.urls')),
+#               ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+urlpatterns = i18n_patterns(
+    path("i18n/", include("django.conf.urls.i18n")),
+    path('admin/', admin.site.urls, name='admin'),
+    path('', include('users.urls')),
+    path('', include('school.urls')),
+    path('', include('faq.urls')),
+    path('', include('pages.urls')),
+    path('django_ckeditor_5/', include('django_ckeditor_5.urls')),
+) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -1,4 +1,5 @@
 {% extends 'school/base-template.html' %}
+{% load i18n %}
 {% load static %}
 {% load crispy_forms_tags %}
 
@@ -27,18 +28,8 @@
         <div class="card-body">
             <div class=" d-flex flex-wrap justify-content-between align-items-center gap-3 w-100">
                 <h1 class="h2 m-0">{{ title }}</h1>
-                <a href="{% url 'school:cabinet-schedule' pk=request.user.id %}" class="btn btn-outline-secondary">Schedule</a>
+                <a href="{% url 'school:cabinet-schedule' pk=request.user.id %}" class="btn btn-outline-secondary">{% trans 'Schedule' %}</a>
             </div>
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb m-0">
-                    <li class="breadcrumb-item">
-                        <a href="{% url 'school:cabinet-schedule' pk=request.user.id %}">Schedule</a>
-                    </li>
-                    <li class="breadcrumb-item active">
-                        {{ title }}
-                    </li>
-                </ol>
-            </nav>
         </div>
     </div>
     <form action="
@@ -51,7 +42,7 @@
         {% csrf_token %}
         <div class="row">
             <div class="col-md-4">
-                <div class="card" {% if lesson %}style="pointer-events:none;"{% endif %}>
+                <div class="card" {% if lesson %} style="pointer-events:none;" {% endif %}>
                     <div class="card-body">
                         {% csrf_token %}
                         {{ form.date|as_crispy_field }}
@@ -75,19 +66,19 @@
                 <div class="card">
                     {% if lesson %}
                     <div class="card-header">
-                        <p class="card-text">Lesson status: <b style="text-transform:capitalize;">{{ lesson.status }}</b></p>
-                        <p class="card-text">You can edit only Theme, Notes and HomeWork</p>
+                        <p class="card-text">{% trans 'Lesson status:' %} <b style="text-transform:capitalize;">{{ lesson.status }}</b></p>
+                        <p class="card-text">{% trans 'You can edit only Theme, Notes and HomeWork' %}</p>
                     </div>
                     {% endif %}
                     <div class="card-body">
                         {{ form.theme|as_crispy_field }}
                         <div class="mb-3">
-                            <label for="full-editor-note" class="form-label">Notes</label>
+                            <label for="full-editor-note" class="form-label">{% trans 'Notes' %}</label>
                             {{ form.notes }}
                             <div class="full-editor-note" id="full-editor-note"></div>
                         </div>
                         <div class="mb-3">
-                            <label for="full-editor-hw" class="form-label">Homework</label>
+                            <label for="full-editor-hw" class="form-label">{% trans 'Homework' %}</label>
                             {{ form.homework }}
                             <div class="full-editor-hw" id="full-editor-hw"></div>
                         </div>
@@ -98,8 +89,8 @@
         <div class="card mt-3">
             <div class="card-body">
                 <div class="d-flex flex-wrap justify-content-between w-100 gap-3">
-                    <button class="btn btn-outline-danger" type="reset">Clear</button>
-                    <button class="btn btn-primary" type="submit">Save</button>
+                    <button class="btn btn-outline-danger" type="reset">{% trans 'Clear' %}</button>
+                    <button class="btn btn-primary" type="submit">{% trans 'Save' %}</button>
                 </div>
             </div>
         </div>

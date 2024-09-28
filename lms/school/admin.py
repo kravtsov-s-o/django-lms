@@ -3,6 +3,7 @@ from .models import Teacher, Student, Lesson, StudentProgress
 from .forms import TeacherForm, StudentForm
 from users.models import User
 from django.contrib.auth.forms import UserChangeForm
+from django.utils.translation import gettext_lazy as _
 
 from .services import lesson_finished
 
@@ -19,7 +20,7 @@ class TeacherAdmin(admin.ModelAdmin):
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         field = super().formfield_for_foreignkey(db_field, request, **kwargs)
         if db_field.name == 'user':
-            # Фильтруем пользователей по school_role='student'
+            # Filter users by school_role='teacher'
             field.queryset = User.objects.filter(school_role='teacher')
         return field
 
@@ -32,8 +33,8 @@ class TeacherAdmin(admin.ModelAdmin):
     def get_languages(self, obj):
         return ', '.join([language.name for language in obj.language.all()])
 
-    get_name.short_description = 'Name'
-    get_languages.short_description = 'Languages'
+    get_name.short_description = _('Name')
+    get_languages.short_description = _('Languages')
 
 
 @admin.register(Student)
@@ -47,7 +48,7 @@ class StudentAdmin(admin.ModelAdmin):
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         field = super().formfield_for_foreignkey(db_field, request, **kwargs)
         if db_field.name == 'user':
-            # Фильтруем пользователей по school_role='student'
+            # Filter users by по school_role='student'
             field.queryset = User.objects.filter(school_role='student')
         return field
 
@@ -66,24 +67,24 @@ class StudentAdmin(admin.ModelAdmin):
     def get_company(self, obj):
         return f'{obj.company.name}'
 
-    get_name.short_description = 'Name'
-    get_languages.short_description = 'Languages'
-    get_balance.short_description = 'Wallet'
+    get_name.short_description = _('Name')
+    get_languages.short_description = _('Languages')
+    get_balance.short_description = _('Wallet')
 
 
-@admin.action(description="Mark lesson as 'Conducted'")
+@admin.action(description=_("Mark lesson as 'Conducted'"))
 def make_conducted(modeladmin, request, queryset):
     for lesson in queryset:
         lesson_finished(lesson.teacher, lesson.id, 'conducted')
 
 
-@admin.action(description="Mark lesson as 'Missed'")
+@admin.action(description=_("Mark lesson as 'Missed'"))
 def make_missed(modeladmin, request, queryset):
     for lesson in queryset:
         lesson_finished(lesson.teacher, lesson.id, 'missed')
 
 
-@admin.action(description="Mark lesson as 'Planned'")
+@admin.action(description=_("Mark lesson as 'Planned'"))
 def make_planned(modeladmin, request, queryset):
     for lesson in queryset:
         lesson_finished(lesson.teacher, lesson.id, 'planned')

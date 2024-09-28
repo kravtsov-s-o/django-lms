@@ -1,4 +1,5 @@
 {% extends 'school/base-template.html' %}
+{% load i18n %}
 {% load static %}
 {% load url_params %}
 {% load extract_students %}
@@ -25,13 +26,9 @@
     <div class="card mb-4">
         <div class="card-body">
             <div class=" d-flex flex-wrap justify-content-between align-items-center gap-3 w-100">
-                <h1 class="h2 m-0">Schedule</h1>
-                <a href="{% url 'school:lesson-add' pk=request.user.pk %}" class="btn btn-primary">Add lesson</a>
+                <h1 class="h2 m-0">{% trans 'Schedule' %}</h1>
+                <a href="{% url 'school:lesson-add' pk=request.user.pk %}" class="btn btn-primary">{% trans 'Add lesson' %}</a>
             </div>
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb m-0">
-                </ol>
-            </nav>
         </div>
     </div>
     <div class="row">
@@ -124,10 +121,10 @@
                         <table class="table">
                             <thead>
                             <tr>
-                                <th>Time</th>
-                                <th>Status</th>
-                                <th>Students</th>
-                                <th class="text-center" style="width: 1%;">Actions</th>
+                                <th>{% trans 'Time' %}</th>
+                                <th>{% trans 'Status' %}</th>
+                                <th>{% trans 'Students' %}</th>
+                                <th class="text-center" style="width: 1%;">{% trans 'Actions' %}</th>
                             </tr>
                             </thead>
                             <tbody class="table-border-bottom-0">
@@ -160,30 +157,30 @@
                                              style="position: absolute; inset: 0px auto auto 0px; margin: 0px; transform: translate(1225px, 139px);">
                                             {% if lesson.status == 'planned' %}
                                             <a class="dropdown-item" href="{% url 'school:lesson-edit' pk=lesson.id %}">
-                                                <i class="bx bx-edit-alt me-1"></i>Edit</a>
+                                                <i class="bx bx-edit-alt me-1"></i>{% trans 'Edit' %}</a>
                                             <a class="dropdown-item dropdown-item--conducted" href="javascript:void(0);"
                                                data-bs-toggle="modal" data-bs-target="#conducted"
                                                data-id="{{ lesson.id }}" data-action="conducted">
-                                                <i class="bx bx-check me-1"></i> Conducted</a>
+                                                <i class="bx bx-check me-1"></i>{% trans 'Conducted' %}</a>
                                             <a class="dropdown-item dropdown-item--missed" href="javascript:void(0);"
                                                data-bs-toggle="modal" data-bs-target="#missed"
                                                data-id="{{ lesson.id }}" data-action="missed">
-                                                <i class="bx bx-x me-1"></i> Missed</a>
+                                                <i class="bx bx-x me-1"></i>{% trans 'Missed' %}</a>
                                             <a class="dropdown-item dropdown-item--move" href="javascript:void(0);"
                                                data-bs-toggle="modal" data-bs-target="#move"
                                                data-id="{{ lesson.id }}" data-action="move">
-                                                <i class="bx bx-right-arrow-circle me-1"></i>Move</a>
+                                                <i class="bx bx-right-arrow-circle me-1"></i>{% trans 'Move' %}</a>
                                             <a class="dropdown-item dropdown-item--delete" href="javascript:void(0);"
                                                data-bs-toggle="modal" data-bs-target="#delete"
                                                data-id="{{ lesson.id }}" data-action="delete">
-                                                <i class="bx bx-trash me-1"></i> Delete</a>
+                                                <i class="bx bx-trash me-1"></i>{% trans 'Delete' %}</a>
                                             {% else %}
                                             <a class="dropdown-item" href="{% url 'school:lesson-edit' pk=lesson.id %}">
-                                                <i class="bx bx-edit-alt me-1"></i>Edit</a>
+                                                <i class="bx bx-edit-alt me-1"></i>{% trans 'Edit' %}</a>
                                             <a class="dropdown-item dropdown-item--planned" href="javascript:void(0);"
-                                               data-bs-toggle="modal" data-bs-target="#planned" title="Planned"
+                                               data-bs-toggle="modal" data-bs-target="#planned" title="{% trans 'Planned' %}"
                                                data-id="{{ lesson.id }}" data-action="planned">
-                                                <i class="bx bx-rotate-left"></i> Planned</a>
+                                                <i class="bx bx-rotate-left"></i>{% trans 'Planned' %}</a>
                                             {% endif %}
                                         </div>
                                     </div>
@@ -196,7 +193,7 @@
                 </div>
                 {% else %}
                 <div class="card-body">
-                    Lesson list is empty
+                    {% trans 'Lesson list is empty' %}
                 </div>
                 {% endif %}
             </div>

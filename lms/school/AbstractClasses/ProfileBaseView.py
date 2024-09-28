@@ -7,6 +7,8 @@ from users.models import User
 from school.models import Student, Teacher
 from school.services import count_time_left
 
+from django.utils.translation import gettext_lazy as _
+
 
 class ProfileBaseView(View):
     """
@@ -41,7 +43,7 @@ class ProfileBaseView(View):
         Общий контекст для всех вкладок профиля.
         """
         context = {
-            'title': 'Profile',
+            'title': _('Profile'),
             'current_user': self.current_user,
             'current_user_rate': self.current_user_rate,
             'lessons_left': self.get_Lesson_time_left(),

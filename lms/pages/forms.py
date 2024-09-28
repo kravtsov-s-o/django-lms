@@ -1,26 +1,26 @@
 from django import forms
 from django.utils.text import slugify
 from django_ckeditor_5.fields import CKEditor5Field
+from django_ckeditor_5.widgets import CKEditor5Widget
 
 from .models import Page
 
 
 class PageForm(forms.ModelForm):
-    content = CKEditor5Field('Text', config_name='extends')
 
     class Meta:
         model = Page
         fields = '__all__'
+        widgets = {
+            'content': CKEditor5Widget(config_name='default', attrs={'style': 'width: 80%;'})
+        }
 
     def save(self, commit=True):
-        # Сначала выполняем стандартное сохранение формы
         instance = super(PageForm, self).save(commit=False)
 
-        # Если slug пустой, генерируем его из title
         if not instance.slug:
             instance.slug = slugify(instance.title)
 
-        # Если нужно сразу сохранить объект
         if commit:
             instance.save()
 

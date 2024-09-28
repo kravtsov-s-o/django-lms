@@ -1,3 +1,4 @@
+{% load i18n %}
 {% load crispy_forms_tags %}
 <div class="card mb-4">
 <div class="card-header">
@@ -8,13 +9,13 @@
             note</a>
         {% endif %}
     </div>
-    <p class="text-muted m-0">To be completed by the teacher as he or she learns and passes the
-        themes.</p>
+    <p class="text-muted m-0">
+        {% trans 'To be completed by the teacher as he or she learns and passes the themes.' %}</p>
 </div>
 <hr class="my-1">
 {% if not progress_list %}
 <div class="card-body">
-    <h6 class="m-0">Progress list is empty!</h6>
+    <h6 class="m-0">{% trans 'Progress list is empty!' %}</h6>
 </div>
 {% else %}
 <!-- Activity Timeline -->
@@ -91,7 +92,7 @@
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="newComment">New Note</h5>
+                <h5 class="modal-title" id="newComment">{% trans 'New Note' %}</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                 </button>
             </div>
@@ -105,8 +106,8 @@
                 </div>
                 <div class="modal-footer">
                     <div class="d-flex flex-wrap justify-content-between w-100 gap-3">
-                        <button type="reset" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Save</button>
+                        <button type="reset" class="btn btn-danger" data-bs-dismiss="modal">{% trans 'Close' %}</button>
+                        <button type="submit" class="btn btn-primary">{% trans 'Save' %}</button>
                     </div>
                 </div>
             </form>

@@ -16,9 +16,10 @@ from .models import Student, Teacher, Lesson, StudentProgress
 from .forms import LessonForm, LessonMoveForm, ProgressStageForm, UserChangePassword, UserCombineCommonForm
 from companies.models import Company
 from transactions.models import StudentPayment, TeacherPayment, CompanyPayment
-from .services import user_is_student_or_teacher, count_time_left, user_is_teacher, user_is_staff, \
+from .services import user_is_student_or_teacher, user_is_teacher, user_is_staff, \
     get_paginator, get_teacher, get_duration_list, generate_month_list_for_filter, get_year_list, \
     sort_data_for_analytics, user_is_lesson_teacher, user_is_student_teacher
+from django.utils.translation import gettext_lazy as _
 
 
 @method_decorator(login_required(login_url='/login/'), name='dispatch')
@@ -54,7 +55,7 @@ class ScheduleView(View):
 
         return render(request, 'school/teacher/index.html',
                       context={
-                          'title': 'Lesson',
+                          'title': _('Lesson'),
                           'date': current_date,
                           'lessons': lessons,
                           'lesson_move_form': LessonMoveForm(),
@@ -72,13 +73,14 @@ class ScheduleView(View):
 @method_decorator(login_required(login_url='/login/'), name='dispatch')
 @method_decorator(user_is_teacher, name='dispatch')
 class LessonAdd(View):
+    title = _('Add new lesson')
     def get(self, request, pk):
         teacher = get_teacher(request)
 
         return render(request,
                       'school/teacher/lesson-add.html',
                       context={
-                          'title': 'Add new lesson',
+                          'title': self.title,
                           'form': LessonForm(teacher)
                       })
 
@@ -93,7 +95,7 @@ class LessonAdd(View):
             return render(request,
                           'school/teacher/lesson-add.html',
                           context={
-                              'title': 'Add new lesson',
+                              'title': self.title,
                               'form': form
                           })
 
@@ -101,6 +103,7 @@ class LessonAdd(View):
 @method_decorator(login_required(login_url='/login/'), name='dispatch')
 @method_decorator(user_is_lesson_teacher, name='dispatch')
 class LessonEdit(View):
+    title = _('Edit lesson')
     def get(self, request, *args, **kwargs):
         pk = kwargs.get('pk', None)
         teacher = get_teacher(request)
@@ -110,7 +113,7 @@ class LessonEdit(View):
         return render(request,
                       'school/teacher/lesson-add.html',
                       context={
-                          'title': 'Edit lesson',
+                          'title': self.title,
                           'form': form,
                           'lesson': lesson
                       })
@@ -127,7 +130,7 @@ class LessonEdit(View):
             return render(request,
                           'school/teacher/lesson-add.html',
                           context={
-                              'title': 'Edit lesson',
+                              'title': self.title,
                               'form': form
                           })
 
@@ -206,11 +209,11 @@ class StudentsView(View):
 
         return render(request, 'school/teacher/students.html',
                       context={
-                          'title': 'Students',
+                          'title': _('Students'),
                           'students': students_page,
                           'page_range': page_range,
-                          'current_page': 'students'}
-                      )
+                          'current_page': 'students'
+                      })
 
 
 @method_decorator(login_required(login_url='/login/'), name='dispatch')
@@ -249,7 +252,7 @@ class TeacherStatistic(View):
         result = sort_data_for_analytics(queryset_lessons)
 
         return render(request, 'school/teacher/statistic.html', context={
-            'title': 'Statistics',
+            'title': _('Statistics'),
             'current_page': 'statistics',
             'sum': half_month_summaries,
             'teacher_salary': teacher_salary,
@@ -366,7 +369,7 @@ class AnalyticTeachers(BaseAnalyticView):
     model = TeacherPayment
     current_item_field = 'teacher'
     template_name = 'school/analytics/index.html'
-    context_title = 'Teacher Analytics'
+    context_title = _('Teacher Analytics')
     current_page = 'teacher-analytics'
 
     def get_item_list(self):
@@ -400,7 +403,7 @@ class AnalyticCompanies(BaseAnalyticView):
     model = CompanyPayment
     current_item_field = 'company'
     template_name = 'school/analytics/index.html'
-    context_title = 'Company Analytics'
+    context_title = _('Company Analytics')
     current_page = 'company-analytics'
 
     def get_item_list(self):
