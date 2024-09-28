@@ -52,9 +52,9 @@
                 <div data-i18n="Page 2">Lessons</div>
             </a>
         </li>
-        {% if request.user.school_role == 'student' and current_user.user == request.user %}
+        {% if request.user.school_role == 'student' %}
         <li class="menu-item  {% if current_page == 'progress' and current_user.user == request.user %}active{% endif %}">
-            <a href="{% url 'school:profile-progress' pk=current_user.user.id %}" class="menu-link">
+            <a href="{% url 'school:profile-progress' pk=request.user.id %}" class="menu-link">
                 <i class="menu-icon tf-icons bx bxs-graduation"></i>
                 <div data-i18n="Page 2">Progress</div>
             </a>

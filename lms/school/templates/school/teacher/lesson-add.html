@@ -45,7 +45,7 @@
             {% if lesson %}
                 {% url 'school:lesson-edit' pk=lesson.pk %}
             {% else %}
-                {% url 'school:lesson-add' %}
+                {% url 'school:lesson-add' pk=request.user.pk %}
             {% endif %}
         " method="post" id="lesson-form">
         {% csrf_token %}

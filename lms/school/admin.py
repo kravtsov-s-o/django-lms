@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Teacher, Student, Lesson
+from .models import Teacher, Student, Lesson, StudentProgress
 from .forms import TeacherForm, StudentForm
 from users.models import User
 from django.contrib.auth.forms import UserChangeForm
@@ -101,3 +101,9 @@ class LessonAdmin(admin.ModelAdmin):
         return ", ".join([str(student) for student in obj.students.all()])
 
     actions = [make_conducted, make_missed, make_planned]
+
+
+@admin.register(StudentProgress)
+class StudentProgressAdmin(admin.ModelAdmin):
+    list_display = ['title', 'teacher', 'student', 'date']
+    list_filter = ['teacher', 'student']

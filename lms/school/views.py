@@ -18,7 +18,7 @@ from companies.models import Company
 from transactions.models import StudentPayment, TeacherPayment, CompanyPayment
 from .services import user_is_student_or_teacher, count_time_left, user_is_teacher, user_is_staff, \
     get_paginator, get_teacher, get_duration_list, generate_month_list_for_filter, get_year_list, \
-    sort_data_for_analytics, user_is_lesson_teacher
+    sort_data_for_analytics, user_is_lesson_teacher, user_is_student_teacher
 
 
 @method_decorator(login_required(login_url='/login/'), name='dispatch')
@@ -70,9 +70,9 @@ class ScheduleView(View):
 
 
 @method_decorator(login_required(login_url='/login/'), name='dispatch')
-# @method_decorator(user_is_teacher, name='dispatch')
+@method_decorator(user_is_teacher, name='dispatch')
 class LessonAdd(View):
-    def get(self, request):
+    def get(self, request, pk):
         teacher = get_teacher(request)
 
         return render(request,
@@ -307,7 +307,7 @@ class ProfileProgressView(ProfileBaseView):
 
 
 @method_decorator(login_required(login_url='/login/'), name='dispatch')
-@method_decorator(user_is_teacher, name='dispatch')
+@method_decorator(user_is_student_teacher, name='dispatch')
 class ProfileProgressDelete(DeleteView):
     def post(self, request, pk, pk2):
         if request.method == "POST":

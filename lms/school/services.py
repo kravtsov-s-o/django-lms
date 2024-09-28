@@ -376,6 +376,23 @@ def user_is_teacher(view_func):
 
     return _wrapped_view
 
+def user_is_student_teacher(view_func):
+    """
+    Check user is Student Teacher
+    """
+
+    @wraps(view_func)
+    def _wrapped_view(request, *args, **kwargs):
+        student_pk = kwargs.get('pk')
+        student = get_object_or_404(Student, pk=student_pk)
+
+        if request.user == student.teacher.user:
+            return view_func(request, *args, **kwargs)
+        else:
+            raise PermissionDenied
+
+    return _wrapped_view
+
 
 def user_is_lesson_teacher(view_func):
     @wraps(view_func)
