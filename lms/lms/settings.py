@@ -45,7 +45,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'crispy_forms',
     "crispy_bootstrap5",
-    "ckeditor",
     "django_ckeditor_5",
     'settings',
     'users',
