@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-09-28 22:32+0300\n"
+"POT-Creation-Date: 2024-09-29 18:59+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -155,32 +155,120 @@ msgstr ""
 msgid "Profile"
 msgstr ""
 
-#: .\school\admin.py:36 .\school\admin.py:70
+#: .\school\admin.py:17 .\school\admin.py:29
+msgid "Base info"
+msgstr ""
+
+#: .\school\admin.py:20 .\school\admin.py:32
+msgid "User info"
+msgstr ""
+
+#: .\school\admin.py:23 .\school\admin.py:35
+msgid "School info"
+msgstr ""
+
+#: .\school\admin.py:60 .\school\admin.py:120
 msgid "Name"
 msgstr ""
 
-#: .\school\admin.py:37 .\school\admin.py:71 .\settings\models.py:14
+#: .\school\admin.py:61 .\school\admin.py:121 .\settings\models.py:14
 msgid "Languages"
 msgstr ""
 
-#: .\school\admin.py:72
+#: .\school\admin.py:122
 msgid "Wallet"
 msgstr ""
 
-#: .\school\admin.py:75
+#: .\school\admin.py:125
 msgid "Mark lesson as 'Conducted'"
 msgstr ""
 
-#: .\school\admin.py:81
+#: .\school\admin.py:131
 msgid "Mark lesson as 'Missed'"
 msgstr ""
 
-#: .\school\admin.py:87
+#: .\school\admin.py:137
 msgid "Mark lesson as 'Planned'"
 msgstr ""
 
 #: .\school\apps.py:8
 msgid "school"
+msgstr ""
+
+#: .\school\forms.py:16 .\users\models.py:8
+msgid "None"
+msgstr ""
+
+#: .\school\forms.py:17 .\school\models.py:31 .\users\models.py:9
+msgid "Teacher"
+msgstr ""
+
+#: .\school\forms.py:18 .\school\models.py:42
+#: .\school\templates\school\analytics\index.html:84
+#: .\school\templates\school\teacher\statistic.html:47
+#: .\school\templates\school\teacher\students.html:21 .\users\models.py:10
+msgid "Student"
+msgstr ""
+
+#: .\school\forms.py:29
+msgid "Username"
+msgstr ""
+
+#: .\school\forms.py:30
+msgid "First Name"
+msgstr ""
+
+#: .\school\forms.py:31
+msgid "Last Name"
+msgstr ""
+
+#: .\school\forms.py:32
+msgid "Email"
+msgstr ""
+
+#: .\school\forms.py:36
+msgid "School Role"
+msgstr ""
+
+#: .\school\forms.py:37
+msgid "Choose school role (teacher или student)."
+msgstr ""
+
+#: .\school\forms.py:42 .\school\forms.py:58
+#, fuzzy
+#| msgid "Reset Password"
+msgid "Password"
+msgstr "Скинути пароль"
+
+#: .\school\forms.py:44
+msgid ""
+"Your password can’t be too similar to your other personal information.<br>\n"
+"                    Your password must contain at least 8 characters.<br>\n"
+"                    Your password can’t be a commonly used password.<br>\n"
+"                    Your password can’t be entirely numeric."
+msgstr ""
+
+#: .\school\forms.py:51
+#, fuzzy
+#| msgid "Reset Password"
+msgid "Confirm Password"
+msgstr "Скинути пароль"
+
+#: .\school\forms.py:53
+#, fuzzy
+#| msgid "Reset Password"
+msgid "Repeat password."
+msgstr "Скинути пароль"
+
+#: .\school\forms.py:59
+msgid "You can change the password using."
+msgstr ""
+
+#: .\school\forms.py:84
+#, python-brace-format
+msgid ""
+"You can change the password using <a href='{password_change_url}'>this form</"
+"a>."
 msgstr ""
 
 #: .\school\models.py:12
@@ -195,10 +283,6 @@ msgstr ""
 msgid "about"
 msgstr ""
 
-#: .\school\models.py:31 .\users\models.py:9
-msgid "Teacher"
-msgstr ""
-
 #: .\school\models.py:32
 #: .\school\templates\school\template_parts\_sidebar.html:83
 msgid "Teachers"
@@ -211,12 +295,6 @@ msgstr ""
 #: .\school\models.py:38 .\school\models.py:56 .\school\models.py:78
 #: .\transactions\models.py:61
 msgid "teacher"
-msgstr ""
-
-#: .\school\models.py:42 .\school\templates\school\analytics\index.html:84
-#: .\school\templates\school\teacher\statistic.html:47
-#: .\school\templates\school\teacher\students.html:21 .\users\models.py:10
-msgid "Student"
 msgstr ""
 
 #: .\school\models.py:43 .\school\templates\school\lesson-single.html:71
@@ -730,10 +808,6 @@ msgstr ""
 
 #: .\users\apps.py:8
 msgid "users"
-msgstr ""
-
-#: .\users\models.py:8
-msgid "None"
 msgstr ""
 
 #: .\users\models.py:13

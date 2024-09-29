@@ -1,46 +1,155 @@
 from django import forms
+from django.contrib.auth.forms import ReadOnlyPasswordHashField
+from django.urls import reverse
 from django.utils.functional import lazy
 from .models import Teacher, Student, Lesson, StudentProgress
 from settings.models import Language
 from users.models import User
+from django.utils.translation import gettext_lazy as _
 
 
 def get_language_choices():
     return Language.objects.all().values_list('id', 'name')
 
 
-class TeacherForm(forms.ModelForm):
+SCHOOL_ROLE_CHOICES = (
+    ('None', _('None')),
+    ('teacher', _('Teacher')),
+    ('student', _('Student')),
+)
+
+
+class BaseUserForm(forms.ModelForm):
     language_choices = lazy(get_language_choices, list)
     language = forms.MultipleChoiceField(
         choices=language_choices,
         widget=forms.CheckboxSelectMultiple
     )
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        if self.instance.pk:
-            self.initial['language'] = list(self.instance.language.values_list('id', flat=True))
+    username = forms.CharField(max_length=150, label=_("Username"))
+    first_name = forms.CharField(max_length=30, label=_("First Name"))
+    last_name = forms.CharField(max_length=30, label=_("Last Name"))
+    email = forms.EmailField(label=_("Email"))
+
+    school_role = forms.ChoiceField(
+        choices=SCHOOL_ROLE_CHOICES,
+        label=_("School Role"),
+        help_text=_("Choose school role (teacher или student)."),
+        required=True,
+    )
+
+    password1 = forms.CharField(
+        label=_("Password"),
+        widget=forms.PasswordInput,
+        help_text=_("""Your password can’t be too similar to your other personal information.<br>
+                    Your password must contain at least 8 characters.<br>
+                    Your password can’t be a commonly used password.<br>
+                    Your password can’t be entirely numeric."""),
+        required=False
+    )
+    password2 = forms.CharField(
+        label=_("Confirm Password"),
+        widget=forms.PasswordInput,
+        help_text=_("Repeat password."),
+        required=False
+    )
+
+    password = ReadOnlyPasswordHashField(
+        label=_("Password"),
+        help_text=_("You can change the password using."),
+        required=False
+    )
 
     class Meta:
+        abstract = True
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        if self.instance.pk:
+            self.initial['language'] = list(self.instance.language.values_list('id', flat=True))
+            user_instance = self.instance.user
+            if user_instance:
+                self.fields['username'].initial = user_instance.username
+                self.fields['first_name'].initial = user_instance.first_name
+                self.fields['last_name'].initial = user_instance.last_name
+                self.fields['email'].initial = user_instance.email
+                self.fields['school_role'].initial = user_instance.school_role
+
+                self.fields['password1'].initial = ''
+                self.fields['password2'].initial = ''
+                self.fields['password'].initial = user_instance.password
+
+                password_change_url = reverse('admin:auth_user_password_change', args=[user_instance.pk])
+                self.fields['password'].help_text = _("You can change the password using <a href='{password_change_url}'>this form</a>.").format(password_change_url=password_change_url)
+        else:
+            self.fields['password'].initial = ""
+            self.fields['password1'].required = True
+            self.fields['password2'].required = True
+
+    def save_user(self, user_instance):
+        user_instance.username = self.cleaned_data['username']
+        user_instance.first_name = self.cleaned_data['first_name']
+        user_instance.last_name = self.cleaned_data['last_name']
+        user_instance.email = self.cleaned_data['email']
+        user_instance.school_role = self.cleaned_data['school_role']
+        user_instance.set_password(self.cleaned_data['password1'])
+        user_instance.save()
+
+class TeacherForm(BaseUserForm):
+    class Meta(BaseUserForm.Meta):
         model = Teacher
         fields = '__all__'
-
-
-class StudentForm(forms.ModelForm):
-    language_choices = lazy(get_language_choices, list)
-    language = forms.MultipleChoiceField(
-        choices=language_choices,
-        widget=forms.CheckboxSelectMultiple
-    )
+        widgets = {
+            'user': forms.HiddenInput()
+        }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        if self.instance.pk:
-            self.initial['language'] = list(self.instance.language.values_list('id', flat=True))
+        if not self.instance.pk:
+            self.fields['school_role'].initial = 'teacher'
 
-    class Meta:
+    def save(self, commit=True):
+        teacher = super().save(commit=False)
+
+        if not teacher.user:
+            user = User()
+            self.save_user(user)
+            teacher.user = user
+        else:
+            self.save_user(teacher.user)
+
+        if commit:
+            teacher.save()
+        return teacher
+
+
+class StudentForm(BaseUserForm):
+    class Meta(BaseUserForm.Meta):
         model = Student
         fields = '__all__'
+        widgets = {
+            'user': forms.HiddenInput()
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if not self.instance.pk:
+            self.fields['school_role'].initial = 'student'
+
+    def save(self, commit=True):
+        student = super().save(commit=False)
+
+        if not student.user:
+            user = User()
+            self.save_user(user)
+            student.user = user
+        else:
+            self.save_user(student.user)
+
+        if commit:
+            student.save()
+        return student
 
 
 class LessonForm(forms.ModelForm):

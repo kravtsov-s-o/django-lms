@@ -1,8 +1,6 @@
 from django.contrib import admin
 from .models import Teacher, Student, Lesson, StudentProgress
 from .forms import TeacherForm, StudentForm
-from users.models import User
-from django.contrib.auth.forms import UserChangeForm
 from django.utils.translation import gettext_lazy as _
 
 from .services import lesson_finished
@@ -15,14 +13,40 @@ class TeacherAdmin(admin.ModelAdmin):
     list_display = ['get_name', 'get_languages', 'rate', 'currency']
     list_filter = ['language', 'user__is_active']
 
-    form = TeacherForm
+    add_fieldsets = (
+        (_('Base info'), {
+            'fields': ('username', 'password1', 'password2',)
+        }),
+        (_('User info'), {
+            'fields': ('first_name', 'last_name', 'email',)
+        }),
+        (_('School info'), {
+            'fields': ('school_role', 'language', 'rate', 'currency', 'about'),
+        }),
+    )
 
-    def formfield_for_foreignkey(self, db_field, request, **kwargs):
-        field = super().formfield_for_foreignkey(db_field, request, **kwargs)
-        if db_field.name == 'user':
-            # Filter users by school_role='teacher'
-            field.queryset = User.objects.filter(school_role='teacher')
-        return field
+    edit_fieldsets = (
+        (_('Base info'), {
+            'fields': ('username', 'password',)
+        }),
+        (_('User info'), {
+            'fields': ('first_name', 'last_name', 'email',)
+        }),
+        (_('School info'), {
+            'fields': ('school_role', 'language', 'rate', 'currency', 'about'),
+        }),
+    )
+
+    def get_fieldsets(self, request, obj=None):
+        """
+        Generate fieldset for add or edit user.
+        """
+        if obj:
+            return self.edit_fieldsets
+        else:
+            return self.add_fieldsets
+
+    form = TeacherForm
 
     def get_name(self, obj):
         if obj.user.first_name == '' and obj.user.last_name == '':
@@ -43,14 +67,40 @@ class StudentAdmin(admin.ModelAdmin):
     list_display = ['get_name', 'teacher', 'get_languages', 'rate', 'wallet', 'currency', 'company']
     list_filter = ['language', 'company', 'teacher', 'user__is_active']
 
-    form = StudentForm
+    add_fieldsets = (
+        ('Base info', {
+            'fields': ('username', 'password1', 'password2',)
+        }),
+        ('User info', {
+            'fields': ('first_name', 'last_name', 'email',)
+        }),
+        ('School info', {
+            'fields': ('school_role', 'language', 'teacher', 'rate', 'wallet', 'currency', 'company'),
+        }),
+    )
 
-    def formfield_for_foreignkey(self, db_field, request, **kwargs):
-        field = super().formfield_for_foreignkey(db_field, request, **kwargs)
-        if db_field.name == 'user':
-            # Filter users by по school_role='student'
-            field.queryset = User.objects.filter(school_role='student')
-        return field
+    edit_fieldsets = (
+        ('Base info', {
+            'fields': ('username', 'password',)
+        }),
+        ('User info', {
+            'fields': ('first_name', 'last_name', 'email',)
+        }),
+        ('School info', {
+            'fields': ('school_role', 'language', 'teacher', 'rate', 'wallet', 'currency', 'company'),
+        }),
+    )
+
+    def get_fieldsets(self, request, obj=None):
+        """
+        Generate fieldset for add or edit user.
+        """
+        if obj:
+            return self.edit_fieldsets
+        else:
+            return self.add_fieldsets
+
+    form = StudentForm
 
     def get_name(self, obj):
         if obj.user.first_name == '' and obj.user.last_name == '':
