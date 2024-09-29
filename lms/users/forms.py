@@ -8,14 +8,24 @@ class MyUserCreationForm(UserCreationForm):
 
     class Meta:
         model = User
-        fields = ('username', 'first_name', 'last_name', 'email', 'school_role', 'groups')
+        fields = '__all__'
+
+    def save(self, commit=True):
+        # Перед сохранением добавляем флаг на экземпляре
+        self.instance.is_from_user_form = True
+        return super().save(commit)
 
 
 class MyUserChangeForm(UserChangeForm):
     email = forms.EmailField(required=True)
     class Meta:
         model = User
-        fields = ('username', 'first_name', 'last_name', 'email', 'school_role', 'groups')
+        fields = '__all__'
+
+    def save(self, commit=True):
+        # Перед сохранением добавляем флаг на экземпляре
+        self.instance.is_from_user_form = True
+        return super().save(commit)
 
 
 class LoginForm(AuthenticationForm):
