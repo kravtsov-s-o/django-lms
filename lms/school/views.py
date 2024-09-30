@@ -84,7 +84,7 @@ class LessonAdd(View):
                           'form': LessonForm(teacher)
                       })
 
-    def post(self, request):
+    def post(self, request, pk):
         teacher = get_teacher(request)
         form = LessonForm(teacher, request.POST)
 

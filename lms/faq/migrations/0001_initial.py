@@ -4,6 +4,13 @@ import django.db.models.deletion
 from django.db import migrations, models
 
 
+def create_default_category(apps, schema_editor):
+    Category = apps.get_model('faq', 'Category')
+    categories = ['Uncategorized']
+    for category in categories:
+        Category.objects.get_or_create(title=category)
+
+
 class Migration(migrations.Migration):
 
     initial = True
@@ -19,6 +26,7 @@ class Migration(migrations.Migration):
                 ('title', models.CharField(max_length=255)),
             ],
         ),
+        migrations.RunPython(create_default_category),
         migrations.CreateModel(
             name='Question',
             fields=[

@@ -1,13 +1,13 @@
 {% load i18n %}
 {% load static %}
 <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
-    <div class="app-brand demo">
-        <a href="{% url 'school:profile-lessons' pk=request.user.id %}" class="app-brand-link">
+    <div class="app-brand demo py-3" style="height: auto;">
+        <a href="{% url 'school:profile-lessons' pk=request.user.id %}" class="app-brand-link align-items-start">
                     <span class="app-brand-logo demo">
-                        <img src="{% static './img/logo.svg' %}" alt="Ruslana.English">
+                        <img src="{{ site_logo_icon.url }}" alt="Ruslana.English" style="height: 29px; width: auto;">
                     </span>
             <span class="app-brand-text demo ms-2">
-                        <img src="{% static './img/logo-title.svg' %}" alt="Ruslana.English">
+                        <img src="{{ site_logo_text.url }}" alt="Ruslana.English" style="height: 45px; width: auto;">
                     </span>
         </a>
 
@@ -16,7 +16,6 @@
             <i class="bx bx-x d-block d-xl-none bx-sm align-middle"></i>
         </a>
     </div>
-
     <ul class="menu-inner py-2">
         {% if request.user.school_role == 'teacher' %}
         <li class="menu-header small text-uppercase">

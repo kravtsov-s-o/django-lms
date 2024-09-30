@@ -1,4 +1,4 @@
-{% extends 'school/base-template.html' %}
+{% extends 'siteapp/base-template.html' %}
 {% load i18n %}
 {% load extract_students %}
 {% block page-title %}{{ lesson.theme }}{% endblock %}
@@ -59,13 +59,7 @@
                     <hr class="mt-3 mb-3">
                     <h5 class="mb-3">{% trans 'Status' %}</h5>
                     <p class="mb-0">
-                        {% if lesson.status == 'planned' %}
-                        <span class="badge bg-label-info">{{ lesson.status }}</span>
-                        {% elif lesson.status == 'conducted' %}
-                        <span class="badge bg-label-success">{{ lesson.status }}</span>
-                        {% elif lesson.status == 'missed' %}
-                        <span class="badge bg-label-danger">{{ lesson.status }}</span>
-                        {% endif %}
+                        {% include 'siteapp/components/lesson-status-badge.html' %}
                     </p>
                     <hr class="mt-3 mb-3">
                     <h5 class="mb-3">{% trans 'Students' %}</h5>

@@ -1,4 +1,4 @@
-{% extends 'school/base-template.html' %}
+{% extends 'siteapp/base-template.html' %}
 {% load i18n %}
 {% load static %}
 {% block page-title %}{{ title }}{% endblock %}
@@ -9,7 +9,8 @@
         <div class="row align-items-center">
             <div class="col-md-6" style="text-align: center;">
                 <h1 class="mb-2 mx-2 display-1" style="font-size: 9em;">{{ code }}</h1>
-                <h2 class="mb-4 mx-2">{{ title }}</h2>
+                <h2 class="mb-2 mx-2">{{ title }}</h2>
+                <p class="mb-4 mx-2">{{ message }}</p>
                 <a href="{% url 'school:profile-lessons' pk=request.user.id %}" class="btn btn-primary">{% trans 'Go to Profile' %}</a>
             </div>
             <div class="col-md-6 d-none d-md-flex" style="text-align: center;">

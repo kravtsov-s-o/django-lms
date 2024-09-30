@@ -1,4 +1,4 @@
-{% extends 'school/base-template.html' %}
+{% extends 'siteapp/base-template.html' %}
 {% load i18n %}
 {% load static %}
 {% load url_params %}
@@ -132,13 +132,7 @@
                             <tr>
                                 <td>{{ lesson.time|time:"H:i" }}</td>
                                 <td>
-                                    {% if lesson.status == 'planned' %}
-                                    <span class="badge bg-label-info">{{ lesson.status }}</span>
-                                    {% elif lesson.status == 'conducted' %}
-                                    <span class="badge bg-label-success">{{ lesson.status }}</span>
-                                    {% elif lesson.status == 'missed' %}
-                                    <span class="badge bg-label-danger">{{ lesson.status }}</span>
-                                    {% endif %}
+                                    {% include 'siteapp/components/lesson-status-badge.html' %}
                                 </td>
                                 <td>{{ lesson.students|extract_students }}</td>
                                 <td style="width: 1%;">

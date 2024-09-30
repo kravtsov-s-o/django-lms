@@ -5,6 +5,23 @@ from django.conf import settings
 from django.db import migrations, models
 
 
+def create_default_pages(apps, schema_editor):
+    Page = apps.get_model('pages', 'Page')
+    pages = [{
+        'title': 'Privacy Policy',
+        'slug': 'privacy-policy',
+        'content': 'Add your policy',
+        'status': 'published',
+    },
+    {
+        'title': 'Terms & Conditions',
+        'slug': 'terms-conditions',
+        'content': 'Add your terms',
+        'status': 'published',
+    }]
+    for page in pages:
+        Page.objects.get_or_create(name=page)
+
 class Migration(migrations.Migration):
 
     initial = True
@@ -27,4 +44,5 @@ class Migration(migrations.Migration):
                 ('author', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, to=settings.AUTH_USER_MODEL)),
             ],
         ),
+        migrations.RunPython(create_default_pages),
     ]

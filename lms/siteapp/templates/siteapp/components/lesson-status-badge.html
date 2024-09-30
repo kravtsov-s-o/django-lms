@@ -1,0 +1,7 @@
+{% if lesson.status == 'planned' %}
+<span class="badge bg-label-info">{{ lesson.status }}</span>
+{% elif lesson.status == 'conducted' %}
+<span class="badge bg-label-success">{{ lesson.status }}</span>
+{% elif lesson.status == 'missed' %}
+<span class="badge bg-label-danger">{{ lesson.status }}</span>
+{% endif %}
