@@ -1,4 +1,5 @@
 import calendar
+from datetime import datetime
 from collections import defaultdict
 
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
@@ -506,10 +507,16 @@ def generate_month_list_for_filter():
     return month_list
 
 
-def get_year_list(model, field='created_at'):
-    return (model.objects
+def get_year_list(model, field='created_at', default=datetime.today().year):
+
+    years_list = (model.objects
                        .annotate(year=ExtractYear(field))
                        .values_list('year', flat=True).distinct().order_by('year'))
+
+    if not years_list:
+        return [default]
+
+    return years_list
 
 
 def sort_data_for_analytics(data):

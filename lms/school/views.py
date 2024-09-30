@@ -262,6 +262,7 @@ class TeacherStatistic(View):
             'current_year': current_year,
             'result': result,
             'available_years': get_year_list(TeacherPayment),
+            'available_years': get_year_list(TeacherPayment),
             'durations': get_duration_list(),
             'month_list': generate_month_list_for_filter()
         })

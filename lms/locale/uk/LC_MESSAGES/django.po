@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-09-29 18:59+0300\n"
+"POT-Creation-Date: 2024-09-30 21:33+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -54,7 +54,7 @@ msgid "Company"
 msgstr ""
 
 #: .\companies\models.py:24
-#: .\school\templates\school\template_parts\_sidebar.html:89
+#: .\siteapp\templates\siteapp\template_parts\_sidebar.html:88
 msgid "Companies"
 msgstr ""
 
@@ -63,6 +63,7 @@ msgid "FAQ"
 msgstr ""
 
 #: .\faq\models.py:7 .\pages\models.py:17 .\school\models.py:75
+#: .\siteapp\models.py:7
 msgid "title"
 msgstr ""
 
@@ -94,15 +95,41 @@ msgstr ""
 msgid "Questions"
 msgstr ""
 
-#: .\lms\settings.py:138
-msgid "English"
+#: .\faq\templates\faq\index.html:12
+msgid "Hello, how can we help?"
 msgstr ""
 
-#: .\lms\settings.py:139
-msgid "Russian"
+#: .\faq\templates\faq\index.html:74
+msgid "Question?"
+msgstr ""
+
+#: .\faq\templates\faq\index.html:75
+msgid "You still have a question?"
+msgstr ""
+
+#: .\faq\templates\faq\index.html:77
+msgid ""
+"If you cannot find a question in our FAQ, you can always contact us. We will "
+"answer to you shortly!"
+msgstr ""
+
+#: .\faq\templates\faq\index.html:92
+msgid "We are always happy to help"
+msgstr ""
+
+#: .\faq\templates\faq\index.html:103
+msgid "Best way to get a quick answer"
 msgstr ""
 
 #: .\lms\settings.py:140
+msgid "English"
+msgstr ""
+
+#: .\lms\settings.py:141
+msgid "Russian"
+msgstr ""
+
+#: .\lms\settings.py:142
 msgid "Ukrainian"
 msgstr ""
 
@@ -151,7 +178,7 @@ msgid "pages"
 msgstr ""
 
 #: .\school\AbstractClasses\ProfileBaseView.py:46
-#: .\school\templates\school\template_parts\_sidebar.html:48
+#: .\siteapp\templates\siteapp\template_parts\_sidebar.html:47
 msgid "Profile"
 msgstr ""
 
@@ -284,7 +311,7 @@ msgid "about"
 msgstr ""
 
 #: .\school\models.py:32
-#: .\school\templates\school\template_parts\_sidebar.html:83
+#: .\siteapp\templates\siteapp\template_parts\_sidebar.html:82
 msgid "Teachers"
 msgstr ""
 
@@ -297,24 +324,25 @@ msgstr ""
 msgid "teacher"
 msgstr ""
 
-#: .\school\models.py:43 .\school\templates\school\lesson-single.html:71
-#: .\school\templates\school\teacher\index.html:126
-#: .\school\templates\school\template_parts\_sidebar.html:35
-#: .\school\views.py:212
+#: .\school\models.py:43 .\school\templates\school\lesson-single.html:65
+#: .\school\templates\school\teacher\index.html:126 .\school\views.py:212
+#: .\siteapp\templates\siteapp\template_parts\_sidebar.html:34
 msgid "Students"
 msgstr ""
 
-#: .\school\models.py:48 .\school\templates\school\teacher\index.html:181
-#: .\school\templates\school\teacher\index.html:183
+#: .\school\models.py:48
+#: .\school\templates\school\modals\lesson-planned.html:17
+#: .\school\templates\school\teacher\index.html:175
+#: .\school\templates\school\teacher\index.html:177
 msgid "Planned"
 msgstr ""
 
-#: .\school\models.py:49 .\school\templates\school\teacher\index.html:164
+#: .\school\models.py:49 .\school\templates\school\teacher\index.html:158
 msgid "Conducted"
 msgstr ""
 
 #: .\school\models.py:50 .\school\templates\school\modals\lesson-missed.html:17
-#: .\school\templates\school\teacher\index.html:168
+#: .\school\templates\school\teacher\index.html:162
 msgid "Missed"
 msgstr ""
 
@@ -357,7 +385,7 @@ msgid "Lesson"
 msgstr ""
 
 #: .\school\models.py:70 .\school\templates\school\profile\index.html:118
-#: .\school\templates\school\template_parts\_sidebar.html:53
+#: .\siteapp\templates\siteapp\template_parts\_sidebar.html:52
 msgid "Lessons"
 msgstr ""
 
@@ -377,16 +405,16 @@ msgstr ""
 msgid "Student Progresses"
 msgstr ""
 
-#: .\school\services.py:44
+#: .\school\services.py:45
 #, python-brace-format
 msgid "For lesson {date} - {time}; Students: {students}"
 msgstr ""
 
-#: .\school\services.py:437
+#: .\school\services.py:438
 msgid "0 hour(s)"
 msgstr ""
 
-#: .\school\services.py:441
+#: .\school\services.py:442
 #, python-brace-format
 msgid "{hours} hour(s) {minutes} minutes"
 msgstr ""
@@ -421,8 +449,8 @@ msgstr ""
 
 #: .\school\templates\school\lesson-single.html:19
 #: .\school\templates\school\teacher\index.html:29
-#: .\school\templates\school\teacher\lesson-add.html:31
-#: .\school\templates\school\template_parts\_sidebar.html:29
+#: .\school\templates\school\teacher\lesson-add.html:32
+#: .\siteapp\templates\siteapp\template_parts\_sidebar.html:28
 msgid "Schedule"
 msgstr ""
 
@@ -439,24 +467,24 @@ msgstr ""
 msgid "Status"
 msgstr ""
 
-#: .\school\templates\school\lesson-single.html:78 .\settings\models.py:24
+#: .\school\templates\school\lesson-single.html:72 .\settings\models.py:24
 msgid "Duration"
 msgstr ""
 
-#: .\school\templates\school\lesson-single.html:87
+#: .\school\templates\school\lesson-single.html:81
 msgid "About"
 msgstr ""
 
-#: .\school\templates\school\lesson-single.html:95
+#: .\school\templates\school\lesson-single.html:89
 msgid "Theme"
 msgstr ""
 
-#: .\school\templates\school\lesson-single.html:98
+#: .\school\templates\school\lesson-single.html:92
 #: .\school\templates\school\teacher\lesson-add.html:76
 msgid "Notes"
 msgstr ""
 
-#: .\school\templates\school\lesson-single.html:101
+#: .\school\templates\school\lesson-single.html:95
 #: .\school\templates\school\teacher\lesson-add.html:81
 msgid "Homework"
 msgstr ""
@@ -482,7 +510,7 @@ msgid "Are you sure you want to delete this lesson?"
 msgstr ""
 
 #: .\school\templates\school\modals\lesson-delete.html:17
-#: .\school\templates\school\teacher\index.html:176
+#: .\school\templates\school\teacher\index.html:170
 msgid "Delete"
 msgstr ""
 
@@ -495,7 +523,7 @@ msgid "Move the lesson to another time"
 msgstr ""
 
 #: .\school\templates\school\modals\lesson-move.html:20
-#: .\school\templates\school\teacher\index.html:172
+#: .\school\templates\school\teacher\index.html:166
 msgid "Move"
 msgstr ""
 
@@ -517,11 +545,11 @@ msgstr ""
 msgid "Actions"
 msgstr ""
 
-#: .\school\templates\school\profile\components\lessons.html:33
+#: .\school\templates\school\profile\components\lessons.html:27
 msgid "Theme:"
 msgstr ""
 
-#: .\school\templates\school\profile\components\lessons.html:36
+#: .\school\templates\school\profile\components\lessons.html:30
 msgid "Students:"
 msgstr ""
 
@@ -630,17 +658,17 @@ msgid "Pay"
 msgstr ""
 
 #: .\school\templates\school\profile\index.html:124
-#: .\school\templates\school\template_parts\_sidebar.html:60
+#: .\siteapp\templates\siteapp\template_parts\_sidebar.html:59
 msgid "Progress"
 msgstr ""
 
 #: .\school\templates\school\profile\index.html:131
-#: .\school\templates\school\template_parts\_sidebar.html:67
+#: .\siteapp\templates\siteapp\template_parts\_sidebar.html:66
 msgid "Payments"
 msgstr ""
 
 #: .\school\templates\school\profile\index.html:136
-#: .\school\templates\school\template_parts\_sidebar.html:73
+#: .\siteapp\templates\siteapp\template_parts\_sidebar.html:72
 msgid "Settings"
 msgstr ""
 
@@ -652,20 +680,20 @@ msgstr ""
 msgid "Time"
 msgstr ""
 
-#: .\school\templates\school\teacher\index.html:160
-#: .\school\templates\school\teacher\index.html:179
+#: .\school\templates\school\teacher\index.html:154
+#: .\school\templates\school\teacher\index.html:173
 msgid "Edit"
 msgstr ""
 
-#: .\school\templates\school\teacher\index.html:196
+#: .\school\templates\school\teacher\index.html:190
 msgid "Lesson list is empty"
 msgstr ""
 
-#: .\school\templates\school\teacher\lesson-add.html:69
+#: .\school\templates\school\teacher\lesson-add.html:35
 msgid "Lesson status:"
 msgstr ""
 
-#: .\school\templates\school\teacher\lesson-add.html:70
+#: .\school\templates\school\teacher\lesson-add.html:37
 msgid "You can edit only Theme, Notes and HomeWork"
 msgstr ""
 
@@ -677,51 +705,6 @@ msgstr ""
 msgid "Month Salary"
 msgstr ""
 
-#: .\school\templates\school\template_parts\_footer.html:12
-msgid "Help Center"
-msgstr ""
-
-#: .\school\templates\school\template_parts\_footer.html:13
-msgid "Privacy Policy"
-msgstr ""
-
-#: .\school\templates\school\template_parts\_footer.html:14
-msgid "Terms &amp; Conditions"
-msgstr ""
-
-#: .\school\templates\school\template_parts\_header.html:22
-msgid "Light"
-msgstr ""
-
-#: .\school\templates\school\template_parts\_header.html:27
-msgid "Dark"
-msgstr ""
-
-#: .\school\templates\school\template_parts\_header.html:32
-msgid "System"
-msgstr ""
-
-#: .\school\templates\school\template_parts\_header.html:104
-msgid "Admin Panel"
-msgstr ""
-
-#: .\school\templates\school\template_parts\_header.html:116
-msgid "Log Out"
-msgstr ""
-
-#: .\school\templates\school\template_parts\_sidebar.html:23
-msgid "Cabinet"
-msgstr ""
-
-#: .\school\templates\school\template_parts\_sidebar.html:42
-#: .\school\views.py:255
-msgid "Statistics"
-msgstr ""
-
-#: .\school\templates\school\template_parts\_sidebar.html:78
-msgid "School Analytics"
-msgstr ""
-
 #: .\school\views.py:76
 msgid "Add new lesson"
 msgstr ""
@@ -730,11 +713,16 @@ msgstr ""
 msgid "Edit lesson"
 msgstr ""
 
-#: .\school\views.py:372
+#: .\school\views.py:255
+#: .\siteapp\templates\siteapp\template_parts\_sidebar.html:41
+msgid "Statistics"
+msgstr ""
+
+#: .\school\views.py:373
 msgid "Teacher Analytics"
 msgstr ""
 
-#: .\school\views.py:406
+#: .\school\views.py:407
 msgid "Company Analytics"
 msgstr ""
 
@@ -770,8 +758,85 @@ msgstr ""
 msgid "Currencies"
 msgstr ""
 
-#: .\templates\403.html:13 .\templates\404.html:14
+#: .\siteapp\apps.py:8
+msgid "site"
+msgstr ""
+
+#: .\siteapp\models.py:8
+msgid "tagline"
+msgstr ""
+
+#: .\siteapp\models.py:9
+msgid "logo_icon"
+msgstr ""
+
+#: .\siteapp\models.py:10
+msgid "logo_text"
+msgstr ""
+
+#: .\siteapp\models.py:11
+msgid "logo_full"
+msgstr ""
+
+#: .\siteapp\models.py:12 .\siteapp\models.py:13
+msgid "phone"
+msgstr ""
+
+#: .\siteapp\models.py:14
+msgid "email"
+msgstr ""
+
+#: .\siteapp\models.py:17
+msgid "Site"
+msgstr ""
+
+#: .\siteapp\models.py:18
+msgid "Sites"
+msgstr ""
+
+#: .\siteapp\templates\siteapp\error-pages\403.html:13
+#: .\siteapp\templates\siteapp\error-pages\404.html:14
 msgid "Go to Profile"
+msgstr ""
+
+#: .\siteapp\templates\siteapp\template_parts\_footer.html:12
+msgid "Help Center"
+msgstr ""
+
+#: .\siteapp\templates\siteapp\template_parts\_footer.html:13
+msgid "Privacy Policy"
+msgstr ""
+
+#: .\siteapp\templates\siteapp\template_parts\_footer.html:14
+msgid "Terms &amp; Conditions"
+msgstr ""
+
+#: .\siteapp\templates\siteapp\template_parts\_header.html:22
+msgid "Light"
+msgstr ""
+
+#: .\siteapp\templates\siteapp\template_parts\_header.html:27
+msgid "Dark"
+msgstr ""
+
+#: .\siteapp\templates\siteapp\template_parts\_header.html:32
+msgid "System"
+msgstr ""
+
+#: .\siteapp\templates\siteapp\template_parts\_header.html:83
+msgid "Admin Panel"
+msgstr ""
+
+#: .\siteapp\templates\siteapp\template_parts\_header.html:95
+msgid "Log Out"
+msgstr ""
+
+#: .\siteapp\templates\siteapp\template_parts\_sidebar.html:22
+msgid "Cabinet"
+msgstr ""
+
+#: .\siteapp\templates\siteapp\template_parts\_sidebar.html:77
+msgid "School Analytics"
 msgstr ""
 
 #: .\transactions\apps.py:8
@@ -822,20 +887,20 @@ msgstr "Англійська для життя та роботи"
 msgid "Everything is difficult before it becomes easy."
 msgstr "Все складно, перш ніж стане легким"
 
-#: .\users\templates\users\login.html:43
+#: .\users\templates\users\login.html:40
 msgid "Welcome!"
 msgstr "Ласкаво просимо"
 
-#: .\users\templates\users\login.html:44
+#: .\users\templates\users\login.html:41
 msgid "Please sign-in to your account"
 msgstr "Увійдіть у свій обліковий запис"
 
-#: .\users\templates\users\login.html:49
+#: .\users\templates\users\login.html:46
 msgid "Sign in"
 msgstr "Увійдіть"
 
-#: .\users\templates\users\login.html:51
-#: .\users\templates\users\password_reset_form.html:46
+#: .\users\templates\users\login.html:48
+#: .\users\templates\users\password_reset_form.html:43
 msgid "Forgot Password?"
 msgstr "Забули пароль?"
 
@@ -843,28 +908,28 @@ msgstr "Забули пароль?"
 msgid "Password Reset - Complete"
 msgstr "Скидання пароля – завершено"
 
-#: .\users\templates\users\password_reset_complete.html:37
+#: .\users\templates\users\password_reset_complete.html:34
 msgid "Password reset complete!️"
 msgstr "Скидання пароля завершено"
 
-#: .\users\templates\users\password_reset_complete.html:39
+#: .\users\templates\users\password_reset_complete.html:36
 msgid "Now you can login."
 msgstr "Тепер ви можете увійти"
 
-#: .\users\templates\users\password_reset_complete.html:41
+#: .\users\templates\users\password_reset_complete.html:38
 msgid "Login"
 msgstr "Логін"
 
-#: .\users\templates\users\password_reset_confirm.html:44
+#: .\users\templates\users\password_reset_confirm.html:41
 msgid "Reset Password"
 msgstr "Скинути пароль"
 
-#: .\users\templates\users\password_reset_confirm.html:48
+#: .\users\templates\users\password_reset_confirm.html:45
 msgid "Set new password"
 msgstr "Встановити новий пароль"
 
-#: .\users\templates\users\password_reset_confirm.html:52
-#: .\users\templates\users\password_reset_form.html:57
+#: .\users\templates\users\password_reset_confirm.html:49
+#: .\users\templates\users\password_reset_form.html:54
 msgid "Back to login"
 msgstr "Назад до входу"
 
@@ -876,11 +941,11 @@ msgstr "Ваш пароль скинуто"
 msgid "Check your email."
 msgstr "Перевір свою електронну пошту"
 
-#: .\users\templates\users\password_reset_done.html:43
+#: .\users\templates\users\password_reset_done.html:40
 msgid "Password reset request sent"
 msgstr "Запит на скидання пароля надіслано"
 
-#: .\users\templates\users\password_reset_done.html:45
+#: .\users\templates\users\password_reset_done.html:42
 msgid "We&#700;ve emailed you with instructions on how to reset your password."
 msgstr "Ми надіслали вам електронний лист з інструкціями щодо скидання пароля."
 
@@ -888,18 +953,18 @@ msgstr "Ми надіслали вам електронний лист з інс
 msgid "No worries, we will send you instructions"
 msgstr "Не хвилюйтеся, ми надішлемо вам інструкції"
 
-#: .\users\templates\users\password_reset_form.html:47
+#: .\users\templates\users\password_reset_form.html:44
 msgid ""
 "Enter your email and we&#700;ll send you instructions to reset your password"
 msgstr ""
 "Введіть свою електронну адресу, і ми надішлемо вам інструкції щодо зміни "
 "пароля"
 
-#: .\users\templates\users\password_reset_form.html:51
+#: .\users\templates\users\password_reset_form.html:48
 msgid "Reset"
 msgstr "Скинути"
 
-#: .\users\templates\users\password_reset_form.html:54
+#: .\users\templates\users\password_reset_form.html:51
 msgid "or"
 msgstr "або"
 
