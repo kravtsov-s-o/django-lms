@@ -1,24 +1,25 @@
 {% load i18n %}
+{% get_current_language as LANGUAGE_CODE %}
+{% get_available_languages as LANGUAGES %}
+{% get_language_info_list for LANGUAGES as languages %}
 
 <li class="nav-item dropdown-language dropdown me-2 me-xl-0">
     <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);"
        data-bs-toggle="dropdown">
-        <i class="bx bx-globe bx-sm"></i>
+        <span class="h5" style="line-height: 1em; text-transform: uppercase; position: relative; top: 1px;"
+        data-bs-toggle="tooltip" data-bs-offset="0,4" data-bs-placement="bottom" title="{% trans 'Language switcher' %}">{{ LANGUAGE_CODE }}</span>
     </a>
-    <ul class="dropdown-menu dropdown-menu-end">
+    <ul class="dropdown-menu dropdown-menu-end" style="min-width:auto;width:auto;">
         <form id="language-form" action="{% url 'set_language' %}" method="post">
             {% csrf_token %}
             <input type="hidden" name="language" id="language-code">
             <input type="hidden" name="next" value="{{ request.path }}">
         </form>
-        {% get_current_language as LANGUAGE_CODE %}
-        {% get_available_languages as LANGUAGES %}
-        {% get_language_info_list for LANGUAGES as languages %}
         {% for language in languages %}
         <li>
             <a href="#" class="dropdown-item"
                onclick="event.preventDefault(); document.getElementById('language-code').value='{{ language.code }}'; document.getElementById('language-form').submit();">
-                {{ language.name_local }}
+                <span class="h6" style="line-height: 1em; text-transform: uppercase;">{{ language.code }}</span>
             </a>
         </li>
         {% endfor %}

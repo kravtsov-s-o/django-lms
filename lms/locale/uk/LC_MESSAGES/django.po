@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-09-30 21:33+0300\n"
+"POT-Creation-Date: 2024-10-03 20:50+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -54,7 +54,7 @@ msgid "Company"
 msgstr ""
 
 #: .\companies\models.py:24
-#: .\siteapp\templates\siteapp\template_parts\_sidebar.html:88
+#: .\siteapp\templates\siteapp\template_parts\_sidebar.html:94
 msgid "Companies"
 msgstr ""
 
@@ -178,7 +178,7 @@ msgid "pages"
 msgstr ""
 
 #: .\school\AbstractClasses\ProfileBaseView.py:46
-#: .\siteapp\templates\siteapp\template_parts\_sidebar.html:47
+#: .\siteapp\templates\siteapp\template_parts\_sidebar.html:53
 msgid "Profile"
 msgstr ""
 
@@ -311,7 +311,7 @@ msgid "about"
 msgstr ""
 
 #: .\school\models.py:32
-#: .\siteapp\templates\siteapp\template_parts\_sidebar.html:82
+#: .\siteapp\templates\siteapp\template_parts\_sidebar.html:88
 msgid "Teachers"
 msgstr ""
 
@@ -326,7 +326,7 @@ msgstr ""
 
 #: .\school\models.py:43 .\school\templates\school\lesson-single.html:65
 #: .\school\templates\school\teacher\index.html:126 .\school\views.py:212
-#: .\siteapp\templates\siteapp\template_parts\_sidebar.html:34
+#: .\siteapp\templates\siteapp\template_parts\_sidebar.html:40
 msgid "Students"
 msgstr ""
 
@@ -385,7 +385,7 @@ msgid "Lesson"
 msgstr ""
 
 #: .\school\models.py:70 .\school\templates\school\profile\index.html:118
-#: .\siteapp\templates\siteapp\template_parts\_sidebar.html:52
+#: .\siteapp\templates\siteapp\template_parts\_sidebar.html:58
 msgid "Lessons"
 msgstr ""
 
@@ -450,7 +450,7 @@ msgstr ""
 #: .\school\templates\school\lesson-single.html:19
 #: .\school\templates\school\teacher\index.html:29
 #: .\school\templates\school\teacher\lesson-add.html:32
-#: .\siteapp\templates\siteapp\template_parts\_sidebar.html:28
+#: .\siteapp\templates\siteapp\template_parts\_sidebar.html:34
 msgid "Schedule"
 msgstr ""
 
@@ -658,17 +658,17 @@ msgid "Pay"
 msgstr ""
 
 #: .\school\templates\school\profile\index.html:124
-#: .\siteapp\templates\siteapp\template_parts\_sidebar.html:59
+#: .\siteapp\templates\siteapp\template_parts\_sidebar.html:65
 msgid "Progress"
 msgstr ""
 
 #: .\school\templates\school\profile\index.html:131
-#: .\siteapp\templates\siteapp\template_parts\_sidebar.html:66
+#: .\siteapp\templates\siteapp\template_parts\_sidebar.html:72
 msgid "Payments"
 msgstr ""
 
 #: .\school\templates\school\profile\index.html:136
-#: .\siteapp\templates\siteapp\template_parts\_sidebar.html:72
+#: .\siteapp\templates\siteapp\template_parts\_sidebar.html:78
 msgid "Settings"
 msgstr ""
 
@@ -714,7 +714,7 @@ msgid "Edit lesson"
 msgstr ""
 
 #: .\school\views.py:255
-#: .\siteapp\templates\siteapp\template_parts\_sidebar.html:41
+#: .\siteapp\templates\siteapp\template_parts\_sidebar.html:47
 msgid "Statistics"
 msgstr ""
 
@@ -794,6 +794,10 @@ msgstr ""
 msgid "Sites"
 msgstr ""
 
+#: .\siteapp\templates\siteapp\components\language-switcher.html:10
+msgid "Language switcher"
+msgstr ""
+
 #: .\siteapp\templates\siteapp\error-pages\403.html:13
 #: .\siteapp\templates\siteapp\error-pages\404.html:14
 msgid "Go to Profile"
@@ -831,11 +835,11 @@ msgstr ""
 msgid "Log Out"
 msgstr ""
 
-#: .\siteapp\templates\siteapp\template_parts\_sidebar.html:22
+#: .\siteapp\templates\siteapp\template_parts\_sidebar.html:28
 msgid "Cabinet"
 msgstr ""
 
-#: .\siteapp\templates\siteapp\template_parts\_sidebar.html:77
+#: .\siteapp\templates\siteapp\template_parts\_sidebar.html:83
 msgid "School Analytics"
 msgstr ""
 
