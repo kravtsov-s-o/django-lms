@@ -20,7 +20,12 @@ def create_default_pages(apps, schema_editor):
         'status': 'published',
     }]
     for page in pages:
-        Page.objects.get_or_create(name=page)
+        Page.objects.get_or_create(
+            title='Privacy Policy',
+            slug='privacy-policy',
+            content='Add your policy',
+            status='published',
+        )
 
 class Migration(migrations.Migration):
 

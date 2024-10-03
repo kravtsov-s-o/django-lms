@@ -27,8 +27,8 @@ class BaseUserForm(forms.ModelForm):
     )
 
     username = forms.CharField(max_length=150, label=_("Username"))
-    first_name = forms.CharField(max_length=30, label=_("First Name"))
-    last_name = forms.CharField(max_length=30, label=_("Last Name"))
+    first_name = forms.CharField(max_length=30, label=_("First Name"), required=False)
+    last_name = forms.CharField(max_length=30, label=_("Last Name"), required=False)
     email = forms.EmailField(label=_("Email"))
 
     school_role = forms.ChoiceField(
@@ -93,7 +93,13 @@ class BaseUserForm(forms.ModelForm):
         user_instance.last_name = self.cleaned_data['last_name']
         user_instance.email = self.cleaned_data['email']
         user_instance.school_role = self.cleaned_data['school_role']
-        user_instance.set_password(self.cleaned_data['password1'])
+
+        password1 = self.cleaned_data.get('password1')
+        password2 = self.cleaned_data.get('password2')
+
+        if password1 and password2 and password1 == password2:
+            user_instance.set_password(password1)
+
         user_instance.save()
 
 class TeacherForm(BaseUserForm):

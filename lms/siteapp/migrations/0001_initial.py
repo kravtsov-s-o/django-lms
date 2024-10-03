@@ -4,8 +4,26 @@ import django.db.models.deletion
 from django.db import migrations, models
 
 
-class Migration(migrations.Migration):
+def create_site_info(apps, schema_editor):
+    SiteInfo = apps.get_model('siteapp', 'SiteInfo')
+    infos = [{
+        'title': 'Site title',
+        'tagline': 'Site tagline',
+        'phone1': '00 000 000 00 00',
+        'phone2': '00 000 000 00 00',
+        'email': 'site-email@email.loc',
+    }]
+    for info in infos:
+        SiteInfo.objects.get_or_create(
+            title='Site title',
+            tagline='Site tagline',
+            phone1='00 000 000 00 00',
+            phone2='00 000 000 00 00',
+            email='site-email@email.loc',
+        )
 
+
+class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
@@ -19,13 +37,16 @@ class Migration(migrations.Migration):
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('title', models.CharField(max_length=255, verbose_name='title')),
                 ('tagline', models.CharField(blank=True, max_length=255, null=True, verbose_name='tagline')),
-                ('logo_icon', models.ImageField(blank=True, null=True, upload_to='static/img/', verbose_name='logo_icon')),
-                ('logo_full', models.ImageField(blank=True, null=True, upload_to='static/img', verbose_name='logo_full')),
+                ('logo_icon',
+                 models.ImageField(blank=True, null=True, upload_to='static/img/', verbose_name='logo_icon')),
+                ('logo_full',
+                 models.ImageField(blank=True, null=True, upload_to='static/img', verbose_name='logo_full')),
                 ('phone1', models.CharField(blank=True, max_length=255, null=True, verbose_name='phone')),
                 ('phone2', models.CharField(blank=True, max_length=255, null=True, verbose_name='phone')),
                 ('email', models.EmailField(blank=True, max_length=254, null=True, verbose_name='email')),
             ],
         ),
+        migrations.RunPython(create_site_info),
         migrations.CreateModel(
             name='FooterMenuItem',
             fields=[
@@ -33,7 +54,8 @@ class Migration(migrations.Migration):
                 ('order', models.PositiveIntegerField(default=1, verbose_name='order')),
                 ('title', models.CharField(blank=True, max_length=128, null=True)),
                 ('url', models.URLField(blank=True, null=True, verbose_name='url')),
-                ('page', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to='pages.page')),
+                ('page', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL,
+                                           to='pages.page')),
             ],
             options={
                 'verbose_name': 'Footer Menu Item',

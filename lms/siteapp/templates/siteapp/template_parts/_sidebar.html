@@ -3,12 +3,18 @@
 <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
     <div class="app-brand demo py-3" style="height: auto;">
         <a href="{% url 'school:profile-lessons' pk=request.user.id %}" class="app-brand-link align-items-start">
-                    <span class="app-brand-logo demo">
-                        <img src="{{ site_logo_icon.url }}" alt="Ruslana.English" style="height: 29px; width: auto;">
-                    </span>
+            {% if site_logo_icon == '' and site_logo_text == '' %}
             <span class="app-brand-text demo ms-2">
-                        <img src="{{ site_logo_text.url }}" alt="Ruslana.English" style="height: 45px; width: auto;">
-                    </span>
+                {{ site_title }}
+            </span>
+            {% else %}
+            <span class="app-brand-logo demo">
+                <img src="{{ site_logo_icon.url }}" alt="Ruslana.English" style="height: 29px; width: auto;">
+            </span>
+            <span class="app-brand-text demo ms-2">
+                <img src="{{ site_logo_text.url }}" alt="Ruslana.English" style="height: 45px; width: auto;">
+            </span>
+            {% endif %}
         </a>
 
         <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto">
@@ -19,7 +25,7 @@
     <ul class="menu-inner py-2">
         {% if request.user.school_role == 'teacher' %}
         <li class="menu-header small text-uppercase">
-          <span class="menu-header-text">{% trans 'Cabinet' %}</span>
+            <span class="menu-header-text">{% trans 'Cabinet' %}</span>
         </li>
         <!-- Page -->
         <li class="menu-item {% if current_page == 'schedule' %}active{% endif %}">
@@ -44,7 +50,7 @@
         {% endif %}
         {% endif %}
         <li class="menu-header small text-uppercase">
-          <span class="menu-header-text">{% trans 'Profile' %}</span>
+            <span class="menu-header-text">{% trans 'Profile' %}</span>
         </li>
         <li class="menu-item  {% if current_page == 'lessons' and current_user.user == request.user %}active{% endif %}">
             <a href="{% url 'school:profile-lessons' pk=request.user.id %}" class="menu-link">
@@ -74,7 +80,7 @@
         </li>
         {% if request.user.is_staff or request.user.is_superuser %}
         <li class="menu-header small text-uppercase">
-          <span class="menu-header-text">{% trans 'School Analytics' %}</span>
+            <span class="menu-header-text">{% trans 'School Analytics' %}</span>
         </li>
         <li class="menu-item  {% if current_page == 'teacher-analytics' %}active{% endif %}">
             <a href="{% url 'school:analytic-teachers' %}" class="menu-link">
