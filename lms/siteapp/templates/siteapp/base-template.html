@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 {% load static %}
+{% load toast_tags %}
 <html lang="en"
       class="light-style layout-navbar-fixed layout-menu-fixed layout-compact"
       dir="ltr"
@@ -45,7 +46,10 @@
     <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
     <script src="{% static './js/config.js' %}"></script>
     <!-- Custom CSS-->
-    {% block extra_css %}{% endblock %}
+
+    <link rel="stylesheet" href="{% static './vendor/libs/toastr/toastr.css' %}"/>
+    {% block extra_css %}
+    {% endblock %}
 </head>
 
 <body>
@@ -95,6 +99,25 @@
 </div>
 <!-- / Layout wrapper -->
 
+<!--toast -->
+{% if messages %}
+<div id="messages">
+    {% for message in messages %}
+    <div class="bs-toast toast fade position-absolute top-0 end-0 m-3"
+         data-bs-delay="5000" data-bs-autohide="true" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header {{ message.tags }}">
+            <strong class="me-auto">{{ message.level|toast_title }}</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body">
+            {{ message|safe }}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+<!--toast -->
+
 <!-- Core JS -->
 <!-- build:js assets/vendor/js/core.js -->
 <script src="{% static './vendor/libs/jquery/jquery.js' %}"></script>
@@ -105,6 +128,23 @@
 
 <script src="{% static './vendor/js/menu.js' %}"></script>
 
+<script href="{% static './vendor/libs/toastr/toastr.js' %}"></script>
+
+<script type="text/javascript">
+    document.addEventListener('DOMContentLoaded', function () {
+        // Получаем все элементы с классом "toast"
+        const toastElements = document.querySelectorAll('.toast');
+
+        toastElements.forEach(toastEl => {
+            // Инициализация Bootstrap Toast
+            const toast = new bootstrap.Toast(toastEl);
+
+            // Показ Toast
+            toast.show();
+        });
+    });
+</script>
+
 <!-- endbuild -->
 
 <!-- Vendors JS -->
@@ -113,23 +153,23 @@
 <script src="{% static './js/main.js' %}"></script>
 <script>
 
-document.addEventListener('DOMContentLoaded', function () {
-    const forms = document.querySelectorAll('form');
+    document.addEventListener('DOMContentLoaded', function () {
+        const forms = document.querySelectorAll('form');
 
-    forms.forEach(form => {
-        form.addEventListener('submit', function (event) {
-            const submitButton = form.querySelector('button[type="submit"], input[type="submit"]');
+        forms.forEach(form => {
+            form.addEventListener('submit', function (event) {
+                const submitButton = form.querySelector('button[type="submit"], input[type="submit"]');
 
-            if (submitButton) {
-                submitButton.disabled = true;
-                submitButton.innerHTML = `
-                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                    <span class="visually-hidden">Loading...</span>
-                `;
-            }
+                if (submitButton) {
+                    submitButton.disabled = true;
+                    submitButton.innerHTML = `
+                        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                        <span class="visually-hidden">Loading...</span>
+                    `;
+                }
+            });
         });
     });
-});
 </script>
 <!-- Custom JS-->
 {% block extra_js %}{% endblock %}

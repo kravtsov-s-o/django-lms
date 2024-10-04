@@ -29,5 +29,6 @@ urlpatterns = i18n_patterns(
     path('', include('faq.urls')),
     path('', include('pages.urls')),
     path('', include('siteapp.urls')),
+    path('', include('transactions.urls')),
     path('django_ckeditor_5/', include('django_ckeditor_5.urls')),
 ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

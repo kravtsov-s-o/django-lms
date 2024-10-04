@@ -1,3 +1,69 @@
-from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, redirect
+from django.utils.decorators import method_decorator
+from django.views import View
+from django.contrib import messages
+
+from .forms import PaymentForm
+from school.services import user_is_staff, set_student_transaction, set_company_transaction
+from django.utils.translation import gettext_lazy as _
+
+from .models import StudentPayment, CompanyPayment
+
 
 # Create your views here.
+@method_decorator(login_required(login_url='/login/'), name='dispatch')
+@method_decorator(user_is_staff, name='dispatch')
+class PaymntView(View):
+    title = _('Add payment')
+
+    def get_form(self, request=None):
+        return PaymentForm(request)
+
+    def get(self, request):
+        form = self.get_form()
+
+        return render(request,
+                      'transactions/payment-form.html',
+                      context={
+                          'title': self.title,
+                          'form': form,
+                          'current_page': 'payment-add',
+                      })
+
+    def post(self, request):
+        form = self.get_form(request=request.POST)
+
+        if form.is_valid():
+            price = form.cleaned_data.get('price')
+            description = form.cleaned_data.get('description')
+            user = ''
+
+            if form.cleaned_data.get('payment_type') == 'student':
+                student = form.cleaned_data.get('student')
+
+                StudentPayment(lesson=None, price=price, description=description, student=student).save()
+                student.wallet += price
+                student.save()
+                user = student
+
+            elif form.cleaned_data.get('payment_type') == 'company':
+                company = form.cleaned_data.get('company')
+
+                CompanyPayment(lesson=None, price=price, description=description, company=company).save()
+                company.wallet += price
+                company.save()
+
+                user = company
+
+            messages.success(request, _('Payment for <b>{user}</b> added successfully.').format(user=user))
+            return redirect(request.META.get('HTTP_REFERER', '/'))
+        else:
+            messages.error(request, _('Check form fields'))
+            return render(request,
+                          'transactions/payment-form.html',
+                          context={
+                              'title': self.title,
+                              'form': form,
+                              'current_page': 'payment-add',
+                          })

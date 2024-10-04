@@ -80,6 +80,15 @@
         </li>
         {% if request.user.is_staff or request.user.is_superuser %}
         <li class="menu-header small text-uppercase">
+            <span class="menu-header-text">{% trans 'Payments' %}</span>
+        </li>
+        <li class="menu-item  {% if current_page == 'payment-add' %}active{% endif %}">
+            <a href="{% url 'transactions:payment-add' %}" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-credit-card"></i>
+                <div>{% trans 'Add payment' %}</div>
+            </a>
+        </li>
+        <li class="menu-header small text-uppercase">
             <span class="menu-header-text">{% trans 'School Analytics' %}</span>
         </li>
         <li class="menu-item  {% if current_page == 'teacher-analytics' %}active{% endif %}">
