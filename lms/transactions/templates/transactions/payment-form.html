@@ -7,13 +7,13 @@
 <link rel="stylesheet" href="{% static './vendor/libs/select2/select2.css' %}"/>
 <style>
     .hidden {
-    display: none;
+        display: none;
     }
 </style>
 {% endblock %}
 {% block content %}
 <div class="container py-5" style="max-width: 960px;">
-    <form action="{% url 'transactions:payment-add' %}" method="POST">
+    <form id="payment-add" action="{% url 'transactions:payment-add' %}" method="POST">
         {% csrf_token %}
         <div class="card mb-5">
             <div class="card-header">
@@ -24,13 +24,11 @@
                 {{ form.payment_type|as_crispy_field }}
                 <div class="row">
                     <div class="col-md-6">
-
-                {{ form.student|as_crispy_field }}
-                {{ form.company|as_crispy_field }}
+                        {{ form.student|as_crispy_field }}
+                        {{ form.company|as_crispy_field }}
                     </div>
                     <div class="col-md-6">
-
-                {{ form.price|as_crispy_field }}
+                        {{ form.price|as_crispy_field }}
                     </div>
                 </div>
                 {{ form.description|as_crispy_field }}
@@ -40,8 +38,40 @@
                 <button type="submit" class="btn btn-primary">{% trans 'Add payment' %}</button>
             </div>
         </div>
-
     </form>
+
+    <div class="card">
+        <div class="card-header">
+            <h2 class="h5 m-0">{% trans 'Last payments' %}</h2>
+        </div>
+        <hr class="m-0">
+        <div class="card-body">
+            {% if last_payments %}
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>{% trans 'Date' %}</th>
+                    <th>{% trans 'Student / Company' %}</th>
+                    <th>{% trans 'Price' %}</th>
+                    <th>{% trans 'Description' %}</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for payment in last_payments %}
+                <tr>
+                    <td>{{ payment.created_at }}</td>
+                    <td>{{ payment.student }} {{ payment.company }}</td>
+                    <td>{{ payment.price }}</td>
+                    <td>{{ payment.description }}</td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <p>{% trans 'No payments found.' %}</p>
+            {% endif %}
+        </div>
+    </div>
 </div>
 {% endblock %}
 
@@ -62,7 +92,6 @@
     companies.classList.add('hidden');
     students_list.required = true;
 
-    // Используем forEach вместо for...in для перебора NodeList
     types.forEach(type => {
         type.addEventListener('change', function() {
             $('#id_student').val(null).trigger('change');
@@ -81,6 +110,5 @@
             }
         });
     });
-
 </script>
 {% endblock %}

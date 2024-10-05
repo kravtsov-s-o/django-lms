@@ -1,0 +1,29 @@
+<nav aria-label="Page navigation">
+    <ul class="pagination m-0">
+        {% if object_list.has_previous %}
+        <li class="page-item prev">
+            <a class="page-link" href="?page={{ object_list.previous_page_number }}">
+                <i class="tf-icon bx bx-chevron-left"></i>
+            </a>
+        </li>
+        {% endif %}
+        {% for number in page_range %}
+        {% if number != object_list.number %}
+        <li class="page-item">
+            <a class="page-link" href="?page={{ number }}">{{ number }}</a>
+        </li>
+        {% else %}
+        <li class="page-item active">
+            <a class="page-link">{{ number }}</a>
+        </li>
+        {% endif %}
+        {% endfor %}
+        {% if object_list.has_next %}
+        <li class="page-item next">
+            <a class="page-link" href="?page={{ object_list.next_page_number }}">
+                <i class="tf-icon bx bx-chevron-right"></i>
+            </a>
+        </li>
+        {% endif %}
+    </ul>
+</nav>

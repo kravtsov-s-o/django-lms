@@ -1,5 +1,6 @@
 import calendar
 
+from django.contrib import messages
 from django.db.models import Sum
 from django.db.models.functions import TruncMonth
 from django.shortcuts import render, redirect, get_object_or_404
@@ -262,7 +263,6 @@ class TeacherStatistic(View):
             'current_year': current_year,
             'result': result,
             'available_years': get_year_list(TeacherPayment),
-            'available_years': get_year_list(TeacherPayment),
             'durations': get_duration_list(),
             'month_list': generate_month_list_for_filter()
         })
@@ -273,9 +273,9 @@ class TeacherStatistic(View):
 class ProfileLessons(ProfileBaseView):
     def get(self, request, pk):
         if self.user.school_role == 'student':
-            lessons = Lesson.objects.filter(students=self.current_user).order_by('-date')
+            lessons = Lesson.objects.filter(students=self.current_user).order_by('-date', '-time')
         else:
-            lessons = Lesson.objects.filter(teacher=self.current_user).order_by('-date')
+            lessons = Lesson.objects.filter(teacher=self.current_user).order_by('-date', '-time')
 
 
         items_per_page = 20
@@ -291,10 +291,18 @@ class ProfileLessons(ProfileBaseView):
 @method_decorator(user_is_student_or_teacher, name='dispatch')
 class ProfileProgressView(ProfileBaseView):
     active_page = 'progress'
+    items_per_page = 10
+
     def get(self, request, pk):
         teacher = get_teacher(request)
         progress_list = StudentProgress.objects.filter(student=self.current_user).order_by('-date')
-        return self.render_page(request, self.active_page, progress_list=progress_list, progress_form=ProgressStageForm(self.current_user, teacher))
+
+        progress_page, page_range = get_paginator(progress_list, self.items_per_page, request)
+
+        return self.render_page(request, self.active_page,
+                                progress_list=progress_page,
+                                page_range=page_range,
+                                progress_form=ProgressStageForm(self.current_user, teacher))
 
     def post(self, request, pk):
         teacher = get_teacher(request)
@@ -304,8 +312,11 @@ class ProfileProgressView(ProfileBaseView):
             form.save()
             return redirect(request.META.get('HTTP_REFERER', '/'))
         else:
-            progress_list = StudentProgress.objects.filter(student=self.current_user)
-            return self.render_page(request, self.active_page, progress_list=progress_list, progress_form=form)
+            progress_list = StudentProgress.objects.filter(student=self.current_user).order_by('-date')
+            progress_page, page_range = get_paginator(progress_list, self.items_per_page, request)
+            return self.render_page(request, self.active_page,
+                                progress_list=progress_page,
+                                page_range=page_range, progress_form=form)
 
 
 
@@ -340,28 +351,50 @@ class ProfilePayments(ProfileBaseView):
 class ProfileSettings(ProfileBaseView):
     active_page = 'settings'
 
+    def get_common_form(self, user, teacher):
+        return UserCombineCommonForm(user=user, teacher=teacher)
+
     def get(self, request, pk):
         teacher = self.current_user if self.user.school_role == 'teacher' else None
-        common_form = UserCombineCommonForm(user=self.user, teacher=teacher)
-        return self.render_page(request, self.active_page, common_form=common_form, password_form=UserChangePassword)
+        return self.render_page(request, self.active_page,
+                                common_form=self.get_common_form(self.user, teacher),
+                                password_form=UserChangePassword())
 
     def post(self, request, pk):
         teacher = self.current_user if self.user.school_role == 'teacher' else None
-
-        if 'change-password' in request.POST:
+        print(request.POST)
+        # Обработка смены пароля
+        if request.POST.get('form_name') == 'password':
             form = UserChangePassword(request.POST, user=self.user)
             if form.is_valid():
                 form.save()
+                messages.success(request, _('Password was changed successfully'))
                 return redirect(request.META.get('HTTP_REFERER', '/'))
             else:
-                common_form = UserCombineCommonForm(user=self.user, teacher=teacher)
-                return self.render_page(request, self.active_page, common_form=common_form, password_form=form)
+                messages.error(request, _('Fix errors in form'))
+                return self.render_page(request, self.active_page,
+                                        common_form=self.get_common_form(self.user, teacher),
+                                        password_form=form, active_tab='password')
 
-        if 'common-information' in request.POST:
+        # Обработка обновления профиля
+        if request.POST.get('form_name') == 'common':
+            print('common-information')
             form = UserCombineCommonForm(request.POST, user=self.user, teacher=teacher)
             if form.is_valid():
                 form.save(user=self.user, teacher=teacher)
-            return redirect(request.META.get('HTTP_REFERER', '/'))
+                messages.success(request, _('Profile updated!'))
+                return redirect(request.META.get('HTTP_REFERER', '/'))
+            else:
+                messages.error(request, _('Fix errors in form'))
+                return self.render_page(request, self.active_page,
+                                        common_form=self.get_common_form(self.user, teacher),
+                                        password_form=form, active_tab='common')
+
+        # Если ничего не было обработано, вернуть страницу с формами
+        messages.warning(request, _('Something went wrong. Try again.'))
+        return self.render_page(request, self.active_page,
+                                common_form=self.get_common_form(self.user, teacher),
+                                password_form=UserChangePassword())
 
 
 @method_decorator(login_required(login_url='/login/'), name='dispatch')

@@ -6,7 +6,7 @@
             <li class="nav-item">
                 <button
                         type="button"
-                        class="nav-link active"
+                        class="nav-link {% if active_tab == 'common' or active_tab is None %} active {% endif %}"
                         role="tab"
                         data-bs-toggle="tab"
                         data-bs-target="#navs-tab-settings-common"
@@ -18,7 +18,7 @@
             <li class="nav-item">
                 <button
                         type="button"
-                        class="nav-link"
+                        class="nav-link {% if active_tab == 'password' %} active {% endif %}"
                         role="tab"
                         data-bs-toggle="tab"
                         data-bs-target="#navs-tab-settings-password"
@@ -30,21 +30,23 @@
         </ul>
     </div>
     <div class="tab-content">
-        <div class="tab-pane fade show active" id="navs-tab-settings-common" role="tabpanel">
-            <form action="#" method="POST" id="common">
+        <div class="tab-pane fade {% if active_tab == 'common' or active_tab is None %} active show {% endif %}" id="navs-tab-settings-common" role="tabpanel">
+            <form action="{% url 'school:profile-settings' pk=request.user.id %}" method="POST" id="common">
                 {% csrf_token %}
                 <fieldset>
+                    <input type="hidden" name="form_name" id="common_form" value="common">
                     {{ common_form|crispy }}
-                    <button type="submit" name="common-information" class="btn btn-primary">{% trans 'Save' %}</button>
+                    <button type="submit" class="btn btn-primary">{% trans 'Save' %}</button>
                 </fieldset>
             </form>
         </div>
-        <div class="tab-pane fade" id="navs-tab-settings-password" role="tabpanel">
-            <form action="#" method="POST" id="password">
+        <div class="tab-pane fade {% if active_tab == 'password' %} active show {% endif %}" id="navs-tab-settings-password" role="tabpanel">
+            <form action="{% url 'school:profile-settings' pk=request.user.id %}" method="POST" id="password">
                 {% csrf_token %}
                 <fieldset>
+                    <input type="hidden" name="form_name" id="change_password" value="password">
                     {{ password_form|crispy }}
-                    <button type="submit" name="change-password" class="btn btn-primary">{% trans 'Save' %}</button>
+                    <button type="submit" class="btn btn-primary">{% trans 'Save' %}</button>
                 </fieldset>
             </form>
         </div>

@@ -1,3 +1,5 @@
+from itertools import chain
+
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.utils.decorators import method_decorator
@@ -14,11 +16,23 @@ from .models import StudentPayment, CompanyPayment
 # Create your views here.
 @method_decorator(login_required(login_url='/login/'), name='dispatch')
 @method_decorator(user_is_staff, name='dispatch')
-class PaymntView(View):
+class PaymentView(View):
     title = _('Add payment')
 
     def get_form(self, request=None):
         return PaymentForm(request)
+
+    def get_last_transactions(self):
+        last_student_transactions = list(StudentPayment.objects.filter(lesson=None).order_by('-created_at')[:10])
+        last_company_transactions = list(CompanyPayment.objects.filter(lesson=None).order_by('-created_at')[:10])
+
+        combined_transactions = list(chain(last_student_transactions, last_company_transactions))
+
+        combined_transactions_sorted = sorted(combined_transactions, key=lambda x: x.created_at, reverse=True)
+
+        final_transactions = combined_transactions_sorted[:10]
+
+        return final_transactions
 
     def get(self, request):
         form = self.get_form()
@@ -29,6 +43,7 @@ class PaymntView(View):
                           'title': self.title,
                           'form': form,
                           'current_page': 'payment-add',
+                          'last_payments': self.get_last_transactions()
                       })
 
     def post(self, request):

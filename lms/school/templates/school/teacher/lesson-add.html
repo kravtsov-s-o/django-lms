@@ -48,7 +48,7 @@
         {% csrf_token %}
         <div class="row">
             <div class="col-md-4">
-                <div class="card" {% if lesson %} style="pointer-events:none;" {% endif %}>
+                <div class="card" {% if lesson and lesson.status != 'planned' %} style="pointer-events:none;" {% endif %}>
                     <div class="card-body">
                         {% csrf_token %}
                         {{ form.date|as_crispy_field }}

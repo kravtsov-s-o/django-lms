@@ -26,7 +26,7 @@ GROUP_DISCOUNT = {
 }
 
 
-def payment_description(lesson: Lesson) -> str:
+def payment_description() -> str:
     """
     Returns a description for the payment related to the given lesson.
 
@@ -38,11 +38,7 @@ def payment_description(lesson: Lesson) -> str:
     -------
         string - description for the payment related to the given lesson
     """
-    students = ', '.join(
-        [f'{student.user.first_name} {student.user.last_name}' for student in lesson.students.all()])
-    date = lesson.date.strftime("%d.%m.%Y")
-    time = lesson.time.strftime("%H:%M")
-    return _("For lesson {date} - {time}; Students: {students}").format(date=date, time=time, students=students)
+    return _("Lesson payment")
 
 
 def lesson_finished(teacher: Teacher, lesson_id: int, status: str):
@@ -133,7 +129,7 @@ def set_company_transaction(company: Company, lesson: Lesson):
     duration = lesson.duration.time
     number_of_students = len(lesson.students.all())
     price = calculate_company_price(company, duration, number_of_students)
-    description = payment_description(lesson)
+    description = payment_description()
     CompanyPayment(lesson=lesson, price=price, description=description, company=company).save()
     company.wallet -= price
     company.save()
@@ -151,7 +147,7 @@ def set_teacher_transaction(teacher: Teacher, lesson: Lesson):
     duration = lesson.duration.time
     number_of_students = len(lesson.students.all())
     price = calculate_teacher_price(teacher, duration, lesson, number_of_students)
-    description = payment_description(lesson)
+    description = payment_description()
     TeacherPayment(lesson=lesson, price=price, description=description, teacher=teacher).save()
 
 
@@ -168,7 +164,7 @@ def set_student_transaction(student: Student, lesson: Lesson, company: Company):
     duration = lesson.duration.time
     number_of_students = len(lesson.students.all())
     price = calculate_student_price(student.rate, duration, number_of_students, company)
-    description = payment_description(lesson)
+    description = payment_description()
     StudentPayment(lesson=lesson, price=price, description=description, student=student).save()
     student.wallet -= price
     student.save()
@@ -442,7 +438,7 @@ def count_time_left(user):
     return _("{hours} hour(s) {minutes} minutes").format(hours=hours, minutes=minutes)
 
 
-def get_paginator(items, items_per_page, request):
+def get_paginator(items, items_per_page, request, surrounding = 2):
     """
     Cut items per page
 
@@ -468,7 +464,29 @@ def get_paginator(items, items_per_page, request):
     except EmptyPage:
         items_page = paginator.page(paginator.num_pages)
 
-    page_range = range(1, items_page.paginator.num_pages + 1)
+    # =================================================================
+    page_number = items_page.number
+    total_pages = items_page.paginator.num_pages
+    page_range = []
+
+    min_page_range_threshold = surrounding + 1
+    min_page_ellipsis_threshold = surrounding + 2
+    max_page_ellipsis_threshold = surrounding - 1
+
+    if page_number > min_page_range_threshold:
+        page_range.append(1)
+        if page_number > min_page_ellipsis_threshold:
+            page_range.append('...')
+
+    start_range = max(1, page_number - surrounding)
+    end_range = min(total_pages, page_number + surrounding) + 1
+    page_range.extend(range(start_range, end_range))
+
+    if page_number < total_pages - surrounding:
+        if page_number < total_pages - max_page_ellipsis_threshold:
+            page_range.append('...')
+        page_range.append(total_pages)
+    # =================================================================
 
     return items_page, page_range
 
