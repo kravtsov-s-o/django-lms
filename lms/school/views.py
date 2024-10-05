@@ -75,6 +75,7 @@ class ScheduleView(View):
 @method_decorator(user_is_teacher, name='dispatch')
 class LessonAdd(View):
     title = _('Add new lesson')
+
     def get(self, request, pk):
         teacher = get_teacher(request)
 
@@ -91,8 +92,10 @@ class LessonAdd(View):
 
         if form.is_valid():
             form.save()
+            messages.success(request, _('Lesson added successfully'))
             return redirect(to='school:cabinet-schedule', pk=request.user.id)
         else:
+            messages.error(request, _('Fix form fields'))
             return render(request,
                           'school/teacher/lesson-add.html',
                           context={
@@ -105,6 +108,7 @@ class LessonAdd(View):
 @method_decorator(user_is_lesson_teacher, name='dispatch')
 class LessonEdit(View):
     title = _('Edit lesson')
+
     def get(self, request, *args, **kwargs):
         pk = kwargs.get('pk', None)
         teacher = get_teacher(request)
@@ -126,8 +130,10 @@ class LessonEdit(View):
 
         if form.is_valid():
             form.save()
+            messages.success(request, _('Lesson edited successfully'))
             return redirect(to='school:cabinet-schedule', pk=request.user.id)
         else:
+            messages.error(request, _('Fix form fields'))
             return render(request,
                           'school/teacher/lesson-add.html',
                           context={
@@ -154,6 +160,7 @@ class LessonDelete(View):
 
         if request.method == "POST":
             lesson.delete()
+            messages.success(request, _('Lesson was deleted'))
             return redirect(to='school:cabinet-schedule', pk=request.user.id)
 
 
@@ -170,8 +177,10 @@ class LessonMove(View):
                 teacher = get_teacher(request)
                 Lesson.objects.filter(pk=pk, teacher=teacher).update(date=new_date, time=new_time)
 
+                messages.success(request, _('Lesson was moved on {date} | {time}').format(date=new_date, time=new_time))
                 return redirect(to='school:cabinet-schedule', pk=request.user.id)
 
+            messages.error(request, _('Something went wrong. Try again.'))
             return redirect(request.META.get('HTTP_REFERER', '/'))
 
 
@@ -277,7 +286,6 @@ class ProfileLessons(ProfileBaseView):
         else:
             lessons = Lesson.objects.filter(teacher=self.current_user).order_by('-date', '-time')
 
-
         items_per_page = 20
         lessons_page, page_range = get_paginator(lessons, items_per_page, request)
 
@@ -293,16 +301,21 @@ class ProfileProgressView(ProfileBaseView):
     active_page = 'progress'
     items_per_page = 10
 
-    def get(self, request, pk):
-        teacher = get_teacher(request)
+    def inner_render_page(self, request,  form):
         progress_list = StudentProgress.objects.filter(student=self.current_user).order_by('-date')
-
         progress_page, page_range = get_paginator(progress_list, self.items_per_page, request)
 
         return self.render_page(request, self.active_page,
                                 progress_list=progress_page,
                                 page_range=page_range,
-                                progress_form=ProgressStageForm(self.current_user, teacher))
+                                progress_form=form)
+
+
+    def get(self, request, pk):
+        teacher = get_teacher(request)
+        form = ProgressStageForm(self.current_user, teacher)
+
+        return self.inner_render_page(request, form)
 
     def post(self, request, pk):
         teacher = get_teacher(request)
@@ -310,15 +323,10 @@ class ProfileProgressView(ProfileBaseView):
 
         if form.is_valid():
             form.save()
+            messages.success(request, _('New Note was added.'))
             return redirect(request.META.get('HTTP_REFERER', '/'))
         else:
-            progress_list = StudentProgress.objects.filter(student=self.current_user).order_by('-date')
-            progress_page, page_range = get_paginator(progress_list, self.items_per_page, request)
-            return self.render_page(request, self.active_page,
-                                progress_list=progress_page,
-                                page_range=page_range, progress_form=form)
-
-
+            return self.inner_render_page(request, form)
 
 
 @method_decorator(login_required(login_url='/login/'), name='dispatch')
@@ -327,6 +335,7 @@ class ProfileProgressDelete(DeleteView):
     def post(self, request, pk, pk2):
         if request.method == "POST":
             StudentProgress.objects.filter(pk=pk2).delete()
+            messages.success(request, _('Note was deleted.'))
             return redirect(request.META.get('HTTP_REFERER', '/'))
 
 
@@ -362,7 +371,6 @@ class ProfileSettings(ProfileBaseView):
 
     def post(self, request, pk):
         teacher = self.current_user if self.user.school_role == 'teacher' else None
-        print(request.POST)
         # Обработка смены пароля
         if request.POST.get('form_name') == 'password':
             form = UserChangePassword(request.POST, user=self.user)
