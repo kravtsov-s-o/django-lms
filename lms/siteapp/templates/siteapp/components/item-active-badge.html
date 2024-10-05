@@ -1,0 +1,6 @@
+{% load i18n %}
+{% if item_status == True %}
+<span class="badge bg-label-success">{% trans 'ACTIVE' %}</span>
+{% else %}
+<span class="badge bg-label-danger">{% trans 'INACTIVE' %}</span>
+{% endif %}

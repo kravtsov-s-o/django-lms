@@ -45,13 +45,8 @@
                       {% endif %}
                     </td>
                     <td>
-                      {% if student.user.is_active == True %}
-                        <span class="badge bg-label-success">{% trans 'ACTIVE' %}</span>
-                      {% else %}
-                        <span class="badge bg-label-danger">{% trans 'INACTIVE' %}</span>
-                      {% endif %}
+                        {% include 'siteapp/components/item-active-badge.html' with item_status=student.user.is_active %}
                     </td>
-
                 </tr>
                 {% endfor %}
                 </tbody>

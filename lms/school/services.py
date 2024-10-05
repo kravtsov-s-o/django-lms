@@ -464,7 +464,6 @@ def get_paginator(items, items_per_page, request, surrounding = 2):
     except EmptyPage:
         items_page = paginator.page(paginator.num_pages)
 
-    # =================================================================
     page_number = items_page.number
     total_pages = items_page.paginator.num_pages
     page_range = []
@@ -486,7 +485,6 @@ def get_paginator(items, items_per_page, request, surrounding = 2):
         if page_number < total_pages - max_page_ellipsis_threshold:
             page_range.append('...')
         page_range.append(total_pages)
-    # =================================================================
 
     return items_page, page_range
 

@@ -50,16 +50,8 @@
                             </li>
                             <li class="mb-3">
                                 <span class="fw-bold me-2">{% trans 'Status:' %}</span>
-                                {% if current_user.user.is_active == True %}
-                                <span class="badge bg-label-success">{% trans 'ACTIVE' %}</span>
-                                {% else %}
-                                <span class="badge bg-label-danger">{% trans 'INACTIVE' %}</span>
-                                {% endif %}
+                                {% include 'siteapp/components/item-active-badge.html' with item_status=current_user.user.is_active %}
                             </li>
-                            <!--<li class="mb-3">
-                                <span class="fw-bold me-2">{% trans 'Contact:' %}</span>
-                                <span>(123) 456-7890</span>
-                            </li>-->
                             <li class="mb-3">
                                 <span class="fw-bold me-2">{% trans 'Languages:' %}</span>
                                 <span>{{ current_user.language|extract_languages }}</span>
