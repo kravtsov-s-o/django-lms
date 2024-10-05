@@ -1,7 +1,7 @@
 {% load extract_students %}
 {% load i18n %}
 <div class="card mb-4">
-{% if not lessons %}
+    {% if not lessons %}
     <div class="card-body">
         <h6 class="m-0">{% trans 'Lessons not found' %}</h6>
     </div>
@@ -24,19 +24,24 @@
                     {% include 'siteapp/components/lesson-status-badge.html' %}
                 </td>
                 <td>
-                    <p class="m-0"><b>{% trans 'Theme:' %}</b></p>
-                    <p class="m-0">{{ lesson.theme }}</p>
-                    <hr class="my-2">
-                    <p class="m-0"><b>{% trans 'Students:' %}</b></p>
-                    <p class="m-0">{{ lesson.students|extract_students }}</p>
+                    <table class="table table-sm table-borderless">
+                        <tr>
+                            <th style="width:1%;">{% trans 'Theme:' %}</th>
+                            <td>{{ lesson.theme }}</td>
+                        </tr>
+                        {% if current_user.user.school_role == 'teacher' %}
+                        <tr>
+                            <th style="width:1%;">{% trans 'Students:' %}</th>
+                            <td>{{ lesson.students|extract_students }}</td>
+                        </tr>
+                        {% endif %}
+                    </table>
                 </td>
                 <td style="width: 1%;">
-                    <div class="dropdown btn-group">
-                        <a href="{% url 'school:lesson-view' pk=lesson.id %}"
+                    <a href="{% url 'school:lesson-view' pk=lesson.id %}"
                            class="btn btn-icon btn-outline-secondary">
                             <i class='bx bx-show'></i>
                         </a>
-                    </div>
                 </td>
             </tr>
             {% endfor %}
@@ -49,5 +54,5 @@
     <div class="card-footer">
         {% include "siteapp/components/_pagination.html" with object_list=lessons page_range=page_range %}
     </div>
-{% endif %}
+    {% endif %}
 </div>

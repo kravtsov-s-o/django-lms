@@ -121,20 +121,31 @@
                         <table class="table">
                             <thead>
                             <tr>
-                                <th>{% trans 'Time' %}</th>
-                                <th>{% trans 'Status' %}</th>
-                                <th>{% trans 'Students' %}</th>
+                                <th style="width:1%">{% trans 'Time' %}</th>
+                                <th style="width:1%">{% trans 'Status' %}</th>
+                                <th>{% trans 'Theme / Students' %}</th>
                                 <th class="text-center" style="width: 1%;">{% trans 'Actions' %}</th>
                             </tr>
                             </thead>
                             <tbody class="table-border-bottom-0">
                             {% for lesson in lessons %}
                             <tr>
-                                <td>{{ lesson.time|time:"H:i" }}</td>
-                                <td>
+                                <td style="width:1%;">{{ lesson.time|time:"H:i" }}</td>
+                                <td style="width:1%;">
                                     {% include 'siteapp/components/lesson-status-badge.html' %}
                                 </td>
-                                <td>{{ lesson.students|extract_students }}</td>
+                                <td>
+                                    <table class="table table-sm table-borderless">
+                                        <tr>
+                                            <th style="width:1%;">{% trans 'Theme:' %}</th>
+                                            <td>{{ lesson.theme }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th style="width:1%;">{% trans 'Students:' %}</th>
+                                            <td>{{ lesson.students|extract_students }}</td>
+                                        </tr>
+                                    </table>
+                                </td>
                                 <td style="width: 1%;">
                                     <div class="dropdown btn-group">
                                         <a href="{% url 'school:lesson-view' pk=lesson.id %}"
