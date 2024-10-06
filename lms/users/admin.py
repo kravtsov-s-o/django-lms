@@ -3,6 +3,9 @@ from django.contrib.auth.admin import UserAdmin
 from .models import User
 from .forms import MyUserCreationForm, MyUserChangeForm
 
+from django.contrib.auth.models import Group
+from django.contrib.auth.admin import GroupAdmin
+
 
 # Register your models here.
 @admin.register(User)
@@ -41,3 +44,7 @@ class MyUserAdmin(UserAdmin):
             }
         )
     )
+
+
+admin.site.unregister(Group)
+admin.site.register(Group, GroupAdmin)
