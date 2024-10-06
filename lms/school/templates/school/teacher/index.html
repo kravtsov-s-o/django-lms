@@ -116,85 +116,83 @@
                 </div>
                 <hr class="m-0">
                 {% if lessons %}
-                <div class="card-table">
-                    <div class="table-responsive text-nowrap">
-                        <table class="table">
-                            <thead>
-                            <tr>
-                                <th style="width:1%">{% trans 'Time' %}</th>
-                                <th style="width:1%">{% trans 'Status' %}</th>
-                                <th>{% trans 'Theme / Students' %}</th>
-                                <th class="text-center" style="width: 1%;">{% trans 'Actions' %}</th>
-                            </tr>
-                            </thead>
-                            <tbody class="table-border-bottom-0">
-                            {% for lesson in lessons %}
-                            <tr>
-                                <td style="width:1%;">{{ lesson.time|time:"H:i" }}</td>
-                                <td style="width:1%;">
-                                    {% include 'siteapp/components/lesson-status-badge.html' %}
-                                </td>
-                                <td>
-                                    <table class="table table-sm table-borderless">
-                                        <tr>
-                                            <th style="width:1%;">{% trans 'Theme:' %}</th>
-                                            <td>{{ lesson.theme }}</td>
-                                        </tr>
-                                        <tr>
-                                            <th style="width:1%;">{% trans 'Students:' %}</th>
-                                            <td>{{ lesson.students|extract_students }}</td>
-                                        </tr>
-                                    </table>
-                                </td>
-                                <td style="width: 1%;">
-                                    <div class="dropdown btn-group">
-                                        <a href="{% url 'school:lesson-view' pk=lesson.id %}"
-                                           class="btn btn-icon btn-outline-secondary">
-                                            <i class='bx bx-show'></i>
-                                        </a>
-                                        <button type="button"
-                                                class="btn btn-icon btn-outline-secondary p-0 dropdown-toggle hide-arrow"
-                                                data-bs-toggle="dropdown" aria-expanded="true">
-                                            <i class="bx bx-dots-vertical-rounded"></i>
-                                        </button>
-                                        <div class="dropdown-menu hide"
-                                             data-popper-placement="bottom-start"
-                                             style="position: absolute; inset: 0px auto auto 0px; margin: 0px; transform: translate(1225px, 139px);">
-                                            {% if lesson.status == 'planned' %}
-                                            <a class="dropdown-item" href="{% url 'school:lesson-edit' pk=lesson.id %}">
-                                                <i class="bx bx-edit-alt me-1"></i>{% trans 'Edit' %}</a>
-                                            <a class="dropdown-item dropdown-item--conducted" href="javascript:void(0);"
-                                               data-bs-toggle="modal" data-bs-target="#conducted"
-                                               data-id="{{ lesson.id }}" data-action="conducted">
-                                                <i class="bx bx-check me-1"></i>{% trans 'Conducted' %}</a>
-                                            <a class="dropdown-item dropdown-item--missed" href="javascript:void(0);"
-                                               data-bs-toggle="modal" data-bs-target="#missed"
-                                               data-id="{{ lesson.id }}" data-action="missed">
-                                                <i class="bx bx-x me-1"></i>{% trans 'Missed' %}</a>
-                                            <a class="dropdown-item dropdown-item--move" href="javascript:void(0);"
-                                               data-bs-toggle="modal" data-bs-target="#move"
-                                               data-id="{{ lesson.id }}" data-action="move">
-                                                <i class="bx bx-right-arrow-circle me-1"></i>{% trans 'Move' %}</a>
-                                            <a class="dropdown-item dropdown-item--delete" href="javascript:void(0);"
-                                               data-bs-toggle="modal" data-bs-target="#delete"
-                                               data-id="{{ lesson.id }}" data-action="delete">
-                                                <i class="bx bx-trash me-1"></i>{% trans 'Delete' %}</a>
-                                            {% else %}
-                                            <a class="dropdown-item" href="{% url 'school:lesson-edit' pk=lesson.id %}">
-                                                <i class="bx bx-edit-alt me-1"></i>{% trans 'Edit' %}</a>
-                                            <a class="dropdown-item dropdown-item--planned" href="javascript:void(0);"
-                                               data-bs-toggle="modal" data-bs-target="#planned" title="{% trans 'Planned' %}"
-                                               data-id="{{ lesson.id }}" data-action="planned">
-                                                <i class="bx bx-rotate-left"></i>{% trans 'Planned' %}</a>
-                                            {% endif %}
-                                        </div>
+                <div class="card-table table-responsive">
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th style="width:1%">{% trans 'Time' %}</th>
+                            <th style="width:1%">{% trans 'Status' %}</th>
+                            <th>{% trans 'Theme / Students' %}</th>
+                            <th class="text-center" style="width: 1%;">{% trans 'Actions' %}</th>
+                        </tr>
+                        </thead>
+                        <tbody class="table-border-bottom-0">
+                        {% for lesson in lessons %}
+                        <tr>
+                            <td style="width:1%;">{{ lesson.time|time:"H:i" }}</td>
+                            <td style="width:1%;">
+                                {% include 'siteapp/components/lesson-status-badge.html' %}
+                            </td>
+                            <td>
+                                <table class="table table-sm table-borderless">
+                                    <tr>
+                                        <th style="width:1%;">{% trans 'Theme:' %}</th>
+                                        <td>{{ lesson.theme }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th style="width:1%;">{% trans 'Students:' %}</th>
+                                        <td>{{ lesson.students|extract_students }}</td>
+                                    </tr>
+                                </table>
+                            </td>
+                            <td style="width: 1%;">
+                                <div class="dropdown btn-group">
+                                    <a href="{% url 'school:lesson-view' pk=lesson.id %}"
+                                       class="btn btn-icon btn-outline-secondary">
+                                        <i class='bx bx-show'></i>
+                                    </a>
+                                    <button type="button"
+                                            class="btn btn-icon btn-outline-secondary p-0 dropdown-toggle hide-arrow"
+                                            data-bs-toggle="dropdown" aria-expanded="true">
+                                        <i class="bx bx-dots-vertical-rounded"></i>
+                                    </button>
+                                    <div class="dropdown-menu hide"
+                                         data-popper-placement="bottom-start"
+                                         style="position: absolute; inset: 0px auto auto 0px; margin: 0px; transform: translate(1225px, 139px);">
+                                        {% if lesson.status == 'planned' %}
+                                        <a class="dropdown-item" href="{% url 'school:lesson-edit' pk=lesson.id %}">
+                                            <i class="bx bx-edit-alt me-1"></i>{% trans 'Edit' %}</a>
+                                        <a class="dropdown-item dropdown-item--conducted" href="javascript:void(0);"
+                                           data-bs-toggle="modal" data-bs-target="#conducted"
+                                           data-id="{{ lesson.id }}" data-action="conducted">
+                                            <i class="bx bx-check me-1"></i>{% trans 'Conducted' %}</a>
+                                        <a class="dropdown-item dropdown-item--missed" href="javascript:void(0);"
+                                           data-bs-toggle="modal" data-bs-target="#missed"
+                                           data-id="{{ lesson.id }}" data-action="missed">
+                                            <i class="bx bx-x me-1"></i>{% trans 'Missed' %}</a>
+                                        <a class="dropdown-item dropdown-item--move" href="javascript:void(0);"
+                                           data-bs-toggle="modal" data-bs-target="#move"
+                                           data-id="{{ lesson.id }}" data-action="move">
+                                            <i class="bx bx-right-arrow-circle me-1"></i>{% trans 'Move' %}</a>
+                                        <a class="dropdown-item dropdown-item--delete" href="javascript:void(0);"
+                                           data-bs-toggle="modal" data-bs-target="#delete"
+                                           data-id="{{ lesson.id }}" data-action="delete">
+                                            <i class="bx bx-trash me-1"></i>{% trans 'Delete' %}</a>
+                                        {% else %}
+                                        <a class="dropdown-item" href="{% url 'school:lesson-edit' pk=lesson.id %}">
+                                            <i class="bx bx-edit-alt me-1"></i>{% trans 'Edit' %}</a>
+                                        <a class="dropdown-item dropdown-item--planned" href="javascript:void(0);"
+                                           data-bs-toggle="modal" data-bs-target="#planned" title="{% trans 'Planned' %}"
+                                           data-id="{{ lesson.id }}" data-action="planned">
+                                            <i class="bx bx-rotate-left"></i>{% trans 'Planned' %}</a>
+                                        {% endif %}
                                     </div>
-                                </td>
-                            </tr>
-                            {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                </table>
                 </div>
                 {% else %}
                 <div class="card-body">
