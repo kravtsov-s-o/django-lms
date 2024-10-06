@@ -460,7 +460,7 @@ class AnalyticCompanies(BaseAnalyticView):
 
     def get_month_payment(self, current_item, current_year):
         return (self.model.objects
-                .filter(company=current_item, created_at__year=current_year)
+                .filter(company=current_item, created_at__year=current_year, lesson__isnull=False)
                 .annotate(month=TruncMonth('created_at'))  # Извлекаем месяц из поля created_at
                 .values('month')  # Группируем по месяцу
                 .annotate(total_price=Sum('price'))  # Суммируем поле price для каждого месяца

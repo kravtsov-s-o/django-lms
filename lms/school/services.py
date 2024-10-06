@@ -41,6 +41,7 @@ def payment_description() -> str:
     return _("Lesson payment")
 
 
+
 def lesson_finished(teacher: Teacher, lesson_id: int, status: str):
     """
     Marks the given lesson as finished and calculates the final price based on the lesson duration,
@@ -508,7 +509,7 @@ def get_duration_list():
     -------
         list: list of Duration objects
     """
-    return Duration.objects.all()
+    return Duration.objects.all().order_by('time')
 
 
 def generate_month_list_for_filter():

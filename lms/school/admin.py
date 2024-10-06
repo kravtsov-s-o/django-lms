@@ -1,4 +1,6 @@
 from django.contrib import admin
+from django.db import transaction
+
 from .models import Teacher, Student, Lesson, StudentProgress
 from .forms import TeacherForm, StudentForm
 from django.utils.translation import gettext_lazy as _
@@ -123,18 +125,21 @@ class StudentAdmin(admin.ModelAdmin):
 
 
 @admin.action(description=_("Mark lesson as 'Conducted'"))
+@transaction.atomic
 def make_conducted(modeladmin, request, queryset):
     for lesson in queryset:
         lesson_finished(lesson.teacher, lesson.id, 'conducted')
 
 
 @admin.action(description=_("Mark lesson as 'Missed'"))
+@transaction.atomic
 def make_missed(modeladmin, request, queryset):
     for lesson in queryset:
         lesson_finished(lesson.teacher, lesson.id, 'missed')
 
 
 @admin.action(description=_("Mark lesson as 'Planned'"))
+@transaction.atomic
 def make_planned(modeladmin, request, queryset):
     for lesson in queryset:
         lesson_finished(lesson.teacher, lesson.id, 'planned')
