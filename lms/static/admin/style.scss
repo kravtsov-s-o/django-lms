@@ -44,6 +44,10 @@
     }
 }
 
+.app-auth {
+    order: 999;
+}
+
 
 @media (max-width: 1279px) {
     :root {

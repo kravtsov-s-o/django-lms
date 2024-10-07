@@ -8,6 +8,12 @@ from django.utils.translation import gettext_lazy as _
 @admin.register(TransactionType)
 class TransactionTypeAdmin(TranslationAdmin):
     list_display = ['title', 'description', 'type', 'is_system']
+    readonly_fields = ['is_system']
+
+    def has_delete_permission(self, request, obj=None):
+        if obj and obj.is_system:
+            return False
+        return super().has_delete_permission(request, obj)
 
 
 @admin.register(TeacherPayment)

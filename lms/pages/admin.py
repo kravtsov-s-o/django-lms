@@ -12,7 +12,7 @@ class PageAdmin(TranslationAdmin):
     form = PageForm
 
     search_fields = ['title', 'content']
-    list_display = ['title', 'author', 'status']
+    list_display = ['title', 'slug', 'author', 'status']
     list_filter = ['status', 'author']
     readonly_fields = ['author', 'created_at', 'updated_at']
 

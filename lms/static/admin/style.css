@@ -36,6 +36,10 @@
   box-shadow: 0 3px 12px rgba(0, 0, 0, 0.2);
 }
 
+.app-auth {
+  order: 999;
+}
+
 @media (max-width: 1279px) {
   :root {
     --dashboard-module-columns: 2;
