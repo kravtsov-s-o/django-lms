@@ -1,0 +1,64 @@
+/*
+    DJANGO Admin styles
+*/
+
+:root {
+    --dashboard-module-columns: 3;
+}
+
+.dashboard {
+    #content {
+        width: 100%;
+        max-width: 100%;
+        margin: 0;
+        display: grid;
+        grid-template-columns: 1fr 260px;
+        gap: 2em;
+        box-sizing: border-box;
+
+        h1 {
+            grid-column-start: 1;
+            grid-column-end: -1;
+        }
+
+        #content-main,
+        #content-related {
+            float: none;
+            margin: 0;
+        }
+
+        #content-main {
+            display: grid;
+            grid-template-columns: repeat(var(--dashboard-module-columns), 1fr);
+            gap: 2em;
+        }
+
+        .module:not(#recent-actions-module) {
+            margin: 0;
+            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        #content-related {
+            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.2);
+        }
+    }
+}
+
+
+@media (max-width: 1279px) {
+    :root {
+        --dashboard-module-columns: 2;
+    }
+}
+
+@media (max-width: 1023px) {
+    :root {
+        --dashboard-module-columns: 1;
+    }
+}
+
+@media (max-width: 767px) {
+    .dashboard #content {
+        grid-template-columns: 1fr;
+    }
+}
