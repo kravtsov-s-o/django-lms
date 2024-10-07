@@ -44,7 +44,3 @@ class MyUserAdmin(UserAdmin):
             }
         )
     )
-
-
-admin.site.unregister(Group)
-admin.site.register(Group, GroupAdmin)

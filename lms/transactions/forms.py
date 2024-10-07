@@ -1,7 +1,17 @@
 from django import forms
-from django.utils.translation import gettext_lazy as _
+from django.utils.functional import lazy
+from django.utils.safestring import mark_safe
 from school.models import Student
 from companies.models import Company
+from .models import TransactionType
+from django.utils.translation import gettext_lazy as _
+
+
+def get_transaction_types():
+    return [
+        (str(t.id), mark_safe(f"{t.title}<br><small>{t.description}</small>")) for t in
+        TransactionType.objects.filter(is_system=False)
+    ]
 
 
 class PaymentForm(forms.Form):
@@ -10,12 +20,16 @@ class PaymentForm(forms.Form):
         ('company', _('Company Payment')),
     )
 
+    transaction_type_choices = lazy(get_transaction_types, list)
+
     payment_type = forms.ChoiceField(choices=PAYMENT_CHOICES, label=_('Payment Type'),
-        widget=forms.RadioSelect, initial='student')
+                                     widget=forms.RadioSelect, initial='student')
     student = forms.ModelChoiceField(queryset=Student.objects.all(), required=False, label=_('Student'))
     company = forms.ModelChoiceField(queryset=Company.objects.all(), required=False, label=_('Company'))
     price = forms.DecimalField(max_digits=10, decimal_places=2, label=_('Total'))
-    description = forms.CharField(max_length=255, required=False, label=_('Description'), initial=_('Wallet replenishment'))
+    transaction_type = forms.ChoiceField(
+        choices=transaction_type_choices, widget=forms.RadioSelect, initial=1
+    )
 
     def clean(self):
         cleaned_data = super().clean()

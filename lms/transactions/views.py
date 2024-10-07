@@ -1,7 +1,7 @@
 from itertools import chain
 
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.utils.decorators import method_decorator
 from django.views import View
 from django.contrib import messages
@@ -10,7 +10,7 @@ from .forms import PaymentForm
 from school.services import user_is_staff, set_student_transaction, set_company_transaction
 from django.utils.translation import gettext_lazy as _
 
-from .models import StudentPayment, CompanyPayment
+from .models import StudentPayment, CompanyPayment, TransactionType
 
 
 # Create your views here.
@@ -51,13 +51,13 @@ class PaymentView(View):
 
         if form.is_valid():
             price = form.cleaned_data.get('price')
-            description = form.cleaned_data.get('description')
+            transaction_type = get_object_or_404(TransactionType, pk=form.cleaned_data.get('transaction_type'))
             user = ''
 
             if form.cleaned_data.get('payment_type') == 'student':
                 student = form.cleaned_data.get('student')
 
-                StudentPayment(lesson=None, price=price, description=description, student=student).save()
+                StudentPayment(lesson=None, price=price, transaction_type=transaction_type, student=student).save()
                 student.wallet += price
                 student.save()
                 user = student
@@ -65,7 +65,7 @@ class PaymentView(View):
             elif form.cleaned_data.get('payment_type') == 'company':
                 company = form.cleaned_data.get('company')
 
-                CompanyPayment(lesson=None, price=price, description=description, company=company).save()
+                CompanyPayment(lesson=None, price=price, transaction_type=transaction_type, company=company).save()
                 company.wallet += price
                 company.save()
 

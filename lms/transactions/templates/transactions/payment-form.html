@@ -31,7 +31,7 @@
                         {{ form.price|as_crispy_field }}
                     </div>
                 </div>
-                {{ form.description|as_crispy_field }}
+                {{ form.transaction_type|as_crispy_field }}
             </div>
             <hr class="m-0">
             <div class="card-footer">
@@ -62,7 +62,7 @@
                     <td>{{ payment.created_at }}</td>
                     <td>{{ payment.student }} {{ payment.company }}</td>
                     <td>{{ payment.price }}</td>
-                    <td>{{ payment.description }}</td>
+                    <td>{{ payment.transaction_type.description }}</td>
                 </tr>
                 {% endfor %}
                 </tbody>

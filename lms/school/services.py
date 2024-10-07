@@ -10,7 +10,7 @@ from decimal import Decimal
 from .models import Student, Teacher, Lesson
 from companies.models import Company
 from settings.models import Currency, Duration
-from transactions.models import StudentPayment, TeacherPayment, CompanyPayment
+from transactions.models import TransactionType, StudentPayment, TeacherPayment, CompanyPayment
 
 from functools import wraps
 from django.core.exceptions import PermissionDenied
@@ -26,20 +26,12 @@ GROUP_DISCOUNT = {
 }
 
 
-def payment_description() -> str:
-    """
-    Returns a description for the payment related to the given lesson.
+def get_outgoing_lesson_transaction_type():
+    return TransactionType.objects.filter(type='outgoing', is_system=True).first()
 
-    Parametrs
-    -------
-        lesson - the lesson object
 
-    Returns
-    -------
-        string - description for the payment related to the given lesson
-    """
-    return _("Lesson payment")
-
+def get_incoming_lesson_transaction_type():
+    return TransactionType.objects.filter(type='incoming', is_system=True).first()
 
 
 def lesson_finished(teacher: Teacher, lesson_id: int, status: str):
@@ -130,8 +122,8 @@ def set_company_transaction(company: Company, lesson: Lesson):
     duration = lesson.duration.time
     number_of_students = len(lesson.students.all())
     price = calculate_company_price(company, duration, number_of_students)
-    description = payment_description()
-    CompanyPayment(lesson=lesson, price=price, description=description, company=company).save()
+    transaction_type = get_outgoing_lesson_transaction_type()
+    CompanyPayment(lesson=lesson, price=price, transaction_type=transaction_type, company=company).save()
     company.wallet -= price
     company.save()
 
@@ -148,8 +140,8 @@ def set_teacher_transaction(teacher: Teacher, lesson: Lesson):
     duration = lesson.duration.time
     number_of_students = len(lesson.students.all())
     price = calculate_teacher_price(teacher, duration, lesson, number_of_students)
-    description = payment_description()
-    TeacherPayment(lesson=lesson, price=price, description=description, teacher=teacher).save()
+    transaction_type = get_incoming_lesson_transaction_type()
+    TeacherPayment(lesson=lesson, price=price, transaction_type=transaction_type, teacher=teacher).save()
 
 
 def set_student_transaction(student: Student, lesson: Lesson, company: Company):
@@ -165,8 +157,8 @@ def set_student_transaction(student: Student, lesson: Lesson, company: Company):
     duration = lesson.duration.time
     number_of_students = len(lesson.students.all())
     price = calculate_student_price(student.rate, duration, number_of_students, company)
-    description = payment_description()
-    StudentPayment(lesson=lesson, price=price, description=description, student=student).save()
+    transaction_type = get_outgoing_lesson_transaction_type()
+    StudentPayment(lesson=lesson, price=price, transaction_type=transaction_type, student=student).save()
     student.wallet -= price
     student.save()
 
@@ -376,6 +368,7 @@ def user_is_teacher(view_func):
 
     return _wrapped_view
 
+
 def user_is_student_teacher(view_func):
     """
     Check user is Student Teacher
@@ -439,7 +432,7 @@ def count_time_left(user):
     return _("{hours} hour(s) {minutes} minutes").format(hours=hours, minutes=minutes)
 
 
-def get_paginator(items, items_per_page, request, surrounding = 2):
+def get_paginator(items, items_per_page, request, surrounding=2):
     """
     Cut items per page
 
@@ -525,10 +518,9 @@ def generate_month_list_for_filter():
 
 
 def get_year_list(model, field='created_at', default=datetime.today().year):
-
     years_list = (model.objects
-                       .annotate(year=ExtractYear(field))
-                       .values_list('year', flat=True).distinct().order_by('year'))
+                  .annotate(year=ExtractYear(field))
+                  .values_list('year', flat=True).distinct().order_by('year'))
 
     if not years_list:
         return [default]

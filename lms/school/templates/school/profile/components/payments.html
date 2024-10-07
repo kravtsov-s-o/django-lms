@@ -18,8 +18,8 @@
             {% for payment in payments %}
             <tr>
                 <td style="width: 1%;">{{ payment.created_at|date:"d.m.Y" }} {{ payment.created_at|time:"H:i" }}</td>
-                <td>{{ payment.price }}</td>
-                <td>{{ payment.description }}
+                <td>{% if payment.transaction_type.type == 'incoming' %}+{% else %}-{% endif %}{{ payment.price }}</td>
+                <td>{{ payment.transaction_type.description }}
                     {% if payment.lesson %}
                      - <a href="{% url 'school:lesson-view' pk=payment.lesson.id %}">{% trans 'View lesson' %}</a>
                     <p class="my-1">Lesson date: {{ payment.lesson.date|date:"d.m.Y" }} - {{ payment.lesson.time|time:"H:i" }}</p>

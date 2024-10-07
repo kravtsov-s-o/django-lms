@@ -5,16 +5,35 @@ from django.db.models import Sum, Case, When, IntegerField, Value
 from django.db.models.functions import TruncMonth
 from school.models import Lesson, Teacher, Student
 from companies.models import Company
+
 from django.utils.translation import gettext_lazy as _
 
 
-
 # Create your models here.
+class TransactionType(models.Model):
+    TYPES = [
+        ('incoming', _('Incoming transaction')),
+        ('outgoing', _('Outgoing transaction')),
+    ]
+
+    title = models.CharField(max_length=255, null=True,  verbose_name=_('title'))
+    description = models.TextField(null=True, verbose_name=_('description'))
+    type = models.CharField(max_length=50, choices=TYPES, default='incoming', verbose_name=_('type'))
+    is_system = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.title if self.title else self.type.capitalize()
+
+    class Meta:
+        verbose_name = _('Transaction Type')
+        verbose_name_plural = _('Transaction Types')
+
+
 class TransactionBase(models.Model):
-    created_at = models.DateField(default=datetime.now, verbose_name=_('created at'))
+    created_at = models.DateTimeField(default=datetime.now, verbose_name=_('created at'))
     lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE, null=True, blank=True, verbose_name=_('lesson'))
     price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name=_('price'))
-    description = models.CharField(max_length=255, null=True, blank=True, verbose_name=_('description'))
+    transaction_type = models.ForeignKey(TransactionType, on_delete=models.SET_NULL, null=True, verbose_name=_('transaction type'))
 
     class Meta:
         abstract = True
@@ -22,6 +41,7 @@ class TransactionBase(models.Model):
 
 class StudentPayment(TransactionBase):
     student = models.ForeignKey(Student, on_delete=models.CASCADE, verbose_name=_('student'))
+
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
 
