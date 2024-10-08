@@ -18,7 +18,7 @@ class ProfileBaseView(View):
     def dispatch(self, request, *args, **kwargs):
         self.user = get_object_or_404(User, pk=kwargs.get('pk'))
         self.current_user = self.get_current_user(self.user)
-        self.current_user_rate = int(self.current_user.rate)
+        self.current_user_rate = int(self.current_user.price_plan.price)
         return super().dispatch(request, *args, **kwargs)
 
     def get_current_user(self, user):

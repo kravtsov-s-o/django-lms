@@ -48,7 +48,7 @@ class PaymentForm(forms.Form):
         self.fields['company'].label_from_instance = self.get_label_from_instance_companies
 
     def get_label_from_instance_students(self, obj):
-        return f"{obj.user.first_name} {obj.user.last_name} - {obj.currency}"
+        return f"{obj.user.first_name} {obj.user.last_name} - {obj.price_plan.currency}"
 
     def get_label_from_instance_companies(self, obj):
-        return f"{obj.name} - {obj.currency}"
+        return f"{obj.name} - {obj.price_plan.currency}"

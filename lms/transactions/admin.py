@@ -1,10 +1,22 @@
 from django.contrib import admin
-from .models import TransactionType, StudentPayment, TeacherPayment, CompanyPayment
+from .models import CategoryPrice, Price, TransactionType, StudentPayment, TeacherPayment, CompanyPayment
 from modeltranslation.admin import TranslationAdmin
 from django.utils.translation import gettext_lazy as _
 
 
 # Register your models here.
+@admin.register(CategoryPrice)
+class CategoryPriceAdmin(admin.ModelAdmin):
+    list_display = ['title']
+
+
+@admin.register(Price)
+class PriceAdmin(admin.ModelAdmin):
+    list_display = ['title', 'description', 'price', 'currency', 'period_type', 'period_duration', 'discount',
+                    'discount_date_end', 'category']
+    list_filter = ['currency', 'category', 'period_type']
+
+
 @admin.register(TransactionType)
 class TransactionTypeAdmin(TranslationAdmin):
     list_display = ['title', 'description', 'type', 'is_system']

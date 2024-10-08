@@ -12,7 +12,7 @@ from .services import lesson_finished
 @admin.register(Teacher)
 class TeacherAdmin(admin.ModelAdmin):
     search_fields = ['user__username', 'user__first_name', 'user__last_name', 'user__email']
-    list_display = ['get_name', 'get_languages', 'rate', 'currency']
+    list_display = ['get_name', 'get_languages', 'price_plan']
     list_filter = ['language', 'user__is_active']
 
     add_fieldsets = (
@@ -23,7 +23,7 @@ class TeacherAdmin(admin.ModelAdmin):
             'fields': ('first_name', 'last_name', 'email',)
         }),
         (_('School info'), {
-            'fields': ('school_role', 'language', 'rate', 'currency', 'about'),
+            'fields': ('school_role', 'language', 'price_plan', 'about'),
         }),
     )
 
@@ -35,7 +35,7 @@ class TeacherAdmin(admin.ModelAdmin):
             'fields': ('first_name', 'last_name', 'email',)
         }),
         (_('School info'), {
-            'fields': ('school_role', 'language', 'rate', 'currency', 'about'),
+            'fields': ('school_role', 'language', 'price_plan', 'about'),
         }),
     )
 
@@ -66,7 +66,7 @@ class TeacherAdmin(admin.ModelAdmin):
 @admin.register(Student)
 class StudentAdmin(admin.ModelAdmin):
     search_fields = ['user__username', 'user__first_name', 'user__last_name', 'user__email']
-    list_display = ['get_name', 'teacher', 'get_languages', 'rate', 'wallet', 'currency', 'company']
+    list_display = ['get_name', 'teacher', 'get_languages', 'wallet', 'price_plan', 'company']
     list_filter = ['language', 'company', 'teacher', 'user__is_active']
 
     add_fieldsets = (
@@ -77,7 +77,7 @@ class StudentAdmin(admin.ModelAdmin):
             'fields': ('first_name', 'last_name', 'email',)
         }),
         ('School info', {
-            'fields': ('school_role', 'language', 'teacher', 'rate', 'wallet', 'currency', 'company'),
+            'fields': ('school_role', 'language', 'teacher', 'wallet', 'price_plan', 'company'),
         }),
     )
 
@@ -89,7 +89,7 @@ class StudentAdmin(admin.ModelAdmin):
             'fields': ('first_name', 'last_name', 'email',)
         }),
         ('School info', {
-            'fields': ('school_role', 'language', 'teacher', 'rate', 'wallet', 'currency', 'company'),
+            'fields': ('school_role', 'language', 'teacher', 'wallet', 'price_plan', 'company'),
         }),
     )
 

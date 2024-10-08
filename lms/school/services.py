@@ -156,7 +156,8 @@ def set_student_transaction(student: Student, lesson: Lesson, company: Company):
     """
     duration = lesson.duration.time
     number_of_students = len(lesson.students.all())
-    price = calculate_student_price(student.rate, duration, number_of_students, company)
+    student_price = student.price_plan.price
+    price = calculate_student_price(student_price, duration, number_of_students, company)
     transaction_type = get_outgoing_lesson_transaction_type()
     StudentPayment(lesson=lesson, price=price, transaction_type=transaction_type, student=student).save()
     student.wallet -= price
@@ -177,8 +178,8 @@ def check_students_currencies(students: list[Student]) -> Currency | None:
     Returns
     currency: Currency | None
     """
-    if all(student.currency for student in students) and len({student.currency for student in students}) == 1:
-        return students[0].currency
+    if all(student.price_plan.currency for student in students) and len({student.price_plan.currency for student in students}) == 1:
+        return students[0].price_plan.currency
 
     return None
 
@@ -211,10 +212,10 @@ def calculate_lesson_price(duration: int, students: list, company: Company = Non
     lesson_price = Decimal(0)
     if check_students_currencies(students):
         for student in students:
-            lesson_price += calculate_price(student.rate, duration, number_of_students)
+            lesson_price += calculate_price(student.price_plan.price, duration, number_of_students)
     else:
         for student in students:
-            lesson_price += calculate_price(student.rate, duration, number_of_students) / student.currency.exchange
+            lesson_price += calculate_price(student.price_plan.price, duration, number_of_students) / student.price_plan.currency.exchange
 
     return lesson_price
 
@@ -225,7 +226,7 @@ def set_lesson_currency(students: list) -> Currency:
     If Student shave different currencies, use system default currency
     """
     if get_students_company(students):
-        return get_students_company(students).currency
+        return get_students_company(students).price_plan.currency
     elif check_students_currencies(students):
         return check_students_currencies(students)
     else:
@@ -289,7 +290,7 @@ def calculate_company_price(company: Company, duration: int, number_of_students:
         lesson price
     """
     company_discount = Decimal(company.discount / 100)  # Переводим % в дробь: 100 = 1; 50 = 0.5
-    company_rate = company.rate if company_discount == 1 else (company.rate * company_discount)
+    company_rate = company.price_plan.price if company_discount == 1 else (company.price_plan.price * company_discount)
 
     company_price = calculate_price(company_rate, duration, number_of_students) * number_of_students
 
@@ -314,16 +315,16 @@ def calculate_teacher_price(teacher: Teacher, duration: int, lesson: Lesson, num
     -------
         lesson price
     """
-    teacher_rate = teacher.rate
+    teacher_rate = teacher.price_plan.price
 
-    if not teacher_rate:
+    if teacher_rate == 0:
         lesson_price = lesson.price
 
-        if lesson.currency != teacher.currency:
+        if lesson.currency != teacher.price_plan.currency:
             if lesson.currency != get_default_system_currency():
                 lesson_price /= lesson.currency.exchange
 
-            lesson_price /= teacher.currency.exchange
+            lesson_price /= teacher.price_plan.currency.exchange
 
         return round(lesson_price, 2)
 

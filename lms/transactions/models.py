@@ -1,12 +1,45 @@
 from datetime import datetime
 
+from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from django.db.models import Sum, Case, When, IntegerField, Value
 from django.db.models.functions import TruncMonth
 from school.models import Lesson, Teacher, Student
 from companies.models import Company
+from settings.models import Currency
 
 from django.utils.translation import gettext_lazy as _
+
+
+class CategoryPrice(models.Model):
+    title = models.CharField(max_length=255, verbose_name=_('title'))
+
+    def __str__(self):
+        return self.title
+
+
+class Price(models.Model):
+    PERIODS = [
+        ('hour', _('Hour')),
+        ('month', _('Month')),
+    ]
+
+    category = models.ForeignKey(CategoryPrice, on_delete=models.SET_NULL, null=True)
+    title = models.CharField(max_length=255, null=False, blank=False, verbose_name=_('title'))
+    description = models.CharField(max_length=255, null=False, blank=False, verbose_name=_('description'))
+    price = models.DecimalField(max_digits=10, decimal_places=2, default=0, verbose_name=_('price'))
+    currency = models.ForeignKey(Currency, on_delete=models.SET_NULL, null=True, verbose_name=_('currency'))
+    period_type = models.CharField(max_length=50, choices=PERIODS, default='hour', verbose_name=_('period type'))
+    period_duration = models.IntegerField(default=1, validators=[MinValueValidator(1, _("Can't be less 1"))],
+                                          verbose_name=_('period duration'))
+    discount = models.IntegerField(validators=[
+        MinValueValidator(0, _("Discount can't be less than 0.")),
+        MaxValueValidator(100, _("Discount can't be greater than 100.")),
+    ], default=0)
+    discount_date_end = models.DateField(null=True, blank=True, default=None, verbose_name=_("discount date end"))
+
+    def __str__(self):
+        return f"{self.title} - {self.price} {self.currency.symbol}"
 
 
 # Create your models here.
@@ -16,7 +49,7 @@ class TransactionType(models.Model):
         ('outgoing', _('Outgoing transaction')),
     ]
 
-    title = models.CharField(max_length=255, null=True,  verbose_name=_('title'))
+    title = models.CharField(max_length=255, null=True, verbose_name=_('title'))
     description = models.TextField(null=True, verbose_name=_('description'))
     type = models.CharField(max_length=50, choices=TYPES, default='incoming', verbose_name=_('type'))
     is_system = models.BooleanField(default=False)
@@ -33,7 +66,8 @@ class TransactionBase(models.Model):
     created_at = models.DateTimeField(default=datetime.now, verbose_name=_('created at'))
     lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE, null=True, blank=True, verbose_name=_('lesson'))
     price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name=_('price'))
-    transaction_type = models.ForeignKey(TransactionType, on_delete=models.SET_NULL, null=True, verbose_name=_('transaction type'))
+    transaction_type = models.ForeignKey(TransactionType, on_delete=models.SET_NULL, null=True,
+                                         verbose_name=_('transaction type'))
 
     class Meta:
         abstract = True

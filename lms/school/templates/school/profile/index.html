@@ -75,9 +75,9 @@
                         <span class="badge bg-label-primary">{% trans 'Rate' %}</span>
                         <div class="d-flex justify-content-center">
                             <sup class="h5 pricing-currency mt-3 mt-sm-4 mb-0 me-1 text-primary">
-                                {{ current_user.currency.symbol }}</sup>
+                                {{ current_user.price_plan.currency.symbol }}</sup>
                             <h1 class="display-3 fw-normal mb-0 text-primary">{{ current_user_rate }}</h1>
-                            <sub class="fs-6 pricing-duration mt-auto mb-4">{% trans '/hour' %}</sub>
+                            <sub class="fs-6 pricing-duration mt-auto mb-4">/{{ current_user.price_plan.period_type }}</sub>
                         </div>
                     </div>
                     {% if current_user.user.school_role == 'student' %}
