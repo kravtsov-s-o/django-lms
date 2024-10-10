@@ -82,7 +82,7 @@
                         <thead>
                         <tr>
                             <th style="width: 25%" class="text-center">{% trans 'Student' %}</th>
-                            {% for time in durations %}
+                            {% for time in DURATIONS %}
                             <th class="text-center">{{ time }}</th>
                             {% endfor %}
                         </tr>
@@ -91,7 +91,7 @@
                         {% for item in result %}
                         <tr>
                             <td style="width: 25%">{{ item.students }}</td>
-                            {% for time in durations %}
+                            {% for time in DURATIONS %}
                             <td class="text-center">
                                 {% if time.time == item.duration %}
                                 {{ item.count }}

@@ -12,12 +12,6 @@ def get_language_choices():
     return Language.objects.all().values_list('id', 'name')
 
 
-SCHOOL_ROLE_CHOICES = (
-    ('None', _('None')),
-    ('teacher', _('Teacher')),
-    ('student', _('Student')),
-)
-
 
 class BaseUserForm(forms.ModelForm):
     language_choices = lazy(get_language_choices, list)
@@ -32,7 +26,7 @@ class BaseUserForm(forms.ModelForm):
     email = forms.EmailField(label=_("Email"))
 
     school_role = forms.ChoiceField(
-        choices=SCHOOL_ROLE_CHOICES,
+        choices=User.SchoolRole,
         label=_("School Role"),
         help_text=_("Choose school role (teacher или student)."),
         required=True,
@@ -113,7 +107,7 @@ class TeacherForm(BaseUserForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         if not self.instance.pk:
-            self.fields['school_role'].initial = 'teacher'
+            self.fields['school_role'].initial = User.SchoolRole.TEACHER
 
     def save(self, commit=True):
         teacher = super().save(commit=False)
@@ -141,7 +135,7 @@ class StudentForm(BaseUserForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         if not self.instance.pk:
-            self.fields['school_role'].initial = 'student'
+            self.fields['school_role'].initial = User.SchoolRole.STUDENT
 
     def save(self, commit=True):
         student = super().save(commit=False)

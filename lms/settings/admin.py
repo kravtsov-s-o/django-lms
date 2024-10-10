@@ -3,17 +3,29 @@ from .models import Language, Duration, Currency
 
 
 # Register your models here.
-class CurrencyAdmin(admin.ModelAdmin):
-    list_display = ['name', 'symbol', 'exchange', 'default']
-    readonly_fields = ['default']
+class DurationAdmin(admin.ModelAdmin):
+    list_display = ['time', 'is_default']
+    readonly_fields = ['is_default']
 
     def has_delete_permission(self, request, obj=None):
         # Запретить удаление, если объект является стандартным
-        if obj and obj.default:
+        if obj and obj.is_default:
+            return False
+        return super().has_delete_permission(request, obj)
+
+
+# Register your models here.
+class CurrencyAdmin(admin.ModelAdmin):
+    list_display = ['name', 'symbol', 'exchange', 'is_default']
+    readonly_fields = ['is_default']
+
+    def has_delete_permission(self, request, obj=None):
+        # Запретить удаление, если объект является стандартным
+        if obj and obj.is_default:
             return False
         return super().has_delete_permission(request, obj)
 
 
 admin.site.register(Language)
-admin.site.register(Duration)
+admin.site.register(Duration, DurationAdmin)
 admin.site.register(Currency, CurrencyAdmin)

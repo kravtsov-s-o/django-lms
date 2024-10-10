@@ -16,6 +16,7 @@ class Language(models.Model):
 
 class Duration(models.Model):
     time = models.IntegerField(null=False, unique=True, verbose_name=_('time'))
+    is_default = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.time} min"
@@ -23,13 +24,14 @@ class Duration(models.Model):
     class Meta:
         verbose_name = _('Duration')
         verbose_name_plural = _('Durations')
+        ordering = ['time']
 
 
 class Currency(models.Model):
     name = models.CharField(max_length=3, unique=True, null=False, verbose_name=_('name'))
     symbol = models.CharField(max_length=3, null=True, blank=True, verbose_name=_('symbol'))
     exchange = models.DecimalField(max_digits=10, decimal_places=5, null=False, verbose_name=_('exchange'))
-    default = models.BooleanField(default=False, verbose_name=_('default'))
+    is_default = models.BooleanField(default=False, verbose_name=_('default'))
 
     def __str__(self):
         return f"{self.name}"

@@ -1,4 +1,5 @@
 import calendar
+import operator
 from datetime import datetime
 from collections import defaultdict
 
@@ -10,76 +11,232 @@ from decimal import Decimal
 from .models import Student, Teacher, Lesson
 from companies.models import Company
 from settings.models import Currency, Duration
-from transactions.models import TransactionType, StudentPayment, TeacherPayment, CompanyPayment
+from transactions.models import Price, TransactionType, StudentPayment, TeacherPayment, CompanyPayment
 
 from functools import wraps
 from django.core.exceptions import PermissionDenied
 
 from django.utils.translation import gettext_lazy as _
 
-DEFAULT_LESSON_DURATION = 60  # minutes
+# IN PERCENTS %
 GROUP_DISCOUNT = {
-    1: Decimal(1),
-    2: Decimal(0.9),
-    3: Decimal(0.85),
-    4: Decimal(0.8),
+    1: 0,
+    2: 10,
+    3: 15,
+    4: 20,
 }
 
 
+def get_default_system_currency() -> Currency:
+    """
+    Return Base Currency from settings
+    """
+    return get_object_or_404(Currency, is_default=True)
+
+
+def get_default_lesson_length() -> Duration:
+    """
+    Return Base Duration from settings
+    """
+    return int(get_object_or_404(Duration, is_default=True).time)
+
+
 def get_outgoing_lesson_transaction_type():
+    """
+    Returns the transaction type for outgoing lessons.
+    Using for Students and companies
+
+    Returns
+    -------
+        TransactionType
+    """
     return TransactionType.objects.filter(type='outgoing', is_system=True).first()
 
 
 def get_incoming_lesson_transaction_type():
+    """
+    Returns the transaction type for outgoing lessons.
+    Using for Teachers
+
+    Returns
+    -------
+        TransactionType
+    """
     return TransactionType.objects.filter(type='incoming', is_system=True).first()
 
 
-def lesson_finished(teacher: Teacher, lesson_id: int, status: str):
+def get_rate_price(plan: Price):
     """
-    Marks the given lesson as finished and calculates the final price based on the lesson duration,
-    number of students, and the availability of a company.
-    Generate Transactions for Teacher, Student(s), Company(Option)
+    Return price from rate
+
+    return rate or rate with discount
+    """
+    percents = 100
+
+    if plan.discount:
+        return plan.price * ((percents - plan.discount) / percents)
+
+    return plan.price
+
+
+# =================================================================
+
+def calculate_price(rate: Decimal, duration: int) -> Decimal:
+    """
+    Calculate base lesson price
+
+    Parameters
+    ----------
+        rate: user rate
+        duration: lesson duration
+        number_of_students: students on lesson
+
+    Returns
+    -------
+        lesson price
+    """
+    price = rate * Decimal(duration / get_default_lesson_length())
+    return round(price, 2)
+
+
+def calculate_teacher_price(teacher: Teacher, lesson: Lesson, number_of_students: int) -> Decimal:
+    """
+    Calculates the price for teacher
+
+    Use Teacher rate and currency. If teacher rate 0, using full lesson price.
+    Convert lesson price to teacher currency
+
+    Parameters
+    ----------
+        teacher: Teacher object
+        duration: lesson duration
+        lesson: Lesson object
+        number_of_students: students on lesson
+
+    Returns
+    -------
+        lesson price
+    """
+    teacher_rate = get_rate_price(teacher.price_plan)
+
+    if teacher_rate == 0:
+        lesson_price = lesson.price
+
+        if lesson.currency != teacher.price_plan.currency:
+            if lesson.currency != get_default_system_currency():
+                lesson_price /= lesson.currency.exchange
+
+            lesson_price /= teacher.price_plan.currency.exchange
+
+        return round(lesson_price, 2)
+
+    return calculate_price(teacher_rate, lesson.duration.time) * number_of_students
+
+
+# =================================================================
+def get_lesson_currency(students: list) -> Currency:
+    """
+    Check lesson currency, base on students currency or students company currency.
+    If Student shave different currencies, use system default currency
+    """
+    if get_students_company(students):
+        return get_students_company(students).price_plan.currency
+    elif check_students_currencies(students):
+        return check_students_currencies(students)
+    else:
+        return get_default_system_currency()
+
+
+# =================================================================
+
+def check_students_currencies(students: list[Student]) -> Currency | None:
+    """
+    Check if all students from one lesson have one currency
+
+    Returns
+    currency: Currency | None
+    """
+    if all(student.price_plan.currency for student in students) and len(
+            {student.price_plan.currency for student in students}) == 1:
+        return students[0].price_plan.currency
+
+    return None
+
+
+def get_students_company(students: list[Student]) -> Company | None:
+    """
+    Check if all students from one company.
+    :param students: список учеников на уроке
+    :return: Компания или None
+    """
+    if all(student.company for student in students) and len({student.company for student in students}) == 1:
+        return students[0].company
+
+    return None
+
+
+def set_student_transaction_for_lesson(student: Student, price, transaction_type=None, operator_symbol='-',
+                                       lesson: Lesson = None):
+    """
+    Set transaction for student
+
+    Parameters
+    ----------
+        student - the student object
+        lesson - the lesson object
+        company - the company object
+    """
+    operators = {
+        '+': operator.add,
+        '-': operator.sub,
+    }
+
+    if transaction_type is None:
+        transaction_type = get_outgoing_lesson_transaction_type()
+    StudentPayment(lesson=lesson, price=price, transaction_type=transaction_type, student=student).save()
+    student.wallet = operators[operator_symbol](student.wallet, price)
+    student.save()
+
+
+def set_company_transaction(company: Company, price, transaction_type=None, operator_symbol='-', lesson: Lesson = None):
+    """
+    Set transaction for company
+
+    Parameters
+    ----------
+        company - the company object
+        lesson - the lesson object
+    """
+    operators = {
+        '+': operator.add,
+        '-': operator.sub,
+    }
+
+    if transaction_type is None:
+        transaction_type = get_outgoing_lesson_transaction_type()
+    CompanyPayment(lesson=lesson, price=price, transaction_type=transaction_type, company=company).save()
+    company.wallet = operators[operator_symbol](company.wallet, price)
+    company.save()
+
+
+def set_teacher_transaction(teacher: Teacher, lesson: Lesson, price):
+    """
+    Set transaction for teacher
 
     Parameters
     ----------
         teacher - the teacher object
-        lesson_id - the ID of the lesson
-        status - the new status of the lesson ("conducted", "missed", "planned")
-
-    Raises
-    ------
-        PermissionDenied - if the user is not the teacher of the lesson
-
-    if teacher != lesson.teacher:
-        raise PermissionDenied("You are not the teacher of this lesson.")
-
-    lesson_finished_service(teacher, lesson_id, status)
+        lesson - the lesson object
     """
-    lesson = get_object_or_404(Lesson, pk=lesson_id, teacher=teacher)
-    company = get_students_company(lesson.students.all())
+    transaction_type = get_incoming_lesson_transaction_type()
+    TeacherPayment(lesson=lesson, price=price, transaction_type=transaction_type, teacher=teacher).save()
 
-    if status == 'planned':
-        lesson_pay_back(lesson, status, company)
-    elif (lesson.status == 'conducted' and status == 'missed') or (lesson.status == 'missed' and status == 'conducted'):
-        lesson.status = status
-        lesson.save()
-    else:
-        lesson.status = status
-        lesson.price = calculate_lesson_price(lesson.duration.time, lesson.students.all(), company)
-        lesson.currency = set_lesson_currency(lesson.students.all())
 
-        lesson.save()
-
-        # Teacher Price
-        set_teacher_transaction(teacher, lesson)
-
-        # Company Price
-        if company:
-            set_company_transaction(company, lesson)
-
-        # Student(s) Price
-        for student in lesson.students.all():
-            set_student_transaction(student, lesson, company)
+def back_money_for_back_lesson_to_status_planned(transaction):
+    item = transaction.company
+    item.wallet += transaction.price
+    item.save()
+    transaction.delete()
 
 
 def lesson_pay_back(lesson: Lesson, status: str, company: Company):
@@ -110,225 +267,80 @@ def lesson_pay_back(lesson: Lesson, status: str, company: Company):
         student_transaction.delete()
 
 
-def set_company_transaction(company: Company, lesson: Lesson):
+def lesson_finished(teacher: Teacher, lesson_id: int, status: str):
     """
-    Set transaction for company
-
-    Parameters
-    ----------
-        company - the company object
-        lesson - the lesson object
-    """
-    duration = lesson.duration.time
-    number_of_students = len(lesson.students.all())
-    price = calculate_company_price(company, duration, number_of_students)
-    transaction_type = get_outgoing_lesson_transaction_type()
-    CompanyPayment(lesson=lesson, price=price, transaction_type=transaction_type, company=company).save()
-    company.wallet -= price
-    company.save()
-
-
-def set_teacher_transaction(teacher: Teacher, lesson: Lesson):
-    """
-    Set transaction for teacher
+    Marks the given lesson as finished and calculates the final price based on the lesson duration,
+    number of students, and the availability of a company.
+    Generate Transactions for Teacher, Student(s), Company(Option)
 
     Parameters
     ----------
         teacher - the teacher object
-        lesson - the lesson object
+        lesson_id - the ID of the lesson
+        status - the new status of the lesson ("conducted", "missed", "planned")
     """
-    duration = lesson.duration.time
-    number_of_students = len(lesson.students.all())
-    price = calculate_teacher_price(teacher, duration, lesson, number_of_students)
-    transaction_type = get_incoming_lesson_transaction_type()
-    TeacherPayment(lesson=lesson, price=price, transaction_type=transaction_type, teacher=teacher).save()
+    lesson = get_object_or_404(Lesson, pk=lesson_id)
+    lesson_students = lesson.students.all()
+    lesson_currency = get_lesson_currency(lesson_students)
+    teacher = lesson.teacher
+    group_discount = Decimal(1 - GROUP_DISCOUNT[len(lesson_students)] / 100)
+    company = get_students_company(lesson_students)
+    company_discount = Decimal(1 - company.discount / 100) if company else 1
 
+    if status == Lesson.LessonStatus.PLANNED:
+        lesson_pay_back(lesson, status, company)
+        return
 
-def set_student_transaction(student: Student, lesson: Lesson, company: Company):
-    """
-    Set transaction for student
+    status_set = {Lesson.LessonStatus.CONDUCTED, Lesson.LessonStatus.MISSED}
+    if lesson.status in status_set and status in status_set and lesson.status != status:
+        lesson.status = status
+        lesson.save()
+        return
 
-    Parameters
-    ----------
-        student - the student object
-        lesson - the lesson object
-        company - the company object
-    """
-    duration = lesson.duration.time
-    number_of_students = len(lesson.students.all())
-    student_price = student.price_plan.price
-    price = calculate_student_price(student_price, duration, number_of_students, company)
-    transaction_type = get_outgoing_lesson_transaction_type()
-    StudentPayment(lesson=lesson, price=price, transaction_type=transaction_type, student=student).save()
-    student.wallet -= price
-    student.save()
+    lesson_price = 0
+    company_price = 0
+    student_prices = {}
+    if 0 < company_discount <= 1:
+        for student in lesson_students:
+            price = calculate_price(get_rate_price(student.price_plan), lesson.duration.time)
+            if 0 < group_discount < 1:
+                price *= group_discount
+            if 0 < company_discount < 1:
+                price *= group_discount
 
+            student_prices[student] = price
 
-def get_default_system_currency() -> Currency:
-    """
-    Return Base Currency from settings
-    """
-    return get_object_or_404(Currency, default=True)
+            if check_students_currencies(lesson_students) is None:
+                price /= student.price_plan.currency.exchange
 
-
-def check_students_currencies(students: list[Student]) -> Currency | None:
-    """
-    Check if all students from one lesson have one currency
-
-    Returns
-    currency: Currency | None
-    """
-    if all(student.price_plan.currency for student in students) and len({student.price_plan.currency for student in students}) == 1:
-        return students[0].price_plan.currency
-
-    return None
-
-
-def get_students_company(students: list[Student]) -> Company | None:
-    """
-    Check if all students from one company.
-    :param students: список учеников на уроке
-    :return: Компания или None
-    """
-    if all(student.company for student in students) and len({student.company for student in students}) == 1:
-        return students[0].company
-
-    return None
-
-
-def calculate_lesson_price(duration: int, students: list, company: Company = None) -> Decimal:
-    """
-    Calculate lesson Price
-    :param duration: lesson Duration
-    :param students: students
-    :param company: company, default = None
-    :return: lesson price
-    """
-    number_of_students = len(students)
+            lesson_price += price
+    else:
+        for student in lesson_students:
+            student_prices[student] = 0
 
     if company:
-        return calculate_company_price(company, duration, number_of_students)
+        company_price = calculate_price(get_rate_price(company.price_plan), lesson.duration.time) * len(
+            lesson_students) * Decimal((company.discount / 100))
+        if 0 < group_discount < 1:
+            company_price *= group_discount
+        lesson_price += company_price
 
-    lesson_price = Decimal(0)
-    if check_students_currencies(students):
-        for student in students:
-            lesson_price += calculate_price(student.price_plan.price, duration, number_of_students)
-    else:
-        for student in students:
-            lesson_price += calculate_price(student.price_plan.price, duration, number_of_students) / student.price_plan.currency.exchange
+    lesson.status = status
+    lesson.price = lesson_price
+    lesson.currency = lesson_currency
+    lesson.save()
 
-    return lesson_price
+    # Teacher Price
+    teacher_price = calculate_teacher_price(teacher, lesson, len(lesson_students))
+    set_teacher_transaction(teacher, lesson, teacher_price)
 
-
-def set_lesson_currency(students: list) -> Currency:
-    """
-    Set lesson currency, base on students currency or students company.
-    If Student shave different currencies, use system default currency
-    """
-    if get_students_company(students):
-        return get_students_company(students).price_plan.currency
-    elif check_students_currencies(students):
-        return check_students_currencies(students)
-    else:
-        return get_default_system_currency()
-
-
-def calculate_price(rate: Decimal, duration: int, number_of_students: int) -> Decimal:
-    """
-    Calculate base lesson price
-
-    Parametrs
-    ----------
-        rate: user rate
-        duration: lesson duration
-        number_of_students: students on lesson
-
-    Returns
-    -------
-        lesson price
-    """
-    group_discount = GROUP_DISCOUNT[4] if number_of_students >= 4 else GROUP_DISCOUNT[number_of_students]
-    price = rate * Decimal(duration / DEFAULT_LESSON_DURATION) * group_discount
-    return round(price, 2)
-
-
-def calculate_student_price(rate: Decimal, duration: int, number_of_students: int, company=None) -> Decimal:
-    """
-    Calculate lesson price for each student
-
-    Parametrs
-    ----------
-        rate: user rate
-        duration: lesson duration
-        number_of_students: students on lesson
-        company: if company pay for student user Company discount
-
-    Returns
-    -------
-        lesson price
-    """
+    # Company Price
     if company:
-        discount = Decimal(1 - (company.discount / 100))
-        rate *= discount
+        set_company_transaction(company, lesson, company_price)
 
-    price = calculate_price(rate, duration, number_of_students)
-    return price
-
-
-def calculate_company_price(company: Company, duration: int, number_of_students: int) -> Decimal:
-    """
-    Calculate lesson price when company pay for their workers
-
-    Parametrs
-    ----------
-        company: Company object
-        duration: lesson duration
-        number_of_students: students on lesson
-
-    Returns
-    -------
-        lesson price
-    """
-    company_discount = Decimal(company.discount / 100)  # Переводим % в дробь: 100 = 1; 50 = 0.5
-    company_rate = company.price_plan.price if company_discount == 1 else (company.price_plan.price * company_discount)
-
-    company_price = calculate_price(company_rate, duration, number_of_students) * number_of_students
-
-    return company_price
-
-
-def calculate_teacher_price(teacher: Teacher, duration: int, lesson: Lesson, number_of_students: int) -> Decimal:
-    """
-    Calculates the price for teacher
-
-    Use Teacher rate and currency. If teacher rate 0, using full lesson price.
-    Convert lesson price to teacher currency
-
-    Parametrs
-    ----------
-        teacher: Teacher object
-        duration: lesson duration
-        lesson: Lesson object
-        number_of_students: students on lesson
-
-    Returns
-    -------
-        lesson price
-    """
-    teacher_rate = teacher.price_plan.price
-
-    if teacher_rate == 0:
-        lesson_price = lesson.price
-
-        if lesson.currency != teacher.price_plan.currency:
-            if lesson.currency != get_default_system_currency():
-                lesson_price /= lesson.currency.exchange
-
-            lesson_price /= teacher.price_plan.currency.exchange
-
-        return round(lesson_price, 2)
-
-    return calculate_price(teacher_rate, duration, number_of_students) * number_of_students
+    # Student(s) Price
+    for student in lesson_students:
+        set_student_transaction_for_lesson(student, lesson, student_prices[student])
 
 
 # =================================================================
@@ -509,7 +521,7 @@ def get_duration_list():
 def generate_month_list_for_filter():
     month_list = [
         {
-            'title': calendar.month_name[i],
+            'title': _(calendar.month_name[i]),
             'number': i
         }
         for i in range(1, 13)

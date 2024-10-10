@@ -39,15 +39,14 @@ class Student(CommonFields):
 
 
 class Lesson(models.Model):
-    LESSON_STATUSES = [
-        ('planned', _('Planned')),
-        ('conducted', _('Conducted')),
-        ('missed', _('Missed')),
-    ]
+    class LessonStatus(models.TextChoices):
+        PLANNED = 'planned', _('Planned')
+        CONDUCTED = 'conducted', _('Conducted')
+        MISSED = 'missed', _('Missed')
 
     date = models.DateField(default=datetime.now, null=False, verbose_name=_('date'))
     time = models.TimeField(null=False, verbose_name=_('time'))
-    status = models.CharField(max_length=50, choices=LESSON_STATUSES, default='planned', verbose_name=_('status'))
+    status = models.CharField(max_length=50, choices=LessonStatus.choices, default=LessonStatus.PLANNED, verbose_name=_('status'))
     teacher = models.ForeignKey('school.Teacher', on_delete=models.SET_NULL, null=True, verbose_name=_('teacher'))
     students = models.ManyToManyField('school.Student', verbose_name=_('students'))
     duration = models.ForeignKey('settings.Duration', on_delete=models.SET_NULL, null=True, verbose_name=_('duration'))

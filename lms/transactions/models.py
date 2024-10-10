@@ -19,17 +19,16 @@ class CategoryPrice(models.Model):
 
 
 class Price(models.Model):
-    PERIODS = [
-        ('hour', _('Hour')),
-        ('month', _('Month')),
-    ]
+    class Periods(models.TextChoices):
+        HOUR = 'hour', _('Hour')
+        MONTH = 'month', _('Month')
 
     category = models.ForeignKey(CategoryPrice, on_delete=models.SET_NULL, null=True)
     title = models.CharField(max_length=255, null=False, blank=False, verbose_name=_('title'))
     description = models.CharField(max_length=255, null=False, blank=False, verbose_name=_('description'))
     price = models.DecimalField(max_digits=10, decimal_places=2, default=0, verbose_name=_('price'))
     currency = models.ForeignKey(Currency, on_delete=models.SET_NULL, null=True, verbose_name=_('currency'))
-    period_type = models.CharField(max_length=50, choices=PERIODS, default='hour', verbose_name=_('period type'))
+    period_type = models.CharField(max_length=50, choices=Periods.choices, default=Periods.HOUR, verbose_name=_('period type'))
     period_duration = models.IntegerField(default=1, validators=[MinValueValidator(1, _("Can't be less 1"))],
                                           verbose_name=_('period duration'))
     discount = models.IntegerField(validators=[
@@ -44,14 +43,13 @@ class Price(models.Model):
 
 # Create your models here.
 class TransactionType(models.Model):
-    TYPES = [
-        ('incoming', _('Incoming transaction')),
-        ('outgoing', _('Outgoing transaction')),
-    ]
+    class TransactionTypes(models.TextChoices):
+        INCOMING = '+', _('Incoming transaction')
+        OUTGOING = '-', _('Outgoing transaction')
 
     title = models.CharField(max_length=255, null=True, verbose_name=_('title'))
     description = models.TextField(null=True, verbose_name=_('description'))
-    type = models.CharField(max_length=50, choices=TYPES, default='incoming', verbose_name=_('type'))
+    type = models.CharField(max_length=50, choices=TransactionTypes.choices, default=TransactionTypes.INCOMING, verbose_name=_('type'))
     is_system = models.BooleanField(default=False)
 
     def __str__(self):
@@ -113,7 +111,7 @@ class TeacherPaymentManager(models.Manager):
 
 class TeacherPayment(TransactionBase):
     teacher = models.ForeignKey(Teacher, on_delete=models.CASCADE, verbose_name=_('teacher'))
-
+    # count salary for half of month
     objects = TeacherPaymentManager()
 
     def __str__(self):

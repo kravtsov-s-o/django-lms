@@ -7,7 +7,7 @@ from django.views import View
 from django.contrib import messages
 
 from .forms import PaymentForm
-from school.services import user_is_staff, set_student_transaction, set_company_transaction
+from school.services import user_is_staff, set_student_transaction_for_lesson, set_company_transaction
 from django.utils.translation import gettext_lazy as _
 
 from .models import StudentPayment, CompanyPayment, TransactionType
@@ -52,26 +52,19 @@ class PaymentView(View):
         if form.is_valid():
             price = form.cleaned_data.get('price')
             transaction_type = get_object_or_404(TransactionType, pk=form.cleaned_data.get('transaction_type'))
-            user = ''
+            object = ''
 
             if form.cleaned_data.get('payment_type') == 'student':
                 student = form.cleaned_data.get('student')
-
-                StudentPayment(lesson=None, price=price, transaction_type=transaction_type, student=student).save()
-                student.wallet += price
-                student.save()
-                user = student
+                set_student_transaction_for_lesson(student=student, price=price, transaction_type=transaction_type, operator_symbol = '+')
+                object = student
 
             elif form.cleaned_data.get('payment_type') == 'company':
                 company = form.cleaned_data.get('company')
+                set_company_transaction(company=company, price=price, transaction_type=transaction_type, operator_symbol = '+')
+                object = company
 
-                CompanyPayment(lesson=None, price=price, transaction_type=transaction_type, company=company).save()
-                company.wallet += price
-                company.save()
-
-                user = company
-
-            messages.success(request, _('Payment for <b>{user}</b> added successfully.').format(user=user))
+            messages.success(request, _('Payment for <b>{user}</b> added successfully.').format(user=object))
             return redirect(request.META.get('HTTP_REFERER', '/'))
         else:
             messages.error(request, _('Check form fields'))

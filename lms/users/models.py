@@ -4,10 +4,14 @@ from django.utils.translation import gettext_lazy as _
 
 
 class User(AbstractUser):
-    SCHOOL_ROLE_CHOICES = (
-        ('None', _('None')),
-        ('teacher', _('Teacher')),
-        ('student', _('Student')),
-    )
+    class SchoolRole(models.TextChoices):
+        NONE = 'None', _('None')
+        TEACHER = 'teacher', _('Teacher')
+        STUDENT = 'student', _('Student')
 
-    school_role = models.CharField(max_length=10, verbose_name=_('School role'), choices=SCHOOL_ROLE_CHOICES, default='None')
+    school_role = models.CharField(
+        max_length=10,
+        verbose_name=_('School role'),
+        choices=SchoolRole.choices,
+        default=SchoolRole.NONE
+    )

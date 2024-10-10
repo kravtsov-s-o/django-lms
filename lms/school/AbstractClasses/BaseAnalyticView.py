@@ -56,7 +56,6 @@ class BaseAnalyticView(ABC, View):
             'item_list': item_list,
             'result': result,
             'available_years': get_year_list(self.model),
-            'durations': get_duration_list(),
             'month_list': generate_month_list_for_filter()
         }
         context.update(kwargs)
