@@ -1,4 +1,4 @@
-from datetime import datetime
+from django.utils import timezone
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
@@ -44,7 +44,7 @@ class Lesson(models.Model):
         CONDUCTED = 'conducted', _('Conducted')
         MISSED = 'missed', _('Missed')
 
-    date = models.DateField(default=datetime.now, null=False, verbose_name=_('date'))
+    date = models.DateField(default=timezone.now, null=False, verbose_name=_('date'))
     time = models.TimeField(null=False, verbose_name=_('time'))
     status = models.CharField(max_length=50, choices=LessonStatus.choices, default=LessonStatus.PLANNED, verbose_name=_('status'))
     teacher = models.ForeignKey('school.Teacher', on_delete=models.SET_NULL, null=True, verbose_name=_('teacher'))

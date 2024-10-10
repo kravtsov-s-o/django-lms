@@ -8,7 +8,7 @@ from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.views import View
 from django.views.generic.edit import DeleteView
-from datetime import datetime
+from django.utils import timezone
 
 from .AbstractClasses.BaseAnalyticView import BaseAnalyticView
 from .AbstractClasses.ProfileBaseView import ProfileBaseView
@@ -36,11 +36,11 @@ class MainView(View):
 @method_decorator(user_is_teacher, name='dispatch')
 class ScheduleView(View):
     def get(self, request, pk):
-        current_date = datetime.today()
+        current_date = timezone.now().date()
         current_user = get_teacher(request)
 
         if request.GET.get('date'):
-            current_date = datetime.strptime(request.GET.get('date'), '%Y-%m-%d')
+            current_date = timezone.datetime.strptime(request.GET.get('date'), '%Y-%m-%d')
 
         lessons = Lesson.objects.filter(teacher=current_user, date=current_date).order_by('time')
 
@@ -231,7 +231,7 @@ class StudentsView(View):
 class TeacherStatistic(View):
     def get(self, request, pk):
         current_user = get_teacher(request)
-        date = datetime.now()
+        date = timezone.now()
         current_month = date.month
         current_year = date.year
         half_month_summaries = TeacherPayment.objects.get_half_month_summaries(current_user, current_year)

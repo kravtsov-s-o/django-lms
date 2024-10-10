@@ -1,9 +1,5 @@
 from django.db import models
 from django.urls import reverse
-
-from users.models import User
-
-from django_ckeditor_5.fields import CKEditor5Field
 from django.utils.translation import gettext_lazy as _
 
 
@@ -18,7 +14,7 @@ class Page(models.Model):
     content = models.TextField(null=False, blank=False, verbose_name=_('content'))
     status = models.CharField(max_length=50, choices=PageStatuses.choices, default=PageStatuses.DRAFT,
                               verbose_name=_('status'))
-    author = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, verbose_name=_('author'))
+    author = models.ForeignKey('users.User', on_delete=models.SET_NULL, null=True, verbose_name=_('author'))
     created_at = models.DateTimeField(auto_now_add=True, verbose_name=_('created at'))
     updated_at = models.DateTimeField(auto_now=True, verbose_name=_('updated at'))
 

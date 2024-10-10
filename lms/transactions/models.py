@@ -1,9 +1,8 @@
-from datetime import datetime
-
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from django.db.models import Sum, Case, When, IntegerField, Value
 from django.db.models.functions import TruncMonth
+from django.utils import timezone
 from school.models import Lesson, Teacher, Student
 from companies.models import Company
 from settings.models import Currency
@@ -61,7 +60,7 @@ class TransactionType(models.Model):
 
 
 class TransactionBase(models.Model):
-    created_at = models.DateTimeField(default=datetime.now, verbose_name=_('created at'))
+    created_at = models.DateTimeField(default=timezone.now, verbose_name=_('created at'))
     lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE, null=True, blank=True, verbose_name=_('lesson'))
     price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name=_('price'))
     transaction_type = models.ForeignKey(TransactionType, on_delete=models.SET_NULL, null=True,
