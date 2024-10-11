@@ -23,7 +23,7 @@
         </a>
     </div>
     <ul class="menu-inner py-2">
-        {% if request.user.school_role == 'teacher' %}
+        {% if request.user.school_role == SCHOOL_ROLES.TEACHER %}
         <li class="menu-header small text-uppercase">
             <span class="menu-header-text">{% trans 'Cabinet' %}</span>
         </li>
@@ -56,7 +56,7 @@
                 <div>{% trans 'Lessons' %}</div>
             </a>
         </li>
-        {% if request.user.school_role == 'student' %}
+        {% if request.user.school_role == SCHOOL_ROLES.STUDENT %}
         <li class="menu-item  {% if current_page == 'progress' and current_user.user == request.user %}active{% endif %}">
             <a href="{% url 'school:profile-progress' pk=request.user.id %}" class="menu-link">
                 <i class="menu-icon tf-icons bx bxs-graduation"></i>

@@ -15,7 +15,7 @@
         <div class="card-body">
             <div class=" d-flex flex-wrap justify-content-between align-items-center gap-3 w-100">
                 <h1 class="h2 m-0">{{lesson.theme}}</h1>
-                {% if request.user.school_role == 'teacher' %}
+                {% if request.user.school_role == SCHOOL_ROLES.TEACHER %}
                 <a href="{% url 'school:cabinet-schedule' pk=request.user.id %}" class="btn btn-outline-secondary">{% trans 'Schedule' %}</a>
                 {% endif %}
             </div>
@@ -25,7 +25,7 @@
         <div class="col-md-3">
             <div class="card">
                 <div class="card-body">
-                    {% if request.user.school_role == 'teacher' %}
+                    {% if request.user.school_role == SCHOOL_ROLES.TEACHER %}
                     <div class="btn-group">
                         {% if lesson.status == 'planned' %}
                         <a class="lesson-action btn btn-icon btn-outline-secondary" href="javascript:void(0);"
@@ -79,7 +79,7 @@
                 <div class="card-header">
                     <div class="d-flex flex-wrap justify-content-between align-items-center w-100 gap-3">
                         <h2 class="h5 m-0">{% trans 'About' %}</h2>
-                        {% if request.user.school_role == 'teacher' %}
+                        {% if request.user.school_role == SCHOOL_ROLES.TEACHER %}
                         <a href="{% url 'school:lesson-edit' pk=lesson.id %}" class="btn btn-sm btn-outline-secondary">Edit</a>
                         {% endif %}
                     </div>

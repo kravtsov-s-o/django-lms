@@ -53,15 +53,15 @@
             <div class="card mb-4">
                 <div class="card-body">
                     <p class="card-text text-uppercase">Contacts</p>
-                    <ul class="list-unstyled mb-4">
-                        <li class="d-flex align-items-center mb-3">
+                    <ul class="list-unstyled m-0">
+                        <li class="d-flex align-items-center">
                             <i class="bx bx-envelope bx-xs"></i><span class="fw-medium mx-2">Email:</span>
                             <span><a href="mailto:{{ current_user.user.email }}">{{ current_user.user.email }}</a></span>
                         </li>
                     </ul>
                     {% if request.user.school_role == SCHOOL_ROLES.STUDENT %}
                     <p class="card-text text-uppercase">Teacher Contacts</p>
-                    <ul class="list-unstyled mt-3 mb-0">
+                    <ul class="list-unstyled mt-3 mt-4">
                         <li class="d-flex align-items-center mb-3">
                             <i class="bx bx-user bx-xs"></i><span class="fw-medium mx-2">Name:</span>
                             <span><a href="#" data-bs-toggle="modal" data-bs-target="#about-teacher">{{ current_user.teacher }}</a></span>
@@ -120,7 +120,7 @@
 </div>
 <!-- / Content -->
 
-{% if current_user.user.school_role == 'student' %}
+{% if current_user.user.school_role == SCHOOL_ROLES.STUDENT %}
 <!-- Modal About Teacher  -->
 {% include 'school/modals/about-teacher.html' %}
 <!-- / Modal About Teacher -->

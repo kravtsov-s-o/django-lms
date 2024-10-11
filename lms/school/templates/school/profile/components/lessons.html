@@ -29,7 +29,7 @@
                             <th style="width:1%;">{% trans 'Theme:' %}</th>
                             <td>{{ lesson.theme }}</td>
                         </tr>
-                        {% if current_user.user.school_role == 'teacher' %}
+                        {% if current_user.user.school_role == SCHOOL_ROLES.TEACHER %}
                         <tr>
                             <th style="width:1%;">{% trans 'Students:' %}</th>
                             <td>{{ lesson.students|extract_students }}</td>

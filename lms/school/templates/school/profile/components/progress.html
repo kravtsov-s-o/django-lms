@@ -4,7 +4,7 @@
 <div class="card-header">
     <div class=" d-flex flex-wrap justify-content-between align-items-center gap-3 w-100">
         <h5 class="card-title m-0">Your progress and levels</h5>
-        {% if request.user.school_role == 'teacher' %}
+        {% if request.user.school_role == SCHOOL_ROLES.TEACHER %}
         <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newComment">Add
             note</a>
         {% endif %}
@@ -57,7 +57,7 @@
 </div>
 {% endif %}
 
-{% if request.user.school_role == 'teacher' %}
+{% if request.user.school_role == SCHOOL_ROLES.TEACHER %}
 <!-- Modal -->
 <!-- Add progress note Modal -->
 <div class="modal fade" id="newComment" tabindex="-1" aria-labelledby="newCommentLabel" aria-hidden="true">
