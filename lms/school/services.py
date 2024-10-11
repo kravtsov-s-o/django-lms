@@ -439,7 +439,7 @@ def count_time_left(user):
     """
     if user.wallet <= 0:
         return _('0 hour(s)')
-    time_left = user.wallet / user.rate
+    time_left = user.wallet / user.price_plan.price
     hours = int(time_left)
     minutes = int((time_left - hours) * 60)
     return _("{hours} hour(s) {minutes} minutes").format(hours=hours, minutes=minutes)

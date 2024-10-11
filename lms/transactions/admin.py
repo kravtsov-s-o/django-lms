@@ -15,6 +15,7 @@ class PriceAdmin(admin.ModelAdmin):
     list_display = ['title', 'description', 'price', 'currency', 'period_type', 'period_duration', 'discount',
                     'discount_date_end', 'category']
     list_filter = ['currency', 'category', 'period_type']
+    readonly_fields = ['period_type', 'period_duration']
 
 
 @admin.register(TransactionType)

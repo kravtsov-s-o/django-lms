@@ -20,7 +20,7 @@ class CategoryPrice(models.Model):
 class Price(models.Model):
     class Periods(models.TextChoices):
         HOUR = 'hour', _('Hour')
-        MONTH = 'month', _('Month')
+        # MONTH = 'month', _('Month')
 
     category = models.ForeignKey(CategoryPrice, on_delete=models.SET_NULL, null=True)
     title = models.CharField(max_length=255, null=False, blank=False, verbose_name=_('title'))

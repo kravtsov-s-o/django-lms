@@ -67,36 +67,6 @@
                 </div>
             </div>
             <!-- /User Card -->
-            <!-- Plan Card -->
-            {% if request.user == current_user.user %}
-            <div class="card">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-start">
-                        <span class="badge bg-label-primary">{% trans 'Rate' %}</span>
-                        <div class="d-flex justify-content-center">
-                            <sup class="h5 pricing-currency mt-3 mt-sm-4 mb-0 me-1 text-primary">
-                                {{ current_user.price_plan.currency.symbol }}</sup>
-                            <h1 class="display-3 fw-normal mb-0 text-primary">{{ current_user_rate }}</h1>
-                            <sub class="fs-6 pricing-duration mt-auto mb-4">/{{ current_user.price_plan.period_type }}</sub>
-                        </div>
-                    </div>
-                    {% if current_user.user.school_role == 'student' %}
-                    <ul class="list-unstyled mb-3">
-                        <li class="h5 mb-2">{% trans 'Balance' %}</li>
-                        <li class="display-6 fw-bold mb-0">{{ current_user.wallet }} {{ current_user.currency }}</li>
-                    </ul>
-                    <span>{% trans 'Enough for about' %} <b>{{ lessons_left }}</b></span>
-                    <div class="d-grid w-100 mt-3 pt-2"
-                         data-bs-toggle="tooltip" data-bs-offset="0,4" data-bs-placement="top" title="Coming Soon">
-                        <button class="btn btn-primary" disabled>
-                            {% trans 'Pay' %}
-                        </button>
-                    </div>
-                    {% endif %}
-                </div>
-            </div>
-            {% endif %}
-            <!-- /Plan Card -->
         </div>
         <!--/ User Sidebar -->
 
@@ -120,7 +90,7 @@
                 <li class="nav-item">
                     <a class="nav-link {% if tab == 'payments' %}active{% endif %}"
                        href="{% url 'school:profile-payments' pk=current_user.user.id %}">
-                        <i class="bx bx-money-withdraw me-1"></i>{% trans 'Payments' %}</a>
+                        <i class="bx bx-money-withdraw me-1"></i>{% trans 'Billing & Plans' %}</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link {% if tab == 'settings' %}active{% endif %}"
@@ -132,13 +102,13 @@
             <!--/ User Pills -->
 
             {% if tab == 'lessons' %}
-                {% include 'school/profile/components/lessons.html' %}
+            {% include 'school/profile/components/lessons.html' %}
             {% elif tab == 'progress' %}
-                {% include 'school/profile/components/progress.html' %}
+            {% include 'school/profile/components/progress.html' %}
             {% elif tab == 'payments' %}
-                {% include 'school/profile/components/payments.html' %}
+            {% include 'school/profile/components/payments.html' %}
             {% elif tab == 'settings' %}
-                {% include 'school/profile/components/settings.html' %}
+            {% include 'school/profile/components/settings.html' %}
             {% endif %}
         </div>
         <!--/ User Content -->

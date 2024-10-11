@@ -1,5 +1,50 @@
 {% load i18n %}
 <div class="card mb-4">
+    <div class="card-header">
+        <h5 class="m-0">{% trans 'Current Plan' %}</h5>
+    </div>
+    <hr class="m-0">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-xl-6 order-1 order-xl-0">
+                <div class="mb-4">
+                    <h6 class="mb-1">{% trans 'Your Current Plan' %}</h6>
+                    <p>{{ current_user.price_plan.title }}</p>
+                </div>
+                <div>
+                    {% if current_user.price_plan.discount > 0 %}
+                    <span class="d-inline-flex badge bg-label-info mb-1">-{{ current_user.price_plan.discount }}%</span>
+                    <span class="d-inline-flex mb-1">for {{ current_user.price_plan.discount_date_end }}</span>
+                    {% endif %}
+                    <h6 class="mb-1">
+                        <span class="me-2 h5">{{ current_user.price_plan.currency.symbol }}{{ current_user_rate }}</span>
+                        <span class="me-2">{% trans 'Per' %} {{ current_user.price_plan.period_type }}</span>
+                    </h6>
+                    <p class="m-0">{{ current_user.price_plan.description }}</p>
+                </div>
+            </div>
+            <div class="col-xl-6 order-0 order-xl-0">
+                {% if current_user.user.school_role == SCHOOL_ROLES.STUDENT %}
+                <ul class="list-unstyled">
+                    <li class="h5 mb-2">{% trans 'Balance' %}</li>
+                    <li class="h3 fw-bold mb-0">{{ current_user.price_plan.currency.symbol }}{{ current_user.wallet }}</li>
+                </ul>
+                <span>{% trans 'Enough for about' %} <b>{{ lessons_left }}</b></span>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <hr class="m-0">
+    <div class="card-footer">
+        <div class="col-12 order-2 order-xl-0"
+             data-bs-toggle="tooltip" data-bs-offset="0,4" data-bs-placement="left" title="Coming Soon">
+            <button class="btn btn-primary" disabled>
+                {% trans 'Pay' %}
+            </button>
+        </div>
+    </div>
+</div>
+<div class="card mb-4">
     {% if not payments %}
     <div class="card-body">
         <h6 class="m-0">{% trans 'Payments not found' %}</h6>
@@ -18,10 +63,15 @@
             {% for payment in payments %}
             <tr>
                 <td style="width: 1%;">{{ payment.created_at|date:"d.m.Y" }} {{ payment.created_at|time:"H:i" }}</td>
-                <td>{% if payment.transaction_type.type == 'incoming' %}+{% elif payment.price == 0 %}{% else %}-{% endif %}{{ payment.price }}</td>
+                <td>{% if payment.transaction_type.type == 'incoming' %}
+                    +
+                    {% elif payment.price == 0 %}{% else %}
+                    -
+                    {% endif %}{{ payment.price }}
+                </td>
                 <td>{{ payment.transaction_type.description }}
                     {% if payment.lesson %}
-                     - <a href="{% url 'school:lesson-view' pk=payment.lesson.id %}">{% trans 'View lesson' %}</a>
+                    - <a href="{% url 'school:lesson-view' pk=payment.lesson.id %}">{% trans 'View lesson' %}</a>
                     <p class="my-1">Lesson date: {{ payment.lesson.date|date:"d.m.Y" }} - {{ payment.lesson.time|time:"H:i" }}</p>
                     {% endif %}
                 </td>

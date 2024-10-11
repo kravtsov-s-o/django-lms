@@ -1,5 +1,6 @@
-from django.shortcuts import get_object_or_404, redirect, render
-from django.utils.decorators import method_decorator
+from decimal import Decimal
+
+from django.shortcuts import get_object_or_404, render
 from django.views import View
 
 from users.models import User
@@ -18,7 +19,10 @@ class ProfileBaseView(View):
     def dispatch(self, request, *args, **kwargs):
         self.user = get_object_or_404(User, pk=kwargs.get('pk'))
         self.current_user = self.get_current_user(self.user)
-        self.current_user_rate = int(self.current_user.price_plan.price)
+        self.current_user_rate = int(self.current_user.price_plan.price)\
+            if self.current_user.price_plan.discount == 0\
+            else round(self.current_user.price_plan.price - (self.current_user.price_plan.price * Decimal(self.current_user.price_plan.discount / 100)))
+        self.current_user_rate_old = int(self.current_user.price_plan.price)
         return super().dispatch(request, *args, **kwargs)
 
     def get_current_user(self, user):
@@ -46,6 +50,7 @@ class ProfileBaseView(View):
             'title': _('Profile'),
             'current_user': self.current_user,
             'current_user_rate': self.current_user_rate,
+            'current_user_rate_old': self.current_user_rate_old,
             'lessons_left': self.get_Lesson_time_left(),
         }
         context.update(kwargs)

@@ -67,7 +67,7 @@
         <li class="menu-item  {% if current_page == 'payments' and current_user.user == request.user %}active{% endif %}">
             <a href="{% url 'school:profile-payments' pk=request.user.id %}" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-money-withdraw"></i>
-                <div>{% trans 'Payments' %}</div>
+                <div>{% trans 'Billing & Plans' %}</div>
             </a>
         </li>
         <li class="menu-item  {% if current_page == 'settings' and current_user.user == request.user %}active{% endif %}">
