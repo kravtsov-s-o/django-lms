@@ -196,11 +196,8 @@ def set_student_transaction_for_lesson(student: Student, price, transaction_type
 
     if transaction_type is None:
         transaction_type = get_outgoing_lesson_transaction_type()
-    print(student.wallet)
+
     StudentPayment(lesson=lesson, price=price, transaction_type=transaction_type, student=student).save()
-    print(student.wallet)
-    print(price)
-    print(operators[operator_symbol](student.wallet, price))
     student.wallet = operators[operator_symbol](student.wallet, price)
     student.save()
 
