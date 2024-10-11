@@ -4,74 +4,78 @@
 {% load extract_languages %}
 {% block page-title %}{{ current_user }}{% endblock %}
 {% block extra_css %}
-
+<link rel="stylesheet" href="{% static './vendor/css/pages/page-profile.css' %}">
 {% endblock %}
 {% block content %}
 
 <!-- Content -->
 
 <div class="container-xxl flex-grow-1 container-p-y">
-    <div class="card mb-4">
-        <div class="card-body">
-            <div class="page-header">
-                <h1 class="h4 m-0">{% trans 'Profile:' %} {{ current_user }}</h1>
+    <div class="row">
+        <div class="col-12">
+            <div class="card mb-4">
+                <div class="user-profile-header-banner">
+                      <img src="{% static './img/pages/profile-banner.png' %}" alt="Banner image" class="rounded-top" style="height: 100px;">
+                </div>
+                <div class="user-profile-header d-flex flex-column flex-sm-row text-sm-start text-center mb-4">
+                    <div class="flex-shrink-0 mt-n2 mx-sm-0 mx-auto">
+                        {% if not current_user.avatar %}
+                        <img class="d-block h-auto ms-0 ms-sm-4 rounded-3 user-profile-img" src="{% static './img/default_avatar.png' %}"
+                             height="110"
+                             width="110" alt="User avatar"/>
+                        {% else %}
+                        <img class="d-block h-auto ms-0 ms-sm-4 rounded-3 user-profile-img" src="{{ current_user.avatar }}" height="110"
+                             width="110" alt="User avatar"/>
+                        {% endif %}
+                    </div>
+                    <div class="flex-grow-1 mt-3 mt-sm-5">
+                        <div class="d-flex align-items-md-end align-items-sm-start align-items-center justify-content-md-between justify-content-start mx-4 flex-md-row flex-column gap-4">
+                            <div class="user-profile-info">
+                                <h4>{{ current_user }}</h4>
+                                <ul class="list-inline mb-0 d-flex align-items-center flex-wrap justify-content-sm-start justify-content-center gap-2">
+                                    <li class="list-inline-item fw-medium">
+                                        <span class="fw-bold me-2">{% trans 'Languages:' %}</span>
+                                        <span>{{ current_user.language|extract_languages }}</span>
+                                    </li>
+                                </ul>
+                            </div>
+                            <a href="javascript:void(0)" class="btn btn-primary text-nowrap">
+                                <i class="bx bx-user-check me-1"></i>Connected
+                            </a>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
     <div class="row gy-4">
-        <!-- User Sidebar -->
-        <div class="col-xl-4 col-lg-5 col-md-5 order-1 order-md-0">
-            <!-- User Card -->
+        <div class="col-md-4">
             <div class="card mb-4">
                 <div class="card-body">
-                    <div class="user-avatar-section mb-5">
-                        <div class="d-flex align-items-center flex-column">
-                            {% if not current_user.avatar %}
-                            <img class="img-fluid rounded mb-2" src="{% static './img/default_avatar.png' %}"
-                                 height="110"
-                                 width="110" alt="User avatar"/>
-                            {% else %}
-                            <img class="img-fluid rounded mb-2" src="{{ current_user.avatar }}" height="110"
-                                 width="110" alt="User avatar"/>
-                            {% endif %}
-                        </div>
-                    </div>
-                    <h5 class="pb-2 border-bottom mb-4"></h5>
-                    <div class="info-container">
-                        <ul class="list-unstyled">
-                            <li class="mb-3">
-                                <span class="fw-bold me-2">{% trans 'Username:' %}</span>
-                                <span>{{ current_user.user.username }}</span>
-                            </li>
-                            <li class="mb-3">
-                                <span class="fw-bold me-2">{% trans 'Email:' %}</span>
-                                <span><a
-                                        href="mailto:{{ current_user.user.email }}">{{ current_user.user.email }}</a></span>
-                            </li>
-                            <li class="mb-3">
-                                <span class="fw-bold me-2">{% trans 'Status:' %}</span>
-                                {% include 'siteapp/components/item-active-badge.html' with item_status=current_user.user.is_active %}
-                            </li>
-                            <li class="mb-3">
-                                <span class="fw-bold me-2">{% trans 'Languages:' %}</span>
-                                <span>{{ current_user.language|extract_languages }}</span>
-                            </li>
-                            {% if current_user.user.school_role == 'student' %}
-                            <li class="mb-3">
-                                <span class="fw-bold me-2">{% trans 'Teacher:' %}</span>
-                                <span><a href="#" data-bs-toggle="modal" data-bs-target="#about-teacher">{{ current_user.teacher }}</a></span>
-                            </li>
-                            {% endif %}
-                        </ul>
-                    </div>
+                    <p class="card-text text-uppercase">Contacts</p>
+                    <ul class="list-unstyled mb-4">
+                        <li class="d-flex align-items-center mb-3">
+                            <i class="bx bx-envelope bx-xs"></i><span class="fw-medium mx-2">Email:</span>
+                            <span><a href="mailto:{{ current_user.user.email }}">{{ current_user.user.email }}</a></span>
+                        </li>
+                    </ul>
+                    {% if request.user.school_role == SCHOOL_ROLES.STUDENT %}
+                    <p class="card-text text-uppercase">Teacher Contacts</p>
+                    <ul class="list-unstyled mt-3 mb-0">
+                        <li class="d-flex align-items-center mb-3">
+                            <i class="bx bx-user bx-xs"></i><span class="fw-medium mx-2">Name:</span>
+                            <span><a href="#" data-bs-toggle="modal" data-bs-target="#about-teacher">{{ current_user.teacher }}</a></span>
+                        </li>
+                        <li class="d-flex align-items-center mb-3">
+                            <i class="bx bx-envelope bx-xs"></i><span class="fw-medium mx-2">Email:</span>
+                            <span><a href="mailto:{{ current_user.teacher.user.email }}">{{ current_user.teacher.user.email }}</a></span>
+                        </li>
+                    </ul>
+                    {% endif %}
                 </div>
             </div>
-            <!-- /User Card -->
         </div>
-        <!--/ User Sidebar -->
-
-        <!-- User Content -->
-        <div class="col-xl-8 col-lg-7 col-md-7 order-0 order-md-1">
+        <div class="col-md-8">
             <!-- User Pills -->
             <ul class="nav nav-pills flex-column flex-md-row mb-3">
                 <li class="nav-item">
@@ -79,7 +83,7 @@
                        href="{% url 'school:profile-lessons' pk=current_user.user.id %}">
                         <i class="bx bxs-school me-1"></i>{% trans 'Lessons' %}</a>
                 </li>
-                {% if current_user.user.school_role == 'student' %}
+                {% if current_user.user.school_role == SCHOOL_ROLES.STUDENT %}
                 <li class="nav-item">
                     <a class="nav-link {% if tab == 'progress' %}active{% endif %}"
                        href="{% url 'school:profile-progress' pk=current_user.user.id %}">
