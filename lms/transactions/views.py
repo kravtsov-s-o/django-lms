@@ -27,9 +27,7 @@ class PaymentView(View):
         last_company_transactions = list(CompanyPayment.objects.filter(lesson=None).order_by('-created_at')[:10])
 
         combined_transactions = list(chain(last_student_transactions, last_company_transactions))
-
         combined_transactions_sorted = sorted(combined_transactions, key=lambda x: x.created_at, reverse=True)
-
         final_transactions = combined_transactions_sorted[:10]
 
         return final_transactions

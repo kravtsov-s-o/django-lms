@@ -4,6 +4,7 @@ from datetime import datetime
 from collections import defaultdict
 
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
+from django.db import transaction
 from django.db.models.functions import ExtractYear
 from django.shortcuts import get_object_or_404
 from decimal import Decimal
@@ -11,7 +12,8 @@ from decimal import Decimal
 from .models import Student, Teacher, Lesson
 from companies.models import Company
 from settings.models import Currency, Duration
-from transactions.models import Price, TransactionType, StudentPayment, TeacherPayment, CompanyPayment
+from transactions.models import TransactionType, StudentPayment, TeacherPayment, CompanyPayment
+from pricing.models import Plan
 
 from functools import wraps
 from django.core.exceptions import PermissionDenied
@@ -65,7 +67,7 @@ def get_incoming_lesson_transaction_type():
     return TransactionType.objects.filter(type='incoming', is_system=True).first()
 
 
-def get_rate_price(plan: Price):
+def get_rate_price(plan: Plan):
     """
     Return price from rate
 
@@ -175,6 +177,7 @@ def get_students_company(students: list[Student]) -> Company | None:
     return None
 
 
+@transaction.atomic
 def set_student_transaction_for_lesson(student: Student, price, transaction_type=None, operator_symbol='-',
                                        lesson: Lesson = None):
     """
@@ -193,11 +196,16 @@ def set_student_transaction_for_lesson(student: Student, price, transaction_type
 
     if transaction_type is None:
         transaction_type = get_outgoing_lesson_transaction_type()
+    print(student.wallet)
     StudentPayment(lesson=lesson, price=price, transaction_type=transaction_type, student=student).save()
+    print(student.wallet)
+    print(price)
+    print(operators[operator_symbol](student.wallet, price))
     student.wallet = operators[operator_symbol](student.wallet, price)
     student.save()
 
 
+@transaction.atomic
 def set_company_transaction(company: Company, price, transaction_type=None, operator_symbol='-', lesson: Lesson = None):
     """
     Set transaction for company
@@ -330,15 +338,15 @@ def lesson_finished(teacher: Teacher, lesson_id: int, status: str):
     lesson.currency = lesson_currency
     lesson.save()
 
-    # Teacher Price
+    # Teacher Plan
     teacher_price = calculate_teacher_price(teacher, lesson, len(lesson_students))
     set_teacher_transaction(teacher, lesson, teacher_price)
 
-    # Company Price
+    # Company Plan
     if company:
         set_company_transaction(company, lesson, company_price)
 
-    # Student(s) Price
+    # Student(s) Plan
     for student in lesson_students:
         set_student_transaction_for_lesson(student, lesson, student_prices[student])
 

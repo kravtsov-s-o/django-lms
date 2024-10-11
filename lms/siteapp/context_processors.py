@@ -2,7 +2,8 @@ from django.core.cache import cache
 from .models import SiteInfo
 from users.models import User
 from school.models import Lesson
-from transactions.models import TransactionType, Price
+from transactions.models import TransactionType
+from pricing.models import Plan
 from settings.models import Duration, Currency
 
 DAILY_CACHE_TIME = 24 * 60 * 60  # 24 hours
@@ -41,7 +42,7 @@ def global_constants(request):
         'SCHOOL_ROLES': User.SchoolRole,
         'LESSON_STATUSES': Lesson.LessonStatus,
         'TRANSACTION_TYPES': TransactionType.TransactionTypes,
-        'PRICE_PLAN_PERIODS': Price.Periods,
+        'PRICE_PLAN_PERIODS': Plan.Periods,
         'CURRENCIES': currency_cache,
         'DURATIONS': duration_cache,
     }

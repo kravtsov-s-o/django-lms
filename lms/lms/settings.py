@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     "crispy_bootstrap5",
     "django_ckeditor_5",
     'settings',
+    'pricing',
     'users',
     'companies',
     'school',

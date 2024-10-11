@@ -63,9 +63,11 @@
             {% for payment in payments %}
             <tr>
                 <td style="width: 1%;">{{ payment.created_at|date:"d.m.Y" }} {{ payment.created_at|time:"H:i" }}</td>
-                <td>{% if payment.transaction_type.type == 'incoming' %}
+                <td>{% if payment.transaction_type.type == TRANSACTION_TYPES.INCOMING %}
                     +
-                    {% elif payment.price == 0 %}{% else %}
+                    {% elif payment.price == 0 %}
+
+                    {% else %}
                     -
                     {% endif %}{{ payment.price }}
                 </td>

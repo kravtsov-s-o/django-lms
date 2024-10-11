@@ -7,7 +7,7 @@ from django.utils.translation import gettext_lazy as _
 class CommonFields(models.Model):
     user = models.OneToOneField('users.User', on_delete=models.CASCADE, null=True, verbose_name=_('user'))
     language = models.ManyToManyField('settings.Language', verbose_name=_('language'))
-    price_plan = models.ForeignKey('transactions.Price', on_delete=models.SET_NULL, null=True, verbose_name=_('price'))
+    price_plan = models.ForeignKey('pricing.Plan', on_delete=models.SET_NULL, null=True, verbose_name=_('price'))
     created_at = models.DateTimeField(auto_now_add=True, verbose_name=_('created at'))
 
     class Meta:

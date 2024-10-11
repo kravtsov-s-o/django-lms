@@ -7,6 +7,18 @@ from .models import TransactionType
 from django.utils.translation import gettext_lazy as _
 
 
+class TransactionTypeForm(forms.ModelForm):
+    class Meta:
+        model = TransactionType
+        fields = '__all__'
+
+    def __init__(self, *args, **kwargs):
+        super(TransactionTypeForm, self).__init__(*args, **kwargs)
+        # Если объект уже существует (редактирование), проверяем is_system
+        if self.instance and self.instance.pk and self.instance.is_system:
+            self.fields['type'].disabled = True
+
+
 def get_transaction_types():
     return [
         (str(t.id), mark_safe(f"{t.title}<br><small>{t.description}</small>")) for t in

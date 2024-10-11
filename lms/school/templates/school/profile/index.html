@@ -20,11 +20,11 @@
                 <div class="user-profile-header d-flex flex-column flex-sm-row text-sm-start text-center mb-4">
                     <div class="flex-shrink-0 mt-n2 mx-sm-0 mx-auto">
                         {% if not current_user.avatar %}
-                        <img class="d-block h-auto ms-0 ms-sm-4 rounded-3 user-profile-img" src="{% static './img/default_avatar.png' %}"
+                        <img class="d-block h-auto ms-0 ms-sm-4 rounded-3 user-profile-img shadow-sm" src="{% static './img/default_avatar.png' %}"
                              height="110"
                              width="110" alt="User avatar"/>
                         {% else %}
-                        <img class="d-block h-auto ms-0 ms-sm-4 rounded-3 user-profile-img" src="{{ current_user.avatar }}" height="110"
+                        <img class="d-block h-auto ms-0 ms-sm-4 rounded-3 user-profile-img shadow-sm" src="{{ current_user.avatar }}" height="110"
                              width="110" alt="User avatar"/>
                         {% endif %}
                     </div>
@@ -34,14 +34,11 @@
                                 <h4>{{ current_user }}</h4>
                                 <ul class="list-inline mb-0 d-flex align-items-center flex-wrap justify-content-sm-start justify-content-center gap-2">
                                     <li class="list-inline-item fw-medium">
-                                        <span class="fw-bold me-2">{% trans 'Languages:' %}</span>
+                                        <i class="bx bxs-flag-alt"></i> {% trans 'Languages:' %}
                                         <span>{{ current_user.language|extract_languages }}</span>
                                     </li>
                                 </ul>
                             </div>
-                            <a href="javascript:void(0)" class="btn btn-primary text-nowrap">
-                                <i class="bx bx-user-check me-1"></i>Connected
-                            </a>
                         </div>
                     </div>
                 </div>
@@ -52,25 +49,26 @@
         <div class="col-md-4">
             <div class="card mb-4">
                 <div class="card-body">
-                    <p class="card-text text-uppercase">Contacts</p>
-                    <ul class="list-unstyled m-0">
-                        <li class="d-flex align-items-center">
-                            <i class="bx bx-envelope bx-xs"></i><span class="fw-medium mx-2">Email:</span>
-                            <span><a href="mailto:{{ current_user.user.email }}">{{ current_user.user.email }}</a></span>
-                        </li>
-                    </ul>
-                    {% if request.user.school_role == SCHOOL_ROLES.STUDENT %}
-                    <p class="card-text text-uppercase">Teacher Contacts</p>
-                    <ul class="list-unstyled mt-3 mt-4">
-                        <li class="d-flex align-items-center mb-3">
-                            <i class="bx bx-user bx-xs"></i><span class="fw-medium mx-2">Name:</span>
-                            <span><a href="#" data-bs-toggle="modal" data-bs-target="#about-teacher">{{ current_user.teacher }}</a></span>
-                        </li>
-                        <li class="d-flex align-items-center mb-3">
-                            <i class="bx bx-envelope bx-xs"></i><span class="fw-medium mx-2">Email:</span>
-                            <span><a href="mailto:{{ current_user.teacher.user.email }}">{{ current_user.teacher.user.email }}</a></span>
-                        </li>
-                    </ul>
+                    {% if request.user.school_role == SCHOOL_ROLES.TEACHER %}
+                        <p class="card-text text-uppercase">Contacts</p>
+                        <ul class="list-unstyled m-0">
+                            <li class="d-flex align-items-center">
+                                <i class="bx bx-envelope bx-xs"></i><span class="fw-medium mx-2">Email:</span>
+                                <span><a href="mailto:{{ current_user.user.email }}">{{ current_user.user.email }}</a></span>
+                            </li>
+                        </ul>
+                    {% elif request.user.school_role == SCHOOL_ROLES.STUDENT %}
+                        <p class="card-text text-uppercase">Teacher Contacts</p>
+                        <ul class="list-unstyled mt-3">
+                            <li class="d-flex align-items-center mb-3">
+                                <i class="bx bx-user bx-xs"></i><span class="fw-medium mx-2">Name:</span>
+                                <span><a href="#" data-bs-toggle="modal" data-bs-target="#about-teacher">{{ current_user.teacher }}</a></span>
+                            </li>
+                            <li class="d-flex align-items-center">
+                                <i class="bx bx-envelope bx-xs"></i><span class="fw-medium mx-2">Email:</span>
+                                <span><a href="mailto:{{ current_user.teacher.user.email }}">{{ current_user.teacher.user.email }}</a></span>
+                            </li>
+                        </ul>
                     {% endif %}
                 </div>
             </div>
