@@ -14,8 +14,6 @@ from companies.models import Company
 from settings.models import Currency, Duration
 from transactions.models import TransactionType, StudentPayment, TeacherPayment, CompanyPayment
 from pricing.models import Plan
-from notifications.models import SystemNotification
-from users.models import User
 
 from functools import wraps
 from django.core.exceptions import PermissionDenied
