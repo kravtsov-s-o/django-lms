@@ -9,6 +9,7 @@ from django.db.models.functions import ExtractYear
 from django.shortcuts import get_object_or_404
 from decimal import Decimal
 
+from users.models import User
 from .models import Student, Teacher, Lesson
 from companies.models import Company
 from settings.models import Currency, Duration
@@ -359,9 +360,9 @@ def user_is_student_or_teacher(view_func):
     @wraps(view_func)
     def _wrapped_view(request, *args, **kwargs):
         user = request.user
-        if user.school_role == 'student':
+        if user.school_role == User.SchoolRole.STUDENT:
             profile = get_object_or_404(Student, user=user)
-        elif user.school_role == 'teacher':
+        elif user.school_role == User.SchoolRole.TEACHER:
             profile = get_object_or_404(Teacher, user=user)
 
         if request.user == profile.user or (hasattr(profile, 'teacher') and profile.teacher.user == request.user):
@@ -381,7 +382,7 @@ def user_is_teacher(view_func):
     def _wrapped_view(request, *args, **kwargs):
         pk = kwargs.get('pk')
 
-        if request.user.school_role == 'teacher' and request.user.id == pk:
+        if request.user.school_role == User.SchoolRole.TEACHER and request.user.id == pk:
             return view_func(request, *args, **kwargs)
         else:
             raise PermissionDenied
@@ -413,7 +414,7 @@ def user_is_lesson_teacher(view_func):
         lesson_pk = kwargs.get('pk')
         lesson = get_object_or_404(Lesson, pk=lesson_pk)
 
-        if request.user.school_role == 'teacher' and request.user.id == lesson.teacher.user.id:
+        if request.user.school_role == User.SchoolRole.TEACHER and request.user.id == lesson.teacher.user.id:
             return view_func(request, *args, **kwargs)
         else:
             raise PermissionDenied

@@ -29,7 +29,7 @@ class ProfileBaseView(View):
         """
         Определение текущего пользователя в зависимости от его роли.
         """
-        if user.school_role == 'student':
+        if user.school_role == User.SchoolRole.STUDENT:
             return get_object_or_404(Student, user=user.id)
         return get_object_or_404(Teacher, user=user.id)
 
@@ -37,7 +37,7 @@ class ProfileBaseView(View):
     def get_Lesson_time_left(self):
         lessons_left = 0
 
-        if self.user.school_role == 'student':
+        if self.user.school_role == User.SchoolRole.STUDENT:
             lessons_left = count_time_left(self.current_user)
 
         return lessons_left

@@ -12,22 +12,17 @@ def create_or_update_profile(sender, instance, created, **kwargs):
     """
     if hasattr(instance, 'is_from_user_form') and instance.is_from_user_form:
         if created:
-            # Если пользователь создан, создаём соответствующую связанную модель
-            if instance.school_role == 'teacher':
+            if instance.school_role == User.SchoolRole.TEACHER:
                 Teacher.objects.create(user=instance)
-            elif instance.school_role == 'student':
+            elif instance.school_role == User.SchoolRole.STUDENT:
                 Student.objects.create(user=instance)
         else:
-            # Если пользователь обновляется, проверяем изменения
-            if instance.school_role == 'teacher':
-                # Удаляем Student, если был, и создаём Teacher
+            if instance.school_role == User.SchoolRole.TEACHER:
                 Student.objects.filter(user=instance).delete()
                 Teacher.objects.get_or_create(user=instance)
-            elif instance.school_role == 'student':
-                # Удаляем Teacher, если был, и создаём Student
+            elif instance.school_role == User.SchoolRole.STUDENT:
                 Teacher.objects.filter(user=instance).delete()
                 Student.objects.get_or_create(user=instance)
             else:
-                # Если роль None, удаляем все связанные модели
                 Student.objects.filter(user=instance).delete()
                 Teacher.objects.filter(user=instance).delete()

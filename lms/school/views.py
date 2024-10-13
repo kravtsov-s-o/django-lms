@@ -13,6 +13,7 @@ from django.utils import timezone
 from .AbstractClasses.BaseAnalyticView import BaseAnalyticView
 from .AbstractClasses.ProfileBaseView import ProfileBaseView
 from .AbstractClasses.UpdateLessonStatusView import UpdateLessonStatusView
+from users.models import User
 from .models import Student, Teacher, Lesson, StudentProgress
 from .forms import LessonForm, LessonMoveForm, ProgressStageForm, UserChangePassword, UserCombineCommonForm
 from companies.models import Company
@@ -280,7 +281,7 @@ class TeacherStatistic(View):
 @method_decorator(user_is_student_or_teacher, name='dispatch')
 class ProfileLessons(ProfileBaseView):
     def get(self, request, pk):
-        if self.user.school_role == 'student':
+        if self.user.school_role == User.SchoolRole.STUDENT:
             lessons = Lesson.objects.filter(students=self.current_user).order_by('-date', '-time')
         else:
             lessons = Lesson.objects.filter(teacher=self.current_user).order_by('-date', '-time')
@@ -342,7 +343,7 @@ class ProfileProgressDelete(DeleteView):
 @method_decorator(user_is_student_or_teacher, name='dispatch')
 class ProfilePayments(ProfileBaseView):
     def get(self, request, pk):
-        if self.user.school_role == 'student':
+        if self.user.school_role == User.SchoolRole.STUDENT:
             payments = StudentPayment.objects.filter(student=self.current_user).order_by('-created_at')
         else:
             payments = TeacherPayment.objects.filter(teacher=self.current_user).order_by('-created_at')
@@ -363,13 +364,13 @@ class ProfileSettings(ProfileBaseView):
         return UserCombineCommonForm(user=user, teacher=teacher)
 
     def get(self, request, pk):
-        teacher = self.current_user if self.user.school_role == 'teacher' else None
+        teacher = self.current_user if self.user.school_role == User.SchoolRole.TEACHER else None
         return self.render_page(request, self.active_page,
                                 common_form=self.get_common_form(self.user, teacher),
                                 password_form=UserChangePassword())
 
     def post(self, request, pk):
-        teacher = self.current_user if self.user.school_role == 'teacher' else None
+        teacher = self.current_user if self.user.school_role == User.SchoolRole.TEACHER else None
         # Обработка смены пароля
         if request.POST.get('form_name') == 'password':
             form = UserChangePassword(request.POST, user=self.user)
