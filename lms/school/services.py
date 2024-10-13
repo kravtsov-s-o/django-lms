@@ -14,11 +14,14 @@ from companies.models import Company
 from settings.models import Currency, Duration
 from transactions.models import TransactionType, StudentPayment, TeacherPayment, CompanyPayment
 from pricing.models import Plan
+from notifications.models import SystemNotification
+from users.models import User
 
 from functools import wraps
 from django.core.exceptions import PermissionDenied
 
 from django.utils.translation import gettext_lazy as _
+
 
 # IN PERCENTS %
 GROUP_DISCOUNT = {
@@ -52,7 +55,7 @@ def get_outgoing_lesson_transaction_type():
     -------
         TransactionType
     """
-    return TransactionType.objects.filter(type='outgoing', is_system=True).first()
+    return TransactionType.objects.filter(type=TransactionType.TransactionTypes.OUTGOING, is_system=True).first()
 
 
 def get_incoming_lesson_transaction_type():
@@ -64,7 +67,7 @@ def get_incoming_lesson_transaction_type():
     -------
         TransactionType
     """
-    return TransactionType.objects.filter(type='incoming', is_system=True).first()
+    return TransactionType.objects.filter(type=TransactionType.TransactionTypes.INCOMING, is_system=True).first()
 
 
 def get_rate_price(plan: Plan):
@@ -194,7 +197,7 @@ def set_student_transaction_for_lesson(student: Student, price, transaction_type
         '-': operator.sub,
     }
 
-    if transaction_type is None:
+    if not transaction_type:
         transaction_type = get_outgoing_lesson_transaction_type()
 
     StudentPayment(lesson=lesson, price=price, transaction_type=transaction_type, student=student).save()
@@ -272,7 +275,8 @@ def lesson_pay_back(lesson: Lesson, status: str, company: Company):
         student_transaction.delete()
 
 
-def lesson_finished(teacher: Teacher, lesson_id: int, status: str):
+@transaction.atomic
+def lesson_finished(lesson_id: int, status: str):
     """
     Marks the given lesson as finished and calculates the final price based on the lesson duration,
     number of students, and the availability of a company.
@@ -337,15 +341,15 @@ def lesson_finished(teacher: Teacher, lesson_id: int, status: str):
 
     # Teacher Plan
     teacher_price = calculate_teacher_price(teacher, lesson, len(lesson_students))
-    set_teacher_transaction(teacher, lesson, teacher_price)
+    set_teacher_transaction(teacher=teacher, lesson=lesson, price=teacher_price)
 
     # Company Plan
     if company:
-        set_company_transaction(company, lesson, company_price)
+        set_company_transaction(company=company, lesson=lesson, price=company_price)
 
     # Student(s) Plan
     for student in lesson_students:
-        set_student_transaction_for_lesson(student, lesson, student_prices[student])
+        set_student_transaction_for_lesson(student=student, lesson=lesson, price=student_prices[student])
 
 
 # =================================================================
@@ -583,3 +587,6 @@ def sort_data_for_analytics(data):
         combined_data[key]["count"] += 1
 
     return list(combined_data.values())
+
+
+

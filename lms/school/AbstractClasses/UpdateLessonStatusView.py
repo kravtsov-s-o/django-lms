@@ -15,13 +15,12 @@ class UpdateLessonStatusView(ABC, View):
         pass
 
     @transaction.atomic
-    def update_lesson_status(self, request, pk):
-        teacher = get_teacher(request)
+    def update_lesson_status(self, pk):
 
-        lesson_finished(teacher, pk, self.get_status())
+        lesson_finished(pk, self.get_status())
 
     def post(self, request, pk):
-        self.update_lesson_status(request, pk)
+        self.update_lesson_status(pk)
 
         messages.success(request, _('Lesson status was changed. {status}').format(status=self.get_status()))
         return redirect(request.META.get('HTTP_REFERER', '/'))

@@ -6,8 +6,10 @@
 <li class="nav-item dropdown-language dropdown me-2 me-xl-0">
     <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);"
        data-bs-toggle="dropdown">
+        <i class="bx bx-globe bx-sm"></i>
         <span class="h5" style="line-height: 1em; text-transform: uppercase; position: relative; top: 1px;"
-        data-bs-toggle="tooltip" data-bs-offset="0,4" data-bs-placement="bottom" title="{% trans 'Language switcher' %}">{{ LANGUAGE_CODE }}</span>
+        data-bs-toggle="tooltip" data-bs-offset="0,4"
+              data-bs-placement="bottom" title="{% trans 'Language switcher' %}"> {{ LANGUAGE_CODE }}</span>
     </a>
     <ul class="dropdown-menu dropdown-menu-end" style="min-width:auto;width:auto;">
         <form id="language-form" action="{% url 'set_language' %}" method="post">
